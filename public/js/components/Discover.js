@@ -21,25 +21,29 @@ const Discover = {
     container.innerHTML = `
       <div class="container discovery-container">
         <!-- Top Status & Action Bar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-          <div>
-            <h1 style="font-size: 1.8rem; margin-bottom: 2px;">Discover Garba Partners</h1>
-            <div id="daily-likes-status" style="font-size: 0.85rem; color: var(--color-text-secondary); font-weight: 600;">
+        <div class="discover-top-bar">
+          <div class="discover-title-wrap">
+            <h1 class="discover-title">Discover</h1>
+            <div id="daily-likes-status" class="discover-status">
               Loading daily allowance...
             </div>
           </div>
-          <div style="display: flex; gap: 8px;">
+          <div class="discover-actions">
             <button id="boost-profile-btn" class="btn btn-secondary btn-sm" onclick="Discover.promptBoost()" style="border-color: var(--color-secondary);">
               Boost Profile
             </button>
-            <button class="btn btn-secondary btn-sm" onclick="Discover.toggleFilterPanel()">
+            <button id="toggle-filter-btn" class="btn btn-secondary btn-sm" onclick="Discover.toggleFilterPanel()">
               Filters
             </button>
           </div>
         </div>
 
-        <!-- Filter Bar -->
-        <div id="filter-panel" class="filter-bar" style="display: flex;">
+        <!-- Filter Bar (Collapsed by default for clean mobile discovery) -->
+        <div id="filter-panel" class="filter-bar" style="display: none;">
+          <div class="filter-header-mobile">
+            <span>Filter Partners</span>
+            <button class="btn btn-sm btn-secondary" onclick="Discover.toggleFilterPanel()" style="padding: 2px 10px; font-size: 0.78rem;">Done</button>
+          </div>
           <select id="filter-city" onchange="Discover.applyFilters()">
             <option value="">All Cities (Gujarat, Mumbai & Indore)</option>
             <option value="Ahmedabad" ${this.filters.city === 'Ahmedabad' ? 'selected' : ''}>Ahmedabad</option>
@@ -87,6 +91,7 @@ const Discover = {
       </div>
     `;
 
+    this.updateFilterButtonBadge();
     await this.updateAllowanceUI();
     await this.loadProfiles();
   },
@@ -148,15 +153,40 @@ const Discover = {
 
   toggleFilterPanel() {
     const panel = document.getElementById('filter-panel');
+    const btn = document.getElementById('toggle-filter-btn');
     if (panel) {
-      panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+      const isClosed = panel.style.display === 'none' || !panel.style.display;
+      panel.style.display = isClosed ? 'flex' : 'none';
+      if (btn) {
+        btn.classList.toggle('active', isClosed);
+      }
+    }
+  },
+
+  updateFilterButtonBadge() {
+    const btn = document.getElementById('toggle-filter-btn');
+    if (!btn) return;
+    const activeCount = [this.filters.city, this.filters.experience, this.filters.connection_type].filter(Boolean).length;
+    btn.textContent = activeCount > 0 ? `Filters (${activeCount})` : 'Filters';
+    if (activeCount > 0) {
+      btn.style.borderColor = 'var(--color-primary)';
+      btn.style.color = 'var(--color-primary)';
+      btn.style.fontWeight = '700';
+    } else {
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.fontWeight = '';
     }
   },
 
   applyFilters() {
-    this.filters.city = document.getElementById('filter-city').value;
-    this.filters.experience = document.getElementById('filter-experience').value;
-    this.filters.connection_type = document.getElementById('filter-connection').value;
+    const cityEl = document.getElementById('filter-city');
+    const expEl = document.getElementById('filter-experience');
+    const connEl = document.getElementById('filter-connection');
+    this.filters.city = cityEl ? cityEl.value : '';
+    this.filters.experience = expEl ? expEl.value : '';
+    this.filters.connection_type = connEl ? connEl.value : '';
+    this.updateFilterButtonBadge();
     this.currentIndex = 0;
     this.loadProfiles();
   },
@@ -226,9 +256,9 @@ const Discover = {
         <div class="partner-card-body">
           <p class="partner-bio">${p.bio || 'Excited for vibrant Raas and traditional Garba nights!'}</p>
 
-          <div style="margin-bottom: 12px;">
-            <strong style="font-size: 0.84rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Seeking:</strong>
-            <div class="pill-list" style="margin-top: 6px;">
+          <div class="partner-seeking-wrap" style="margin-bottom: 8px;">
+            <strong style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Seeking:</strong>
+            <div class="pill-list" style="margin-top: 4px;">
               ${(p.connection_types || []).map(ct => `
                 <span class="pill pill-accent">${ct === 'partner' ? 'Garba Partner' : ct === 'dating' ? 'Open to Dating' : ct}</span>
               `).join('')}
@@ -236,9 +266,9 @@ const Discover = {
           </div>
 
           ${p.dance_style ? `
-            <div style="margin-bottom: 12px;">
-              <strong style="font-size: 0.84rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Styles & Steps:</strong>
-              <div class="pill-list" style="margin-top: 6px;">
+            <div class="partner-styles-wrap" style="margin-bottom: 8px;">
+              <strong style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Styles:</strong>
+              <div class="pill-list" style="margin-top: 4px;">
                 <span class="pill">${p.dance_style}</span>
                 ${p.preferred_language ? `<span class="pill">${p.preferred_language}</span>` : ''}
               </div>
@@ -316,6 +346,13 @@ const Discover = {
 
   resetFilters() {
     this.filters = { city: '', experience: '', connection_type: '', min_age: '', max_age: '' };
+    const cityEl = document.getElementById('filter-city');
+    const expEl = document.getElementById('filter-experience');
+    const connEl = document.getElementById('filter-connection');
+    if (cityEl) cityEl.value = '';
+    if (expEl) expEl.value = '';
+    if (connEl) connEl.value = '';
+    this.updateFilterButtonBadge();
     this.currentIndex = 0;
     this.loadProfiles();
   },
