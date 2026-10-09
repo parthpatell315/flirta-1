@@ -102,7 +102,7 @@ exports.discoverProfiles = (req, res) => {
       FROM profiles p
       JOIN users u ON p.user_id = u.id
       ${whereClause}
-      ORDER BY p.updated_at DESC
+      ORDER BY CASE WHEN p.boosted_until > CURRENT_TIMESTAMP THEN 1 ELSE 0 END DESC, p.updated_at DESC
       LIMIT ? OFFSET ?
     `;
 

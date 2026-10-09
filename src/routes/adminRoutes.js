@@ -11,6 +11,12 @@ router.get('/events', adminController.getAllEvents);
 router.post('/events', adminController.createEvent);
 router.put('/events/:id', adminController.updateEvent);
 
+router.get('/plans', adminController.getAllPlans);
+router.put('/plans/:id', adminController.updatePlan);
+
+router.get('/transactions', adminController.getTransactions);
+router.post('/transactions/:id/refund', adminController.refundTransaction);
+
 router.get('/reports', adminController.getReports);
 router.patch('/reports/:id', adminController.resolveReport);
 

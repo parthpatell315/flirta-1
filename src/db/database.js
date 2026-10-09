@@ -36,6 +36,13 @@ function getDb(customPath = null) {
     db.exec(schema);
   }
 
+  // Safe column migration for profiles.boosted_until
+  try {
+    db.exec('ALTER TABLE profiles ADD COLUMN boosted_until DATETIME;');
+  } catch {
+    // Column already exists
+  }
+
   if (!customPath) {
     dbInstance = db;
   }

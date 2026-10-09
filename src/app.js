@@ -15,6 +15,7 @@ const groupRoutes = require('./routes/groupRoutes');
 const safetyRoutes = require('./routes/safetyRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
 
 const app = express();
 
@@ -41,10 +42,11 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/safety', safetyRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'GarbaJodi', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', service: 'Flirta', timestamp: new Date().toISOString() });
 });
 
 // Single Page Application fallback for frontend routes

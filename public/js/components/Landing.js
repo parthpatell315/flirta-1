@@ -1,9 +1,8 @@
-// GarbaJodi Landing Component
+// Flirta Landing Component
 
 const Landing = {
   async render() {
-    // Track landing page visit
-    API.post('/api/analytics/track', { eventName: 'landing_page_visited' }).catch(() => {});
+    MetaAds.trackPageView('landing_page');
 
     let events = [];
     let stats = { users: 0, events: 0, matches: 0 };
@@ -15,35 +14,24 @@ const Landing = {
       console.warn('Could not load events for landing:', e);
     }
 
-    try {
-      const metricsData = await API.get('/api/admin/metrics');
-      if (metricsData && metricsData.metrics) {
-        stats.users = metricsData.metrics.users.active;
-        stats.events = metricsData.metrics.events.published;
-        stats.matches = metricsData.metrics.matching.matches;
-      }
-    } catch {
-      // Non-admin will fail /api/admin/metrics gracefully
-    }
-
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container">
         <!-- Hero Section -->
         <section class="hero">
           <div class="hero-tag">
-            <span>✨ Navratri 2026 Partner Discovery</span>
+            <span>✨ Navratri 2026 Partner Discovery & Dating</span>
           </div>
-          <h1 class="hero-title">Find Your Garba Partner</h1>
+          <h1 class="hero-title">Find Your Dream Garba Partner</h1>
           <p class="hero-subtitle">
-            Celebrate 9 nights of Raas and vibrant beats. Discover dance partners, join lively groups, build lasting friendships, and optionally explore dating. Garba first, connections forever.
+            Meet someone who matches your vibe, your dance style, and your energy. Your Navratri feels different when you find someone who matches your vibe. Discover compatible Garba partners on Flirta.
           </p>
           <div class="hero-actions">
             <button class="btn btn-primary" onclick="${State.isAuthenticated() ? "Router.navigate('/discover')" : "openAuthModal('register')"}">
               Find My Garba Partner 🪘
             </button>
-            <button class="btn btn-secondary" onclick="Router.navigate('/events')">
-              Explore Garba Nights 🌙
+            <button class="btn btn-secondary" onclick="Router.navigate('/pricing')">
+              Explore Plans 💎
             </button>
           </div>
         </section>

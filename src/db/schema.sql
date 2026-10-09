@@ -165,6 +165,60 @@ CREATE TABLE IF NOT EXISTS moderation_actions (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Subscription Plans Table (Spark, Chemistry, Attraction, Dream Match)
+CREATE TABLE IF NOT EXISTS subscription_plans (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  code TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  price_inr INTEGER NOT NULL,
+  duration_days INTEGER NOT NULL DEFAULT 30,
+  daily_likes_limit INTEGER NOT NULL DEFAULT 25,
+  boost_credits INTEGER NOT NULL DEFAULT 0,
+  can_see_likes INTEGER NOT NULL DEFAULT 0,
+  priority_level INTEGER NOT NULL DEFAULT 1,
+  features_json TEXT NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  is_popular INTEGER NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- User Active Subscriptions
+CREATE TABLE IF NOT EXISTS user_subscriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  plan_id INTEGER NOT NULL REFERENCES subscription_plans(id) ON DELETE CASCADE,
+  status TEXT CHECK(status IN ('active', 'expired', 'cancelled')) DEFAULT 'active',
+  start_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  end_date DATETIME NOT NULL,
+  remaining_boosts INTEGER NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Payment Transactions Audit
+CREATE TABLE IF NOT EXISTS payment_transactions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  plan_id INTEGER NOT NULL REFERENCES subscription_plans(id) ON DELETE CASCADE,
+  order_id TEXT UNIQUE NOT NULL,
+  payment_id TEXT UNIQUE,
+  amount_inr INTEGER NOT NULL,
+  currency TEXT DEFAULT 'INR',
+  status TEXT CHECK(status IN ('created', 'captured', 'failed', 'refunded')) DEFAULT 'created',
+  payment_method TEXT,
+  signature TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- User Profile Boost Records
+CREATE TABLE IF NOT EXISTS user_boosts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  boosted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Product Analytics Events
 CREATE TABLE IF NOT EXISTS analytics_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -185,3 +239,5 @@ CREATE INDEX IF NOT EXISTS idx_likes_receiver ON likes(receiver_id);
 CREATE INDEX IF NOT EXISTS idx_matches_users ON matches(user1_id, user2_id);
 CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id);
 CREATE INDEX IF NOT EXISTS idx_blocks_lookup ON blocks(blocker_id, blocked_id);
+CREATE INDEX IF NOT EXISTS idx_subs_user ON user_subscriptions(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_payments_order ON payment_transactions(order_id);

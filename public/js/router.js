@@ -1,10 +1,12 @@
-// GarbaJodi Client-Side SPA Router
+// Flirta Client-Side SPA Router
 
 const Router = {
   routes: {
     '/garba-partner': Landing,
     '/': Landing,
     '/discover': Discover,
+    '/pricing': Pricing,
+    '/likes-received': LikesReceived,
     '/matches': Matches,
     '/events': Events,
     '/groups': Groups,
@@ -43,6 +45,8 @@ const Router = {
     // Normalize path
     let matchedPath = '/garba-partner';
     if (path.startsWith('/discover')) matchedPath = '/discover';
+    else if (path.startsWith('/pricing')) matchedPath = '/pricing';
+    else if (path.startsWith('/likes-received')) matchedPath = '/likes-received';
     else if (path.startsWith('/matches')) matchedPath = '/matches';
     else if (path.startsWith('/events')) matchedPath = '/events';
     else if (path.startsWith('/groups')) matchedPath = '/groups';

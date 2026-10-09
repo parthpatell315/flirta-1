@@ -38,6 +38,32 @@ exports.sendInteraction = (req, res) => {
       return res.status(403).json({ error: 'Interaction not permitted between these accounts.' });
     }
 
+    // Enforce Daily Likes Allowance
+    if (action === 'like') {
+      const { getUserActiveSubscription } = require('./subscriptionController');
+      const activeSub = getUserActiveSubscription(db, senderId);
+      const dailyLimit = activeSub ? activeSub.daily_likes_limit : 5; // Default free: 5 likes/day
+
+      if (dailyLimit !== -1) {
+        const existingLike = db.prepare("SELECT id FROM likes WHERE sender_id = ? AND receiver_id = ? AND action = 'like'").get(senderId, targetUserId);
+        if (!existingLike) {
+          const todayLikes = db.prepare(`
+            SELECT COUNT(*) as count FROM likes
+            WHERE sender_id = ? AND action = 'like' AND DATE(created_at) = DATE('now')
+          `).get(senderId).count;
+
+          if (todayLikes >= dailyLimit) {
+            return res.status(403).json({
+              error: `You have reached your daily interest allowance of ${dailyLimit} likes for today. Upgrade your Flirta plan to send more interest expressions!`,
+              limitReached: true,
+              upgradeRequired: true,
+              dailyLimit
+            });
+          }
+        }
+      }
+    }
+
     // Wrap critical interaction and match logic inside a transaction
     db.exec('BEGIN IMMEDIATE');
 

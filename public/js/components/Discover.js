@@ -20,11 +20,22 @@ const Discover = {
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container discovery-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <h1 style="font-size: 1.8rem;">Discover Garba Partners 🪘</h1>
-          <button class="btn btn-secondary btn-sm" onclick="Discover.toggleFilterPanel()">
-            🔍 Filters
-          </button>
+        <!-- Top Status & Action Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h1 style="font-size: 1.8rem; margin-bottom: 2px;">Discover Garba Partners 🪘</h1>
+            <div id="daily-likes-status" style="font-size: 0.85rem; color: var(--color-text-secondary); font-weight: 600;">
+              Loading daily allowance...
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button id="boost-profile-btn" class="btn btn-secondary btn-sm" onclick="Discover.promptBoost()" style="border-color: var(--color-secondary);">
+              🚀 Boost Profile
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="Discover.toggleFilterPanel()">
+              🔍 Filters
+            </button>
+          </div>
         </div>
 
         <!-- Filter Bar -->
@@ -57,13 +68,69 @@ const Discover = {
         <!-- Card Deck View -->
         <div id="discover-card-area">
           <div style="text-align: center; padding: 60px 20px;">
-            <p style="color: var(--color-gold-light);">Loading dancers...</p>
+            <p style="color: var(--color-primary);">Loading dancers...</p>
           </div>
         </div>
       </div>
     `;
 
+    await this.updateAllowanceUI();
     await this.loadProfiles();
+  },
+
+  async updateAllowanceUI() {
+    try {
+      const res = await API.get('/api/subscriptions/me');
+      const statusEl = document.getElementById('daily-likes-status');
+      const boostBtn = document.getElementById('boost-profile-btn');
+
+      if (statusEl && res.usage) {
+        const u = res.usage;
+        const sub = res.subscription;
+        const planName = sub ? sub.planName : 'Free';
+        const limitStr = u.dailyLimit === 'unlimited' ? 'Unlimited' : `${u.remainingLikesToday} / ${u.dailyLimit}`;
+
+        statusEl.innerHTML = `
+          <span>Plan: <strong style="color: var(--color-primary);">${planName}</strong> · Daily Likes: <strong>${limitStr}</strong></span>
+          ${u.remainingLikesToday === 0 ? ` · <a href="javascript:void(0)" onclick="Router.navigate('/pricing')" style="color: var(--color-primary); text-decoration: underline;">Upgrade</a>` : ''}
+        `;
+      }
+
+      if (boostBtn) {
+        if (res.usage && res.usage.isBoosted) {
+          boostBtn.innerHTML = '⚡ Boost Active';
+          boostBtn.className = 'btn btn-primary btn-sm';
+        } else if (res.subscription && res.subscription.remainingBoosts > 0) {
+          boostBtn.innerHTML = `🚀 Boost (${res.subscription.remainingBoosts})`;
+        } else {
+          boostBtn.innerHTML = '🚀 Boost';
+        }
+      }
+    } catch (e) {
+      console.debug('Allowance check error:', e);
+    }
+  },
+
+  async promptBoost() {
+    try {
+      const res = await API.get('/api/subscriptions/me');
+      if (!res.subscription || res.subscription.remainingBoosts <= 0) {
+        if (confirm('You have 0 profile boost credits. Would you like to view Flirta plans (Attraction & Dream Match include boost credits)?')) {
+          Router.navigate('/pricing');
+        }
+        return;
+      }
+
+      if (!confirm(`Activate 1 Profile Boost Credit? Your profile will be prioritized at the top of partner discovery for 24 hours.`)) {
+        return;
+      }
+
+      const boostRes = await API.post('/api/subscriptions/boost');
+      showToast(boostRes.message, 'success');
+      await this.updateAllowanceUI();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
   },
 
   toggleFilterPanel() {
@@ -215,10 +282,17 @@ const Discover = {
         showToast('Interest sent! If they like you back, you will match.', 'info');
       }
 
+      await this.updateAllowanceUI();
       this.currentIndex++;
       this.renderCurrentCard();
     } catch (err) {
-      showToast(err.message, 'error');
+      if (err.message && err.message.includes('daily interest allowance')) {
+        if (confirm(`${err.message}\n\nWould you like to upgrade your Flirta plan to send more interest expressions?`)) {
+          Router.navigate('/pricing');
+        }
+      } else {
+        showToast(err.message, 'error');
+      }
     }
   },
 

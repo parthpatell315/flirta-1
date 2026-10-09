@@ -138,6 +138,103 @@ async function seed() {
     console.log(`Seeded ${sampleEvents.length} real published Garba events.`);
   }
 
+  // 2B. Seed Flirta Official Subscription Plans (Spark, Chemistry, Attraction, Dream Match)
+  const plansCount = db.prepare('SELECT COUNT(*) as count FROM subscription_plans').get().count;
+  if (plansCount === 0) {
+    const defaultPlans = [
+      {
+        code: 'spark',
+        name: 'Spark',
+        price_inr: 249,
+        duration_days: 30,
+        daily_likes_limit: 25,
+        boost_credits: 0,
+        can_see_likes: 0,
+        priority_level: 1,
+        is_popular: 0,
+        features_json: JSON.stringify([
+          'Browse eligible Garba partner profiles',
+          'Preferences for age range, location & dance style',
+          '25 daily interest expressions (likes)',
+          'Filter by Navratri event dates',
+          'Basic compatibility insights'
+        ])
+      },
+      {
+        code: 'chemistry',
+        name: 'Chemistry',
+        price_inr: 549,
+        duration_days: 30,
+        daily_likes_limit: 60,
+        boost_credits: 1,
+        can_see_likes: 1,
+        priority_level: 2,
+        is_popular: 1,
+        features_json: JSON.stringify([
+          'Everything included in Spark',
+          '60 daily interest expressions',
+          'See Who Liked You (Instant Matching)',
+          'Advanced partner preference filters',
+          '1 Profile Boost Credit included',
+          'Priority customer support'
+        ])
+      },
+      {
+        code: 'attraction',
+        name: 'Attraction',
+        price_inr: 749,
+        duration_days: 30,
+        daily_likes_limit: 120,
+        boost_credits: 3,
+        can_see_likes: 1,
+        priority_level: 3,
+        is_popular: 0,
+        features_json: JSON.stringify([
+          'Everything included in Chemistry',
+          '120 daily interest expressions',
+          '3 Profile Boost Credits (High Visibility)',
+          'Enhanced partner matching algorithm',
+          'Priority profile placement in discovery',
+          'Direct event venue badge'
+        ])
+      },
+      {
+        code: 'dream_match',
+        name: 'Dream Match',
+        price_inr: 949,
+        duration_days: 30,
+        daily_likes_limit: -1, // Unlimited
+        boost_credits: 8,
+        can_see_likes: 1,
+        priority_level: 4,
+        is_popular: 0,
+        features_json: JSON.stringify([
+          'Everything included in Attraction',
+          'Unlimited daily likes & interest expressions',
+          '8 Profile Boost Credits for peak Navratri nights',
+          'Top priority visibility in discovery deck',
+          'Exclusive Dream Match badge on profile',
+          'VIP partner coordination assistance'
+        ])
+      }
+    ];
+
+    const insertPlan = db.prepare(`
+      INSERT INTO subscription_plans (
+        code, name, price_inr, duration_days, daily_likes_limit,
+        boost_credits, can_see_likes, priority_level, is_popular, features_json, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+    `);
+
+    for (const pl of defaultPlans) {
+      insertPlan.run(
+        pl.code, pl.name, pl.price_inr, pl.duration_days, pl.daily_likes_limit,
+        pl.boost_credits, pl.can_see_likes, pl.priority_level, pl.is_popular, pl.features_json
+      );
+    }
+    console.log(`Seeded ${defaultPlans.length} Flirta subscription plans.`);
+  }
+
   // 3. Seed Realistic Discoverable Dancers for Partner Matching
   const initialDancers = [
     {

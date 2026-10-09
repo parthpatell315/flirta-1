@@ -10,7 +10,10 @@ const ALLOWED_EVENTS = [
   'match_created',
   'first_message_sent',
   'group_created',
-  'report_submitted'
+  'report_submitted',
+  'pricing_viewed',
+  'checkout_started',
+  'subscription_purchased'
 ];
 
 exports.trackEvent = (req, res) => {

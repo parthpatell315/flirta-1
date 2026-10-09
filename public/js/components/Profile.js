@@ -3,6 +3,7 @@
 const Profile = {
   profileData: null,
   photos: [],
+  subData: null,
 
   async render() {
     if (!State.isAuthenticated()) {
@@ -28,9 +29,13 @@ const Profile = {
 
   async loadProfile() {
     try {
-      const res = await API.get('/api/profile');
+      const [res, sub] = await Promise.all([
+        API.get('/api/profile'),
+        API.get('/api/subscriptions/my').catch(() => null)
+      ]);
       this.profileData = res;
       this.photos = res.photos || [];
+      this.subData = sub;
       this.renderProfileForm();
     } catch (err) {
       document.getElementById('profile-content-area').innerHTML = `
@@ -43,12 +48,57 @@ const Profile = {
 
   renderProfileForm() {
     const p = this.profileData;
+    const sub = this.subData;
     const area = document.getElementById('profile-content-area');
     if (!area) return;
 
     const connectionTypes = p.connection_types || ['partner'];
+    const planName = sub && sub.subscription ? sub.subscription.plan_name : 'Free Explorer';
+    const hasActiveSub = sub && sub.active;
+    const expiryStr = sub && sub.subscription ? new Date(sub.subscription.expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
 
     area.innerHTML = `
+      <!-- Flirta Subscription & Status Card -->
+      <div class="card" style="margin-bottom: 24px; border: 1.5px solid ${hasActiveSub ? 'var(--color-primary)' : 'var(--color-border)'}; background: ${hasActiveSub ? 'linear-gradient(135deg, rgba(236,29,36,0.04) 0%, rgba(245,166,35,0.06) 100%)' : '#FFF'};">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; color: var(--color-primary);">Flirta Pass</span>
+              ${hasActiveSub ? `<span class="badge" style="background: rgba(16,185,129,0.15); color: #059669; font-weight: 700;">Active</span>` : `<span class="badge" style="background: #F3F4F6; color: #6B7280;">Basic Free</span>`}
+            </div>
+            <h3 style="font-size: 1.35rem; margin: 4px 0 2px 0;">${planName}</h3>
+            ${expiryStr ? `<p style="font-size: 0.82rem; color: var(--color-text-secondary); margin: 0;">Valid until: <strong>${expiryStr}</strong></p>` : `<p style="font-size: 0.82rem; color: var(--color-text-secondary); margin: 0;">Unlock "Who Liked You", profile boosts & higher daily limits.</p>`}
+          </div>
+
+          <a href="#/pricing" class="btn ${hasActiveSub ? 'btn-secondary' : 'btn-primary'} btn-sm">
+            ${hasActiveSub ? 'Change Plan ⚡' : 'Upgrade to Flirta Pass ✨'}
+          </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; padding-top: 14px; border-top: 1px solid var(--color-border);">
+          <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Daily Likes</div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary); margin-top: 2px;">
+              ${sub ? `${sub.daily_likes_used} / ${sub.daily_likes_limit === 999999 ? '∞' : sub.daily_likes_limit}` : '5 / 5'}
+            </div>
+          </div>
+
+          <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Boost Credits</div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary); margin-top: 2px;">
+              ${sub ? sub.available_boost_credits : 0} Available
+            </div>
+          </div>
+
+          <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Visibility</div>
+            <div style="font-weight: 700; font-size: 0.95rem; color: ${sub && sub.is_boosted ? 'var(--color-primary)' : 'var(--color-text-primary)'}; margin-top: 2px;">
+              ${sub && sub.is_boosted ? '🚀 Boosted (Top Rank)' : 'Standard'}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Photo Gallery Card -->
       <div class="card" style="margin-bottom: 24px;">
         <h3 style="font-size: 1.2rem; margin-bottom: 14px;">Profile Photos</h3>
