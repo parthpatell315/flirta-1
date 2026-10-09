@@ -1,0 +1,35 @@
+{
+  "name": "garbajodi-navratri-2026",
+  "version": "1.0.0",
+  "description": "GarbaJodi - Navratri 2026 Adult Partner Matching & Community Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "seed": "node src/db/seed.js"
+  },
+  "keywords": [
+    "garba",
+    "navratri",
+    "matching",
+    "events",
+    "ahmedabad",
+    "vadodara",
+    "community"
+  ],
+  "author": "GarbaJodi Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.1"
+  }
+}

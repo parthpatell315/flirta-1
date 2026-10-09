@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>GarbaJodi · Navratri 2026 Partner Discovery</title>
+  <meta name="description" content="Find your adult Garba partner, form dance circles, and explore friendships and optional dating for Navratri 2026 in Ahmedabad, Vadodara, Surat, Mumbai and Rajkot.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Header / Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/garba-partner" class="brand-logo" onclick="event.preventDefault(); Router.navigate('/garba-partner');">
+        <div class="brand-icon">🪘</div>
+        <span>GarbaJodi</span>
+      </a>
+      <nav>
+        <ul class="nav-links" id="navbar-links">
+          <!-- Populated dynamically by app.js based on auth state -->
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main id="main-content" role="main">
+    <!-- Populated dynamically by Router -->
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-nav" id="mobile-bottom-nav">
+    <!-- Populated dynamically by app.js based on auth state -->
+  </nav>
+
+  <!-- Auth Modal (Login / 18+ Register) -->
+  <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="display: flex; gap: 8px;">
+          <button id="tab-login-btn" class="btn btn-sm btn-secondary active" onclick="switchAuthTab('login')">Sign In</button>
+          <button id="tab-reg-btn" class="btn btn-sm btn-secondary" onclick="switchAuthTab('register')">Join 18+</button>
+        </div>
+        <button class="close-btn" onclick="closeAuthModal()" aria-label="Close modal">×</button>
+      </div>
+
+      <!-- Login Form Container -->
+      <div id="login-form-container">
+        <h3 id="auth-modal-title" style="font-size: 1.3rem; margin-bottom: 8px;">Welcome to GarbaJodi</h3>
+        <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 20px;">
+          Log into your verified dancer account for Navratri 2026.
+        </p>
+
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="name@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+          <div id="login-error" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 14px;"></div>
+
+          <button type="submit" class="btn btn-primary btn-block">Sign In 🪘</button>
+        </form>
+
+        <div style="margin: 20px 0; text-align: center; position: relative;">
+          <div style="height: 1px; background: rgba(255,255,255,0.1); width: 100%;"></div>
+          <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #1F0B35; padding: 0 10px; font-size: 0.78rem; color: var(--color-text-muted);">OR</span>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-block btn-sm" onclick="handleGoogleSignInNotice()">
+          <span style="font-size: 1.1rem; margin-right: 4px;">🌐</span> Continue with Google
+        </button>
+      </div>
+
+      <!-- Register Form Container -->
+      <div id="register-form-container" style="display: none;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 6px;">Create Dancers Account</h3>
+        <p style="color: var(--color-gold-light); font-size: 0.85rem; margin-bottom: 18px;">
+          🛡️ Adult Only (18+ verified platform)
+        </p>
+
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Display Name</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="e.g. Diya Sharma" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="name@example.com" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password (min 6 characters)</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="Create secure password" required minlength="6" autocomplete="new-password">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label" for="reg-dob">Date of Birth</label>
+              <input type="date" id="reg-dob" class="form-control" required max="2008-10-09">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reg-city">City</label>
+              <select id="reg-city" class="form-control">
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Vadodara">Vadodara</option>
+                <option value="Surat">Surat</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Rajkot">Rajkot</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-experience">Garba Experience Level</label>
+            <select id="reg-experience" class="form-control">
+              <option value="intermediate">Intermediate (Grooving easily)</option>
+              <option value="beginner">Beginner (Learning Steps)</option>
+              <option value="advanced">Advanced (Raas Enthusiast)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+            <label class="form-checkbox">
+              <input type="checkbox" id="reg-adult-confirm" required>
+              <span>I explicitly confirm that I am at least 18 years old and agree to the platform safety code of conduct.</span>
+            </label>
+          </div>
+
+          <div id="reg-error" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 14px;"></div>
+
+          <button type="submit" class="btn btn-primary btn-block">Complete Registration 🪘</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Safety & Report Modal -->
+  <div id="report-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="report-modal-title">Report Content or Profile</h3>
+        <button class="close-btn" onclick="closeReportModal()" aria-label="Close modal">×</button>
+      </div>
+      <p id="report-target-name" style="font-size: 0.88rem; color: var(--color-gold-light); margin-bottom: 16px;"></p>
+
+      <form onsubmit="handleReportSubmit(event)">
+        <input type="hidden" id="report-target-type">
+        <input type="hidden" id="report-target-id">
+
+        <div class="form-group">
+          <label class="form-label" for="report-reason">Reason</label>
+          <select id="report-reason" class="form-control" required>
+            <option value="">Select a reason...</option>
+            <option value="Inappropriate behavior or language">Inappropriate behavior or language</option>
+            <option value="Fake or misleading profile">Fake or misleading profile</option>
+            <option value="Suspected underage account">Suspected underage account</option>
+            <option value="Commercial spam or unauthorized promotion">Commercial spam or unauthorized promotion</option>
+            <option value="Harassment or safety concern">Harassment or safety concern</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="report-details">Additional Details (Optional)</label>
+          <textarea id="report-details" class="form-control" rows="3" placeholder="Provide any context that will help our safety administrators investigate..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeReportModal()">Cancel</button>
+          <button type="submit" class="btn btn-danger btn-sm">Submit Safety Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/components/SafetyModals.js"></script>
+  <script src="/js/components/Landing.js"></script>
+  <script src="/js/components/AuthModal.js"></script>
+  <script src="/js/components/Discover.js"></script>
+  <script src="/js/components/Matches.js"></script>
+  <script src="/js/components/Events.js"></script>
+  <script src="/js/components/Groups.js"></script>
+  <script src="/js/components/Profile.js"></script>
+  <script src="/js/components/Admin.js"></script>
+  <script src="/js/router.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

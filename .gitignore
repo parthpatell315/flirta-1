@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+garbajodi.db-wal
+garbajodi.db-shm
+*.log
+.env
