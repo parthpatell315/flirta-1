@@ -15,7 +15,7 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="/garba-partner" class="brand-logo" onclick="event.preventDefault(); Router.navigate('/garba-partner');">
-        <div class="brand-icon">💖</div>
+        <div class="brand-icon" style="font-weight: 800; font-size: 1rem; color: #FFF; background: var(--color-primary); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">F</div>
         <span>Flirta</span>
       </a>
       <nav>
@@ -49,7 +49,7 @@
 
       <!-- Login Form Container -->
       <div id="login-form-container">
-        <h3 id="auth-modal-title" style="font-size: 1.3rem; margin-bottom: 8px;">Welcome to GarbaJodi</h3>
+        <h3 id="auth-modal-title" style="font-size: 1.3rem; margin-bottom: 8px;">Welcome to Flirta</h3>
         <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 20px;">
           Log into your verified dancer account for Navratri 2026.
         </p>
@@ -65,7 +65,7 @@
           </div>
           <div id="login-error" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 14px;"></div>
 
-          <button type="submit" class="btn btn-primary btn-block">Sign In 🪘</button>
+          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
         </form>
 
         <div style="margin: 20px 0; text-align: center; position: relative;">
@@ -74,15 +74,15 @@
         </div>
 
         <button type="button" class="btn btn-secondary btn-block btn-sm" onclick="handleGoogleSignInNotice()">
-          <span style="font-size: 1.1rem; margin-right: 4px;">🌐</span> Continue with Google
+          Continue with Google
         </button>
       </div>
 
       <!-- Register Form Container -->
       <div id="register-form-container" style="display: none;">
         <h3 style="font-size: 1.3rem; margin-bottom: 6px;">Create Dancers Account</h3>
-        <p style="color: var(--color-gold-light); font-size: 0.85rem; margin-bottom: 18px;">
-          🛡️ Adult Only (18+ verified platform)
+        <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin-bottom: 18px;">
+          Adult Only (18+ verified platform)
         </p>
 
         <form onsubmit="handleRegister(event)">
@@ -151,7 +151,7 @@
 
           <div id="reg-error" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 14px;"></div>
 
-          <button type="submit" class="btn btn-primary btn-block">Complete Registration 🪘</button>
+          <button type="submit" class="btn btn-primary btn-block">Complete Registration</button>
         </form>
       </div>
     </div>

@@ -14,7 +14,7 @@ const Profile = {
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container" style="max-width: 720px;">
-        <h1 style="font-size: 1.9rem; margin-bottom: 24px;">Your Festive Profile 🪔</h1>
+        <h1 style="font-size: 1.9rem; margin-bottom: 24px;">Your Festive Profile</h1>
 
         <div id="profile-content-area">
           <div style="text-align: center; padding: 40px; color: var(--color-gold-light);">
@@ -71,7 +71,7 @@ const Profile = {
           </div>
 
           <a href="#/pricing" class="btn ${hasActiveSub ? 'btn-secondary' : 'btn-primary'} btn-sm">
-            ${hasActiveSub ? 'Change Plan ⚡' : 'Upgrade to Flirta Pass ✨'}
+            ${hasActiveSub ? 'Change Plan' : 'Upgrade to Flirta Pass'}
           </a>
         </div>
 
@@ -93,7 +93,7 @@ const Profile = {
           <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
             <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Visibility</div>
             <div style="font-weight: 700; font-size: 0.95rem; color: ${sub && sub.is_boosted ? 'var(--color-primary)' : 'var(--color-text-primary)'}; margin-top: 2px;">
-              ${sub && sub.is_boosted ? '🚀 Boosted (Top Rank)' : 'Standard'}
+              ${sub && sub.is_boosted ? 'Boosted (Top Rank)' : 'Standard'}
             </div>
           </div>
         </div>
@@ -127,8 +127,7 @@ const Profile = {
 
           <!-- Upload Box -->
           <label style="border: 2px dashed var(--color-plum-border); border-radius: 12px; height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-muted); transition: var(--transition);">
-            <span style="font-size: 1.8rem;">📷</span>
-            <span style="font-size: 0.82rem; margin-top: 4px;">+ Add Photo</span>
+            <span style="font-size: 0.88rem; font-weight: 700;">+ Add Photo</span>
             <input type="file" id="photo-upload-input" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="Profile.handlePhotoUpload(event)">
           </label>
         </div>
@@ -205,15 +204,15 @@ const Profile = {
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
             <label class="form-checkbox">
               <input type="checkbox" id="conn-partner" ${connectionTypes.includes('partner') ? 'checked' : ''}>
-              <span>🪘 Garba Dance Partner</span>
+              <span>Garba Dance Partner</span>
             </label>
             <label class="form-checkbox">
               <input type="checkbox" id="conn-friendship" ${connectionTypes.includes('friendship') ? 'checked' : ''}>
-              <span>🤝 Festive Friendship</span>
+              <span>Festive Friendship</span>
             </label>
             <label class="form-checkbox">
               <input type="checkbox" id="conn-dating" ${connectionTypes.includes('dating') ? 'checked' : ''}>
-              <span>✨ Open to Dating</span>
+              <span>Open to Dating</span>
             </label>
           </div>
         </div>

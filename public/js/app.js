@@ -39,61 +39,56 @@ function updateNavigationUI(state) {
     desktopNav.innerHTML = `
       <li>
         <button class="nav-btn" data-route="/discover" onclick="Router.navigate('/discover')">
-          🪘 Discover
+          Discover
         </button>
       </li>
       <li>
         <button class="nav-btn" data-route="/likes-received" onclick="Router.navigate('/likes-received')">
-          ❤️ Liked You
+          Liked You
           ${state.likesReceivedCount > 0 ? `<span class="nav-badge">${state.likesReceivedCount}</span>` : ''}
         </button>
       </li>
       <li>
         <button class="nav-btn" data-route="/matches" onclick="Router.navigate('/matches')">
-          💬 Matches
+          Matches
           ${state.matchesCount > 0 ? `<span class="nav-badge">${state.matchesCount}</span>` : ''}
         </button>
       </li>
       <li>
         <button class="nav-btn" data-route="/pricing" onclick="Router.navigate('/pricing')">
-          💎 Plans
+          Plans
         </button>
       </li>
       ${state.isAdmin() ? `
         <li>
           <button class="nav-btn" data-route="/admin" onclick="Router.navigate('/admin')">
-            🛡️ Admin
+            Admin
           </button>
         </li>
       ` : ''}
       <li>
         <button class="btn btn-secondary btn-sm" data-route="/profile" onclick="Router.navigate('/profile')">
-          👤 ${state.profile ? state.profile.display_name.split(' ')[0] : 'Profile'}
+          ${state.profile ? state.profile.display_name.split(' ')[0] : 'Profile'}
         </button>
       </li>
     `;
 
     mobileNav.innerHTML = `
       <button class="mobile-nav-item" data-route="/discover" onclick="Router.navigate('/discover')">
-        <span class="mobile-nav-icon">🪘</span>
         <span>Discover</span>
       </button>
       <button class="mobile-nav-item" data-route="/likes-received" onclick="Router.navigate('/likes-received')">
-        <span class="mobile-nav-icon">❤️</span>
         <span>Likes</span>
-        ${state.likesReceivedCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 0; right: 8px;">${state.likesReceivedCount}</span>` : ''}
+        ${state.likesReceivedCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 4px; right: 8px;">${state.likesReceivedCount}</span>` : ''}
       </button>
       <button class="mobile-nav-item" data-route="/matches" onclick="Router.navigate('/matches')">
-        <span class="mobile-nav-icon">💬</span>
         <span>Matches</span>
-        ${state.matchesCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 0; right: 8px;">${state.matchesCount}</span>` : ''}
+        ${state.matchesCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 4px; right: 8px;">${state.matchesCount}</span>` : ''}
       </button>
       <button class="mobile-nav-item" data-route="/pricing" onclick="Router.navigate('/pricing')">
-        <span class="mobile-nav-icon">💎</span>
         <span>Plans</span>
       </button>
       <button class="mobile-nav-item" data-route="/profile" onclick="Router.navigate('/profile')">
-        <span class="mobile-nav-icon">👤</span>
         <span>Profile</span>
       </button>
     `;
@@ -106,7 +101,7 @@ function updateNavigationUI(state) {
       </li>
       <li>
         <button class="nav-btn" data-route="/pricing" onclick="Router.navigate('/pricing')">
-          💎 Plans
+          Plans
         </button>
       </li>
       <li>
@@ -116,22 +111,19 @@ function updateNavigationUI(state) {
       </li>
       <li>
         <button class="btn btn-primary btn-sm" onclick="openAuthModal('register')">
-          Join 18+ 🪘
+          Join 18+
         </button>
       </li>
     `;
 
     mobileNav.innerHTML = `
       <button class="mobile-nav-item active" data-route="/garba-partner" onclick="Router.navigate('/garba-partner')">
-        <span class="mobile-nav-icon">🏠</span>
         <span>Home</span>
       </button>
       <button class="mobile-nav-item" data-route="/pricing" onclick="Router.navigate('/pricing')">
-        <span class="mobile-nav-icon">💎</span>
         <span>Plans</span>
       </button>
       <button class="mobile-nav-item" onclick="openAuthModal('login')">
-        <span class="mobile-nav-icon">🔑</span>
         <span>Sign In</span>
       </button>
     `;

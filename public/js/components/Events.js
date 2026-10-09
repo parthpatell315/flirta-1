@@ -10,9 +10,9 @@ const Events = {
       <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
           <div>
-            <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Navratri 2026 Garba Nights 🌙</h1>
+            <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Navratri 2026 Garba Nights</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.95rem;">
-              Verified venues across Gujarat & Mumbai. Mark attendance to coordinate with partners.
+              Verified venues across Gujarat, Mumbai & Indore. Mark attendance to coordinate with partners.
             </p>
           </div>
           ${State.isAdmin() ? `
@@ -27,10 +27,11 @@ const Events = {
           <select id="event-city-filter" onchange="Events.applyFilters()">
             <option value="">All Cities</option>
             <option value="Ahmedabad" ${this.filters.city === 'Ahmedabad' ? 'selected' : ''}>Ahmedabad</option>
-            <option value="Vadodara" ${this.filters.city === 'Vadodara' ? 'selected' : ''}>Vadodara</option>
             <option value="Surat" ${this.filters.city === 'Surat' ? 'selected' : ''}>Surat</option>
-            <option value="Mumbai" ${this.filters.city === 'Mumbai' ? 'selected' : ''}>Mumbai</option>
+            <option value="Vadodara" ${this.filters.city === 'Vadodara' ? 'selected' : ''}>Vadodara</option>
             <option value="Rajkot" ${this.filters.city === 'Rajkot' ? 'selected' : ''}>Rajkot</option>
+            <option value="Mumbai" ${this.filters.city === 'Mumbai' ? 'selected' : ''}>Mumbai</option>
+            <option value="Indore" ${this.filters.city === 'Indore' ? 'selected' : ''}>Indore</option>
           </select>
 
           <input type="text" id="event-search-input" placeholder="Search venue or organizer..." value="${this.filters.q}" oninput="Events.applyFilters()">
@@ -80,7 +81,6 @@ const Events = {
     if (this.events.length === 0) {
       listContainer.innerHTML = `
         <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
-          <div style="font-size: 3rem; margin-bottom: 12px;">🎪</div>
           <h3 style="margin-bottom: 8px;">No Events Found</h3>
           <p style="color: var(--color-text-secondary); max-width: 400px; margin: 0 auto;">
             Try clearing filters or check back as more official 2026 Navratri venues publish schedules.
@@ -98,16 +98,16 @@ const Events = {
         <div class="event-card">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span class="event-date-badge">📅 ${ev.event_date}</span>
-              <span style="font-size: 0.8rem; color: var(--color-gold-light); font-weight: 600;">🕒 ${ev.start_time} - ${ev.end_time}</span>
+              <span class="event-date-badge">${ev.event_date}</span>
+              <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 600;">${ev.start_time} - ${ev.end_time}</span>
             </div>
 
             <h3 style="font-size: 1.28rem; margin-bottom: 6px;">${ev.name}</h3>
-            <p style="color: var(--color-gold-light); font-size: 0.86rem; font-weight: 600; margin-bottom: 6px;">
-              🛡️ Organizer: ${ev.organizer}
+            <p style="color: var(--color-text-secondary); font-size: 0.86rem; font-weight: 600; margin-bottom: 6px;">
+              Organizer: ${ev.organizer}
             </p>
             <p style="color: var(--color-text-muted); font-size: 0.88rem; margin-bottom: 14px;">
-              📍 ${ev.venue_name}, ${ev.city}
+              ${ev.venue_name}, ${ev.city}
               <br><span style="font-size: 0.8rem; opacity: 0.8;">${ev.address}</span>
             </p>
             <p style="color: var(--color-text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 18px;">
@@ -117,8 +117,8 @@ const Events = {
 
           <div style="padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-              <span style="font-size: 0.85rem; color: var(--color-cream-muted);">
-                👥 <strong>${ev.attending_count || 0}</strong> attending · <strong>${ev.interested_count || 0}</strong> interested
+              <span style="font-size: 0.85rem; color: var(--color-text-muted);">
+                <strong>${ev.attending_count || 0}</strong> attending · <strong>${ev.interested_count || 0}</strong> interested
               </span>
               <button class="btn btn-secondary btn-sm" onclick="Events.viewAttendees(${ev.id}, '${ev.name.replace(/'/g, "\\'")}')">
                 View Dancers
@@ -127,10 +127,10 @@ const Events = {
 
             <div style="display: flex; gap: 8px;">
               <button class="btn ${isAttending ? 'btn-primary' : 'btn-secondary'} btn-sm" style="flex: 1;" onclick="Events.toggleAttendance(${ev.id}, 'attending')">
-                ${isAttending ? '✓ Attending' : 'Attend'}
+                ${isAttending ? 'Attending' : 'Attend'}
               </button>
               <button class="btn ${isInterested ? 'btn-primary' : 'btn-secondary'} btn-sm" style="flex: 1;" onclick="Events.toggleAttendance(${ev.id}, 'interested')">
-                ${isInterested ? '★ Interested' : 'Interested'}
+                ${isInterested ? 'Interested' : 'Interested'}
               </button>
             </div>
           </div>
@@ -190,7 +190,7 @@ const Events = {
                     <img src="${avatar}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;" onerror="this.src='${defaultAvatar}'">
                     <div>
                       <div style="font-weight: 700;">${a.display_name}, ${a.age}</div>
-                      <div style="font-size: 0.8rem; color: var(--color-gold-light);">📍 ${a.city} · ${a.garba_experience}</div>
+                      <div style="font-size: 0.8rem; color: var(--color-text-secondary);">${a.city} · ${a.garba_experience}</div>
                     </div>
                   </div>
                   <span class="partner-badge" style="font-size: 0.7rem;">${a.attendance_status}</span>

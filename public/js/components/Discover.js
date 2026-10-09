@@ -23,17 +23,17 @@ const Discover = {
         <!-- Top Status & Action Bar -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h1 style="font-size: 1.8rem; margin-bottom: 2px;">Discover Garba Partners 🪘</h1>
+            <h1 style="font-size: 1.8rem; margin-bottom: 2px;">Discover Garba Partners</h1>
             <div id="daily-likes-status" style="font-size: 0.85rem; color: var(--color-text-secondary); font-weight: 600;">
               Loading daily allowance...
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
             <button id="boost-profile-btn" class="btn btn-secondary btn-sm" onclick="Discover.promptBoost()" style="border-color: var(--color-secondary);">
-              🚀 Boost Profile
+              Boost Profile
             </button>
             <button class="btn btn-secondary btn-sm" onclick="Discover.toggleFilterPanel()">
-              🔍 Filters
+              Filters
             </button>
           </div>
         </div>
@@ -111,12 +111,12 @@ const Discover = {
 
       if (boostBtn) {
         if (res.usage && res.usage.isBoosted) {
-          boostBtn.innerHTML = '⚡ Boost Active';
+          boostBtn.innerHTML = 'Boost Active';
           boostBtn.className = 'btn btn-primary btn-sm';
         } else if (res.subscription && res.subscription.remainingBoosts > 0) {
-          boostBtn.innerHTML = `🚀 Boost (${res.subscription.remainingBoosts})`;
+          boostBtn.innerHTML = `Boost (${res.subscription.remainingBoosts})`;
         } else {
-          boostBtn.innerHTML = '🚀 Boost';
+          boostBtn.innerHTML = 'Boost';
         }
       }
     } catch (e) {
@@ -190,14 +190,12 @@ const Discover = {
     if (this.currentIndex >= this.profiles.length) {
       cardArea.innerHTML = `
         <div class="card" style="text-align: center; padding: 50px 20px;">
-          <div style="font-size: 3.5rem; margin-bottom: 16px;">🪔</div>
           <h2 style="font-size: 1.6rem; margin-bottom: 12px;">You've Caught Up!</h2>
           <p style="color: var(--color-text-secondary); max-width: 440px; margin: 0 auto 24px;">
-            You have reviewed all available Garba profiles matching your current filters. Adjust your filters or explore upcoming events to meet more dancers!
+            You have reviewed all available Garba profiles matching your current filters. Adjust your filters to meet more dancers!
           </p>
           <div style="display: flex; gap: 12px; justify-content: center;">
             <button class="btn btn-secondary" onclick="Discover.resetFilters()">Clear Filters</button>
-            <button class="btn btn-primary" onclick="Router.navigate('/events')">Browse Events</button>
           </div>
         </div>
       `;
@@ -216,7 +214,7 @@ const Discover = {
             <div>
               <div class="partner-card-name">${p.display_name}, ${p.age}</div>
               <div class="partner-card-meta">
-                <span>📍 ${p.city}</span>
+                <span>${p.city}</span>
                 <span>·</span>
                 <span style="text-transform: capitalize;">${p.garba_experience} Dancer</span>
               </div>
@@ -229,20 +227,20 @@ const Discover = {
           <p class="partner-bio">${p.bio || 'Excited for vibrant Raas and traditional Garba nights!'}</p>
 
           <div style="margin-bottom: 12px;">
-            <strong style="font-size: 0.84rem; color: var(--color-gold-light); text-transform: uppercase; letter-spacing: 0.5px;">Seeking:</strong>
+            <strong style="font-size: 0.84rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Seeking:</strong>
             <div class="pill-list" style="margin-top: 6px;">
               ${(p.connection_types || []).map(ct => `
-                <span class="pill pill-accent">✨ ${ct === 'partner' ? 'Garba Partner' : ct === 'dating' ? 'Open to Dating' : ct}</span>
+                <span class="pill pill-accent">${ct === 'partner' ? 'Garba Partner' : ct === 'dating' ? 'Open to Dating' : ct}</span>
               `).join('')}
             </div>
           </div>
 
           ${p.dance_style ? `
             <div style="margin-bottom: 12px;">
-              <strong style="font-size: 0.84rem; color: var(--color-gold-light); text-transform: uppercase; letter-spacing: 0.5px;">Styles & Steps:</strong>
+              <strong style="font-size: 0.84rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Styles & Steps:</strong>
               <div class="pill-list" style="margin-top: 6px;">
-                <span class="pill">💃 ${p.dance_style}</span>
-                ${p.preferred_language ? `<span class="pill">🗣️ ${p.preferred_language}</span>` : ''}
+                <span class="pill">${p.dance_style}</span>
+                ${p.preferred_language ? `<span class="pill">${p.preferred_language}</span>` : ''}
               </div>
             </div>
           ` : ''}
@@ -250,16 +248,16 @@ const Discover = {
 
         <!-- Swipe Action Bar -->
         <div class="swipe-actions">
-          <button class="action-circle-btn btn-flag" title="Report or Block" onclick="Discover.openOptions(${p.user_id}, '${p.display_name.replace(/'/g, "\\'")}')">
-            ⚠️
+          <button class="action-circle-btn btn-flag" title="Report or Block" onclick="Discover.openOptions(${p.user_id}, '${p.display_name.replace(/'/g, "\\'")}')" style="font-size: 0.82rem; font-weight: 700;">
+            Report
           </button>
           
-          <button class="action-circle-btn btn-pass" title="Pass" onclick="Discover.handleAction(${p.user_id}, 'pass')">
-            ✕
+          <button class="action-circle-btn btn-pass" title="Pass" onclick="Discover.handleAction(${p.user_id}, 'pass')" style="font-size: 0.95rem; font-weight: 700;">
+            Pass
           </button>
 
-          <button class="action-circle-btn btn-like" title="Like / Send Interest" onclick="Discover.handleAction(${p.user_id}, 'like')">
-            🪘
+          <button class="action-circle-btn btn-like" title="Like / Send Interest" onclick="Discover.handleAction(${p.user_id}, 'like')" style="font-size: 0.95rem; font-weight: 700;">
+            Like
           </button>
         </div>
       </div>
@@ -310,14 +308,13 @@ const Discover = {
     celebrationOverlay.className = 'modal-overlay open';
     celebrationOverlay.innerHTML = `
       <div class="modal-box" style="text-align: center; border: 2px solid var(--color-primary); background: #FFFFFF; box-shadow: var(--shadow-lg);">
-        <div style="font-size: 3.5rem; animation: bounce 1s infinite;">🎉 🪘 🎉</div>
-        <h2 style="font-size: 2rem; color: var(--color-primary); margin: 12px 0;">It's a Garba Jodi Match!</h2>
+        <h2 style="font-size: 2rem; color: var(--color-primary); margin: 12px 0;">It's a Mutual Match!</h2>
         <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: 1rem;">
-          You and <strong>${profile.display_name}</strong> both liked each other! You can now coordinate your Garba nights and chat.
+          You and <strong>${profile.display_name}</strong> both expressed interest in each other! You can now coordinate your Garba nights and chat.
         </p>
         <div style="display: flex; gap: 14px; justify-content: center;">
           <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Keep Browsing</button>
-          <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); Router.navigate('/matches')">Open Chat 💬</button>
+          <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); Router.navigate('/matches')">Open Chat</button>
         </div>
       </div>
     `;

@@ -9,13 +9,13 @@ const Groups = {
       <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
           <div>
-            <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Garba Groups & Circles 🪘</h1>
+            <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Garba Groups</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.95rem;">
               Join a dance team, coordinate group attire, and conquer the mega Garba grounds together.
             </p>
           </div>
           <button class="btn btn-primary" onclick="Groups.openCreateModal()">
-            + Create Garba Circle
+            + Create Group
           </button>
         </div>
 
@@ -52,12 +52,11 @@ const Groups = {
     if (this.groups.length === 0) {
       listContainer.innerHTML = `
         <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
-          <div style="font-size: 3rem; margin-bottom: 12px;">👥</div>
-          <h3 style="margin-bottom: 8px;">No Public Circles Yet</h3>
+          <h3 style="margin-bottom: 8px;">No Public Groups Yet</h3>
           <p style="color: var(--color-text-secondary); max-width: 420px; margin: 0 auto 20px;">
-            Be the first to create a dance circle for your favorite Navratri venue!
+            Be the first to create a dance group!
           </p>
-          <button class="btn btn-primary btn-sm" onclick="Groups.openCreateModal()">Create First Circle</button>
+          <button class="btn btn-primary btn-sm" onclick="Groups.openCreateModal()">Create First Group</button>
         </div>
       `;
       return;
@@ -72,18 +71,18 @@ const Groups = {
         <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
-              <span class="partner-badge">👥 ${g.active_members_count} / ${g.max_members} Members</span>
+              <span class="partner-badge">${g.active_members_count} / ${g.max_members} Members</span>
               <span style="font-size: 0.8rem; color: var(--color-text-muted);">By ${g.creator_name}</span>
             </div>
 
             <h3 style="font-size: 1.25rem; margin-bottom: 8px;">${g.name}</h3>
             <p style="color: var(--color-text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 14px;">
-              ${g.description || 'Navratri group circle for passionate dancers.'}
+              ${g.description || 'Navratri group for passionate dancers.'}
             </p>
 
             ${g.event_name ? `
               <div style="font-size: 0.82rem; color: var(--color-gold-light); margin-bottom: 14px; background: rgba(245,158,11,0.1); padding: 6px 12px; border-radius: 6px;">
-                🎪 Event: <strong>${g.event_name}</strong> (${g.event_city})
+                Event: <strong>${g.event_name}</strong> (${g.event_city})
               </div>
             ` : ''}
           </div>
@@ -94,11 +93,11 @@ const Groups = {
             </button>
 
             ${isMember ? `
-              <button class="btn btn-secondary btn-sm" onclick="Groups.leaveGroup(${g.id})">Leave Circle</button>
+              <button class="btn btn-secondary btn-sm" onclick="Groups.leaveGroup(${g.id})">Leave Group</button>
             ` : isPending ? `
               <button class="btn btn-secondary btn-sm" disabled>Pending Approval</button>
             ` : `
-              <button class="btn btn-primary btn-sm" onclick="Groups.joinGroup(${g.id})">Join Circle</button>
+              <button class="btn btn-primary btn-sm" onclick="Groups.joinGroup(${g.id})">Join Group</button>
             `}
           </div>
         </div>
@@ -123,7 +122,7 @@ const Groups = {
     modal.innerHTML = `
       <div class="modal-box">
         <div class="modal-header">
-          <h3>Create a Garba Circle 🪘</h3>
+          <h3>Create a Garba Group</h3>
           <button class="close-btn" onclick="this.closest('.modal-overlay').remove()">×</button>
         </div>
         <form onsubmit="Groups.handleCreate(event)">
@@ -227,7 +226,7 @@ const Groups = {
                     <img src="${avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.src='${defaultAvatar}'">
                     <div>
                       <span style="font-weight: 600; font-size: 0.9rem;">${m.display_name}</span>
-                      <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block;">📍 ${m.city}</span>
+                      <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block;">${m.city}</span>
                     </div>
                   </div>
                   <span class="partner-badge" style="font-size: 0.7rem;">${m.role}</span>

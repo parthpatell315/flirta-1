@@ -12,7 +12,7 @@ const Pricing = {
       <div class="container" style="max-width: 1100px;">
         <div style="text-align: center; margin-bottom: 40px;">
           <div class="hero-tag" style="margin-bottom: 14px;">
-            <span>✨ Flirta Premium Passes</span>
+            <span>Flirta Premium Passes</span>
           </div>
           <h1 style="font-size: 2.8rem; margin-bottom: 14px; letter-spacing: -0.02em;">
             Unlock Your Dream Garba Partner
@@ -21,14 +21,27 @@ const Pricing = {
             Supercharge your Navratri 2026 discovery with higher daily likes, instant reveal of who liked you, and peak-night profile boosts.
           </p>
           <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--color-primary); background: var(--color-primary-soft); padding: 6px 16px; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--color-primary-border);">
-            🔒 Transparent Pricing · 30-Day Festival Pass · No Automatic Traps
+            🔒 Secure Matchmaking • Navratri Festival Access • One-Time Pass (No Auto-Renewal)
           </div>
         </div>
 
-        <div id="pricing-plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 50px;">
+        <div id="pricing-plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 30px;">
           <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--color-primary);">
             Loading available plans...
           </div>
+        </div>
+
+        <!-- Mandatory Safety Footer Disclaimers -->
+        <div style="margin-bottom: 45px; padding: 20px 24px; background: #F8F9FA; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 0.82rem; line-height: 1.6; color: #666666;">
+          <div style="font-weight: 700; color: #444444; margin-bottom: 8px; font-size: 0.86rem; letter-spacing: 0.2px;">
+            Legal Disclaimer & Safety Terms:
+          </div>
+          <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+            <li>This platform functions strictly as a peer-to-peer social discovery and matchmaking service for cultural dance networking. We do not offer or facilitate paid, rented, or commercial companion services.</li>
+            <li>All user profiles require mandatory mobile OTP and identity verification before interaction is enabled.</li>
+            <li>Subscription fees are strictly for digital matching features and profile filters; we do not guarantee offline meetings or partner availability.</li>
+            <li>To report suspicious profiles or fraud, please visit our Grievance Redressal page or email our designated Grievance Officer at <a href="mailto:compliance@yourdomain.com" style="color: var(--color-primary); text-decoration: underline;">compliance@yourdomain.com</a>.</li>
+          </ol>
         </div>
 
         <!-- Trust & Consumer Protection Notes -->
@@ -38,15 +51,15 @@ const Pricing = {
           </h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; font-size: 0.92rem; color: var(--color-text-secondary);">
             <div>
-              <strong style="color: var(--color-text-primary); display: block; margin-bottom: 4px;">🎯 Real Match Disclosures:</strong>
+              <strong style="color: var(--color-text-primary); display: block; margin-bottom: 4px;">Real Match Disclosures:</strong>
               Subscriptions grant discovery allowances, boost priority, and visibility tools. Matches are created strictly through genuine mutual interest. We never guarantee a response or match.
             </div>
             <div>
-              <strong style="color: var(--color-text-primary); display: block; margin-bottom: 4px;">🛡️ Safety Always Included Free:</strong>
+              <strong style="color: var(--color-text-primary); display: block; margin-bottom: 4px;">Safety Always Included Free:</strong>
               Reporting, blocking, adult age verification, and personal contact privacy are 100% free for all registered users.
             </div>
             <div>
-              <strong style="color: var(--color-text-primary); display: block; margin-bottom: 4px;">💳 Secure Transaction Processing:</strong>
+              <strong style="color: var(--color-text-primary); display: block; margin-bottom: 4px;">Secure Transaction Processing:</strong>
               All transactions are encrypted with 256-bit SSL. Supported via UPI, RuPay, Visa, Mastercard, and NetBanking.
             </div>
           </div>
@@ -83,14 +96,14 @@ const Pricing = {
         <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; position: relative; border: 2px solid ${isPopular ? 'var(--color-primary)' : 'var(--color-border)'}; ${isPopular ? 'box-shadow: var(--shadow-glow); transform: scale(1.02);' : ''}">
           ${isPopular ? `
             <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--color-primary); color: #FFF; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 16px; border-radius: var(--radius-full); box-shadow: 0 4px 12px rgba(236,29,36,0.3);">
-              Most Popular 🔥
+              Most Popular
             </div>
           ` : ''}
 
           <div>
             <div style="margin-bottom: 16px;">
               <h3 style="font-size: 1.4rem; margin-bottom: 4px;">${p.name}</h3>
-              <p style="color: var(--color-text-muted); font-size: 0.85rem;">30-Day Navratri Pass</p>
+              <p style="color: var(--color-text-muted); font-size: 0.85rem;">9-Night Festival Access</p>
             </div>
 
             <div style="margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--color-border);">
@@ -161,7 +174,7 @@ const Pricing = {
             <strong style="font-size: 1.5rem; color: var(--color-primary);">₹${plan.price_inr}</strong>
           </div>
           <div style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.4;">
-            Includes 30 days active access · ${plan.daily_likes_limit === -1 ? 'Unlimited' : plan.daily_likes_limit} daily interest allowances · ${plan.can_see_likes ? 'Who Liked You unlocked' : 'Basic partner discovery'} · ${plan.boost_credits} profile boosts.
+            Includes 9 nights active festival access · ${plan.daily_likes_limit === -1 ? 'Unlimited' : plan.daily_likes_limit} daily interest allowances · ${plan.can_see_likes ? 'Who Liked You unlocked' : 'Basic partner discovery'} · ${plan.boost_credits} profile boosts.
           </div>
         </div>
 
@@ -171,15 +184,15 @@ const Pricing = {
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
               <label style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: 8px; cursor: pointer;">
                 <input type="radio" name="pay-method" value="UPI (GPay / PhonePe / Paytm)" checked accent-color="var(--color-primary)">
-                <span>📱 UPI (Google Pay, PhonePe, Paytm, BHIM)</span>
+                <span>UPI (Google Pay, PhonePe, Paytm, BHIM)</span>
               </label>
               <label style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: 8px; cursor: pointer;">
                 <input type="radio" name="pay-method" value="Credit / Debit Card" accent-color="var(--color-primary)">
-                <span>💳 Debit / Credit Card (Visa, RuPay, Mastercard)</span>
+                <span>Debit / Credit Card (Visa, RuPay, Mastercard)</span>
               </label>
               <label style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: 8px; cursor: pointer;">
                 <input type="radio" name="pay-method" value="NetBanking" accent-color="var(--color-primary)">
-                <span>🏦 NetBanking (HDFC, ICICI, SBI, Axis)</span>
+                <span>NetBanking (HDFC, ICICI, SBI, Axis)</span>
               </label>
             </div>
           </div>
@@ -190,7 +203,7 @@ const Pricing = {
           </div>
 
           <button type="submit" id="pay-submit-btn" class="btn btn-primary btn-block">
-            Pay ₹${plan.price_inr} & Activate Pass 🪘
+            Pay ₹${plan.price_inr} & Activate Pass
           </button>
         </form>
       </div>
@@ -230,7 +243,7 @@ const Pricing = {
     } catch (err) {
       showToast(err.message, 'error');
       btn.disabled = false;
-      btn.textContent = `Pay ₹${plan.price_inr} & Activate Pass 🪘`;
+      btn.textContent = `Pay ₹${plan.price_inr} & Activate Pass`;
     }
   }
 };

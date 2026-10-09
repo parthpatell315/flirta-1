@@ -28,21 +28,21 @@ const Admin = {
       <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h1 style="font-size: 1.9rem; margin-bottom: 4px;">Flirta Monetization & Admin Console 🛡️</h1>
+            <h1 style="font-size: 1.9rem; margin-bottom: 4px;">Flirta Monetization & Admin Console</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
               Subscription revenue, conversion rate optimization, plan configuration, and user safety.
             </p>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="Admin.loadData()">🔄 Refresh Telemetry</button>
+          <button class="btn btn-secondary btn-sm" onclick="Admin.loadData()">Refresh Telemetry</button>
         </div>
 
         <!-- Navigation Tabs -->
         <div style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--color-border); padding-bottom: 12px; overflow-x: auto;">
           <button class="btn btn-sm ${this.activeTab === 'finance' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('finance')">
-            💰 Subscriptions & Revenue
+            Subscriptions & Revenue
           </button>
           <button class="btn btn-sm ${this.activeTab === 'moderation' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('moderation')">
-            🛡️ Moderation Queue (<span id="tab-report-count">0</span>)
+            Moderation Queue (<span id="tab-report-count">0</span>)
           </button>
         </div>
 
@@ -160,7 +160,7 @@ const Admin = {
               ${this.plans.map(p => `
                 <tr style="border-bottom: 1px solid var(--color-border);">
                   <td style="padding: 12px 10px; font-weight: 800;">
-                    ${p.name} ${p.is_popular ? '⭐' : ''}
+                    ${p.name} ${p.is_popular ? '(Popular)' : ''}
                     <div style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: 400;">code: ${p.code}</div>
                   </td>
                   <td style="padding: 12px 10px; font-weight: 800; color: var(--color-primary);">₹${p.price_inr}</td>

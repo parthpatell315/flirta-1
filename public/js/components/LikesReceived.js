@@ -14,13 +14,13 @@ const LikesReceived = {
       <div class="container" style="max-width: 800px;">
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Who Liked You ❤️</h1>
+            <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Who Liked You</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.95rem;">
               Dancers who expressed interest in meeting you this Navratri 2026.
             </p>
           </div>
           <button class="btn btn-secondary btn-sm" onclick="Router.navigate('/pricing')">
-            💎 Upgrade Plan
+            Upgrade Plan
           </button>
         </div>
 
@@ -60,7 +60,6 @@ const LikesReceived = {
     if (!canSeeLikes) {
       container.innerHTML = `
         <div class="card" style="text-align: center; padding: 50px 24px; border: 2px dashed var(--color-primary-border); background: var(--color-primary-soft);">
-          <div style="font-size: 3.5rem; margin-bottom: 14px;">🔒 ❤️ 🔒</div>
           <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--color-text-primary);">
             ${totalCount > 0 ? `${totalCount} Dancers Expressed Interest in You!` : 'Unlock Who Liked You'}
           </h2>
@@ -78,7 +77,7 @@ const LikesReceived = {
           </div>
 
           <button class="btn btn-primary" onclick="Router.navigate('/pricing')">
-            Unlock for ₹549 (Chemistry Plan) 🔓
+            Unlock for ₹549 (Chemistry Plan)
           </button>
         </div>
       `;
@@ -89,7 +88,6 @@ const LikesReceived = {
     if (!likers || likers.length === 0) {
       container.innerHTML = `
         <div class="card" style="text-align: center; padding: 60px 20px;">
-          <div style="font-size: 3rem; margin-bottom: 12px;">🪔</div>
           <h3 style="margin-bottom: 8px;">No Pending Likes Right Now</h3>
           <p style="color: var(--color-text-secondary); max-width: 400px; margin: 0 auto 20px;">
             You have matched with or reviewed all dancers who sent you interest. Activate a Profile Boost to be seen by more people!
@@ -114,7 +112,7 @@ const LikesReceived = {
                   <img src="${avatar}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${defaultAvatar}'">
                   <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); padding: 6px 10px; border-radius: 8px; color: #FFF;">
                     <div style="font-weight: 800; font-size: 1.05rem;">${l.display_name}, ${l.age}</div>
-                    <div style="font-size: 0.78rem; color: var(--color-secondary);">📍 ${l.city} · ${l.garba_experience}</div>
+                    <div style="font-size: 0.78rem; color: var(--color-secondary);">${l.city} · ${l.garba_experience}</div>
                   </div>
                 </div>
 
@@ -125,7 +123,7 @@ const LikesReceived = {
 
               <div style="padding-top: 12px; border-top: 1px solid var(--color-border);">
                 <button class="btn btn-primary btn-sm btn-block" onclick="LikesReceived.matchBack(${l.user_id}, '${l.display_name.replace(/'/g, "\\'")}')">
-                  Match Back & Chat 🪘
+                  Match Back & Chat
                 </button>
               </div>
             </div>

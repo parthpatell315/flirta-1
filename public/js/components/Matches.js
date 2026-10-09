@@ -15,7 +15,7 @@ const Matches = {
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container">
-        <h1 style="font-size: 1.8rem; margin-bottom: 20px;">Your Garba Matches 🪘</h1>
+        <h1 style="font-size: 1.8rem; margin-bottom: 20px;">Your Garba Matches</h1>
 
         <div class="matches-view">
           <!-- Sidebar: Match List -->
@@ -28,9 +28,8 @@ const Matches = {
           <!-- Main: Active Chat Window -->
           <div class="chat-window" id="active-chat-area">
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; color: var(--color-text-muted); text-align: center; padding: 20px;">
-              <div style="font-size: 3rem; margin-bottom: 12px;">💬</div>
               <h3 style="color: var(--color-cream); margin-bottom: 8px;">Select a Match</h3>
-              <p style="font-size: 0.92rem; max-width: 320px;">Choose a dance partner from the list to discuss venues, attire, and Garba night meetups.</p>
+              <p style="font-size: 0.92rem; max-width: 320px;">Choose a dance partner from the list to discuss festive plans, attire, and Garba night meetups.</p>
             </div>
           </div>
         </div>
@@ -64,10 +63,9 @@ const Matches = {
     if (this.matches.length === 0) {
       sidebar.innerHTML = `
         <div style="text-align: center; padding: 40px 10px;">
-          <div style="font-size: 2.5rem; margin-bottom: 10px;">🪔</div>
           <h4 style="margin-bottom: 8px;">No Mutual Matches Yet</h4>
           <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 16px;">
-            Keep discovering profiles or attend events to connect with more dancers.
+            Keep discovering profiles to connect with more dancers.
           </p>
           <button class="btn btn-primary btn-sm" onclick="Router.navigate('/discover')">Discover Partners</button>
         </div>
@@ -124,7 +122,7 @@ const Matches = {
           <img src="${avatar}" class="match-avatar" style="width: 42px; height: 42px;" onerror="this.src='${defaultAvatar}'">
           <div>
             <h3 style="font-size: 1.05rem;">${match.display_name}</h3>
-            <span style="font-size: 0.8rem; color: var(--color-gold-light);">📍 ${match.city} · ${match.garba_experience} dancer</span>
+            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">${match.city} · ${match.garba_experience} dancer</span>
           </div>
         </div>
         <div style="display: flex; gap: 8px;">
@@ -132,20 +130,20 @@ const Matches = {
             Unmatch
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openReportModal('user', ${match.matched_user_id}, '${match.display_name.replace(/'/g, "\\'")}')">
-            ⚠️
+            Report
           </button>
         </div>
       </div>
 
       <div class="chat-messages" id="chat-messages-container">
         <div style="text-align: center; color: var(--color-text-muted); font-size: 0.88rem; padding: 20px;">
-          🔒 End-to-end match encryption enabled. Plan your Navratri 2026 celebrations!
+          End-to-end match messaging enabled. Plan your Navratri 2026 celebrations!
         </div>
       </div>
 
       <form class="chat-input-bar" onsubmit="Matches.sendMessage(event)">
         <input type="text" id="chat-message-input" class="chat-input" placeholder="Say Kem Chho, plan steps, coordinate timing..." autocomplete="off">
-        <button type="submit" class="btn btn-primary btn-sm" style="padding: 10px 20px;">Send 🪘</button>
+        <button type="submit" class="btn btn-primary btn-sm" style="padding: 10px 20px;">Send</button>
       </form>
     `;
 

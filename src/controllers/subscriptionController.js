@@ -436,7 +436,7 @@ exports.activateBoost = (req, res) => {
 
     return res.json({
       success: true,
-      message: 'Profile Boost Activated! Your card is now prioritized at the top of partner discovery for 24 hours. ✨',
+      message: 'Profile Boost Activated! Your card is now prioritized at the top of partner discovery for 24 hours.',
       remainingBoosts: activeSub.remaining_boosts - 1,
       boostedUntil
     });

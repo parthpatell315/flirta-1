@@ -146,15 +146,15 @@ async function seed() {
         code: 'spark',
         name: 'Spark',
         price_inr: 249,
-        duration_days: 30,
+        duration_days: 9,
         daily_likes_limit: 25,
         boost_credits: 0,
         can_see_likes: 0,
         priority_level: 1,
         is_popular: 0,
         features_json: JSON.stringify([
-          'Browse eligible Garba partner profiles',
-          'Preferences for age range, location & dance style',
+          'Discover local cultural dance enthusiasts',
+          'Set preferences for age, location, and dance style',
           '25 daily interest expressions (likes)',
           'Filter by Navratri event dates',
           'Basic compatibility insights'
@@ -164,7 +164,7 @@ async function seed() {
         code: 'chemistry',
         name: 'Chemistry',
         price_inr: 549,
-        duration_days: 30,
+        duration_days: 9,
         daily_likes_limit: 60,
         boost_credits: 1,
         can_see_likes: 1,
@@ -173,8 +173,8 @@ async function seed() {
         features_json: JSON.stringify([
           'Everything included in Spark',
           '60 daily interest expressions',
-          'See Who Liked You (Instant Matching)',
-          'Advanced partner preference filters',
+          'See who liked you (Instant Mutual Matching)',
+          'Advanced community filters',
           '1 Profile Boost Credit included',
           'Priority customer support'
         ])
@@ -183,7 +183,7 @@ async function seed() {
         code: 'attraction',
         name: 'Attraction',
         price_inr: 749,
-        duration_days: 30,
+        duration_days: 9,
         daily_likes_limit: 120,
         boost_credits: 3,
         can_see_likes: 1,
@@ -194,15 +194,15 @@ async function seed() {
           '120 daily interest expressions',
           '3 Profile Boost Credits (High Visibility)',
           'Enhanced partner matching algorithm',
-          'Priority profile placement in discovery',
-          'Direct event venue badge'
+          'Priority profile placement in discovery feed',
+          'Verified event attendee badge'
         ])
       },
       {
         code: 'dream_match',
         name: 'Dream Match',
         price_inr: 949,
-        duration_days: 30,
+        duration_days: 9,
         daily_likes_limit: -1, // Unlimited
         boost_credits: 8,
         can_see_likes: 1,
@@ -214,7 +214,7 @@ async function seed() {
           '8 Profile Boost Credits for peak Navratri nights',
           'Top priority visibility in discovery deck',
           'Exclusive Dream Match badge on profile',
-          'VIP partner coordination assistance'
+          'Advanced security & verified profile filtering tools'
         ])
       }
     ];

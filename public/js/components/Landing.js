@@ -20,7 +20,7 @@ const Landing = {
         <!-- Hero Section -->
         <section class="hero">
           <div class="hero-tag">
-            <span>✨ Navratri 2026 Partner Discovery & Dating</span>
+            <span>Navratri 2026 Partner Discovery & Dating</span>
           </div>
           <h1 class="hero-title">Find Your Dream Garba Partner</h1>
           <p class="hero-subtitle">
@@ -28,10 +28,10 @@ const Landing = {
           </p>
           <div class="hero-actions">
             <button class="btn btn-primary" onclick="${State.isAuthenticated() ? "Router.navigate('/discover')" : "openAuthModal('register')"}">
-              Find My Garba Partner 🪘
+              Find My Garba Partner
             </button>
             <button class="btn btn-secondary" onclick="Router.navigate('/pricing')">
-              Explore Plans 💎
+              Explore Plans
             </button>
           </div>
         </section>
@@ -58,7 +58,7 @@ const Landing = {
 
         <!-- How Matching Works -->
         <section style="margin: 60px 0;">
-          <h2 class="section-title">How GarbaJodi Works</h2>
+          <h2 class="section-title">How Flirta Works</h2>
           <p class="section-subtitle">Three simple steps to finding your ideal dance companion this festival season.</p>
           
           <div class="steps-grid">
@@ -90,14 +90,13 @@ const Landing = {
                 Flirta is committed to a respectful and safe cultural celebration:
               </p>
               <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; color: var(--color-text-secondary); font-size: 0.94rem;">
-                <li>🔒 <strong>Strict 18+ Verification:</strong> Minors are not permitted on the platform.</li>
-                <li>🛡️ <strong>Mutual Consent Messaging:</strong> Only mutual matches can send direct messages.</li>
-                <li>🚫 <strong>Instant Block & Report:</strong> One-tap safety tools actively monitored by admins.</li>
-                <li>👁️ <strong>Privacy Protection:</strong> Sensitive personal contact details are never made public.</li>
+                <li><strong>Strict 18+ Verification:</strong> Minors are not permitted on the platform.</li>
+                <li><strong>Mutual Consent Messaging:</strong> Only mutual matches can send direct messages.</li>
+                <li><strong>Instant Block & Report:</strong> One-tap safety tools actively monitored by admins.</li>
+                <li><strong>Privacy Protection:</strong> Sensitive personal contact details are never made public.</li>
               </ul>
             </div>
             <div style="text-align: center; padding: 20px;">
-              <div style="font-size: 4.5rem; margin-bottom: 10px;">🪔</div>
               <h3 style="color: var(--color-primary); margin-bottom: 8px;">Garba First, Dating Optional</h3>
               <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Whether you want to sync steps, make festive friends, or find romance, your preferences are clearly honored.</p>
             </div>
