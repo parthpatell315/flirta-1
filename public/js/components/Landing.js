@@ -136,13 +136,14 @@ const Landing = {
           <p style="color: var(--color-text-secondary); font-size: 0.88rem; max-width: 600px; margin: 0 auto 18px;">
             Connecting Garba dancers across Gujarat cities, Mumbai, and Indore. Celebrating Gujarati heritage and safe festive togetherness.
           </p>
-          <div style="display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; font-weight: 600; color: var(--color-primary); margin-bottom: 20px;">
-            <a href="javascript:void(0)" onclick="alert('Privacy Policy: All profile data is handled with strict confidentiality. Contact information is never sold or exposed.')">Privacy Policy</a>
-            <a href="javascript:void(0)" onclick="alert('Terms of Service: Respectful conduct, 18+ adult age eligibility, and genuine cultural appreciation required.')">Terms of Use</a>
-            <a href="javascript:void(0)" onclick="alert('Safety Guidelines: Meet in well-lit public celebrations, never share financial details, use in-app report tools.')">Safety Guidelines</a>
-            <a href="javascript:void(0)" onclick="alert('Contact: support@flirta.com · Gujarat, India')">Support & Contact</a>
+          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; font-size: 0.85rem; font-weight: 600; color: var(--color-primary); margin-bottom: 20px;">
+            <a href="javascript:void(0)" onclick="Legal.open('terms')">Terms of Service</a>
+            <a href="javascript:void(0)" onclick="Legal.open('anti-escort')">Anti-Escort Policy</a>
+            <a href="javascript:void(0)" onclick="Legal.open('privacy')">Privacy Policy</a>
+            <a href="javascript:void(0)" onclick="Legal.open('safety')">Safety Guidelines</a>
+            <a href="javascript:void(0)" onclick="Legal.open('grievance')">Grievance Redressal (IT Rules)</a>
           </div>
-          <p style="color: var(--color-text-muted); font-size: 0.78rem;">© 2026 Flirta. All rights reserved.</p>
+          <p style="color: var(--color-text-muted); font-size: 0.78rem;">© 2026 Flirta. All rights reserved. Intermediary safe harbour under Section 79 IT Act 2000.</p>
         </footer>
       </div>
     `;

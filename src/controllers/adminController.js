@@ -430,3 +430,38 @@ exports.getMetrics = (req, res) => {
     return res.status(500).json({ error: 'Failed to retrieve metrics.' });
   }
 };
+
+// IT Rules 2021 Statutory Grievances Management
+exports.getGrievances = (req, res) => {
+  try {
+    const db = getDb();
+    const grievances = db.prepare('SELECT * FROM statutory_grievances ORDER BY created_at DESC').all();
+    return res.json({ grievances });
+  } catch (err) {
+    console.error('admin getGrievances error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve grievances.' });
+  }
+};
+
+exports.resolveGrievance = (req, res) => {
+  try {
+    const db = getDb();
+    const grievanceId = parseInt(req.params.id, 10);
+    const { status, resolutionNotes } = req.body;
+
+    if (!['acknowledged', 'under_investigation', 'resolved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: "Invalid status. Must be 'acknowledged', 'under_investigation', 'resolved', or 'rejected'." });
+    }
+
+    db.prepare(`
+      UPDATE statutory_grievances
+      SET status = ?, resolution_notes = ?, resolved_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(status, (resolutionNotes || '').trim(), grievanceId);
+
+    return res.json({ message: `Grievance ticket marked as ${status}.` });
+  } catch (err) {
+    console.error('admin resolveGrievance error:', err);
+    return res.status(500).json({ error: 'Failed to update grievance.' });
+  }
+};

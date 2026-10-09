@@ -23,4 +23,7 @@ router.patch('/reports/:id', adminController.resolveReport);
 router.patch('/users/:id/suspend', adminController.setUserSuspension);
 router.get('/metrics', adminController.getMetrics);
 
+router.get('/grievances', adminController.getGrievances);
+router.patch('/grievances/:id', adminController.resolveGrievance);
+
 module.exports = router;

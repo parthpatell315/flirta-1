@@ -137,4 +137,62 @@ test('GarbaJodi Safety & Admin Test Suite', async (t) => {
     assert.ok(metricsRes.body.metrics.events.total > 0);
     assert.ok(Array.isArray(metricsRes.body.auditLog));
   });
+
+  await t.test('Statutory grievance lifecycle (IT Rules 2021)', async () => {
+    // 1. Submit official statutory grievance
+    const submitRes = await request(app)
+      .post('/api/safety/grievance')
+      .send({
+        name: 'Pooja Shah',
+        email: 'pooja.shah@example.com',
+        phone: '9876543210',
+        category: 'Impersonation or Fake Profile',
+        subject: 'Fake photo of myself posted without consent',
+        description: 'Someone is using my traditional chaniya choli pictures without permission.',
+        reportedTarget: 'User #99'
+      });
+
+    assert.equal(submitRes.status, 201);
+    assert.ok(submitRes.body.ticketId);
+    assert.match(submitRes.body.ticketId, /^GRV-/);
+
+    // 2. Admin retrieves grievances
+    const listRes = await request(app)
+      .get('/api/admin/grievances')
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    assert.equal(listRes.status, 200);
+    assert.ok(listRes.body.grievances.length >= 1);
+    const targetGrievance = listRes.body.grievances.find(g => g.ticket_id === submitRes.body.ticketId);
+    assert.ok(targetGrievance);
+    assert.equal(targetGrievance.status, 'acknowledged');
+
+    // 3. Admin updates resolution
+    const resolveRes = await request(app)
+      .patch(`/api/admin/grievances/${targetGrievance.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        status: 'resolved',
+        resolutionNotes: 'Profile investigated and offending images taken down within statutory 24-hour mandate.'
+      });
+
+    assert.equal(resolveRes.status, 200);
+    assert.match(resolveRes.body.message, /resolved/i);
+  });
+
+  await t.test('DPDP Act 2023 Right to Erasure: user can permanently delete account and data', async () => {
+    const deleteRes = await request(app)
+      .delete('/api/profile/account')
+      .set('Authorization', `Bearer ${reporter.token}`);
+
+    assert.equal(deleteRes.status, 200);
+    assert.match(deleteRes.body.message, /permanently erased/i);
+
+    // Verify user no longer exists
+    const checkRes = await request(app)
+      .get('/api/profile')
+      .set('Authorization', `Bearer ${reporter.token}`);
+
+    assert.equal(checkRes.status, 401);
+  });
 });

@@ -239,11 +239,25 @@ const Profile = {
       <div class="card" style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center;">
         <div>
           <h4 style="color: var(--color-danger); margin-bottom: 4px;">Account Settings</h4>
-          <span style="font-size: 0.82rem; color: var(--color-text-muted);">Registered as 18+ verified adult dancer.</span>
+          <span style="font-size: 0.82rem; color: var(--color-text-muted);">Registered as 18+ verified adult dancer. DPDP Act Right to Erasure enabled.</span>
         </div>
         <div style="display: flex; gap: 10px;">
           <button class="btn btn-secondary btn-sm" onclick="Profile.logout()">Log Out</button>
           <button class="btn btn-danger btn-sm" onclick="Profile.deleteAccount()">Delete Account</button>
+        </div>
+      </div>
+
+      <!-- Legal, Privacy & Grievance Access in Profile -->
+      <div class="card" style="margin-top: 16px; background: #FAFAFA; border: 1px solid var(--color-border); padding: 18px;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 8px;">
+          Trust, Safety & Legal Governance
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; font-weight: 600;">
+          <a href="javascript:void(0)" onclick="Legal.open('terms')" style="color: var(--color-primary);">Terms of Service</a>
+          <a href="javascript:void(0)" onclick="Legal.open('anti-escort')" style="color: var(--color-primary);">Anti-Escort Code</a>
+          <a href="javascript:void(0)" onclick="Legal.open('privacy')" style="color: var(--color-primary);">Privacy Policy (DPDP Act)</a>
+          <a href="javascript:void(0)" onclick="Legal.open('safety')" style="color: var(--color-primary);">Offline Safety Guidelines</a>
+          <a href="javascript:void(0)" onclick="Legal.open('grievance')" style="color: var(--color-primary);">File Statutory Grievance</a>
         </div>
       </div>
     `;

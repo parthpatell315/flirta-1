@@ -165,6 +165,23 @@ CREATE TABLE IF NOT EXISTS moderation_actions (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- IT Rules 2021 Statutory Grievances Audit Table
+CREATE TABLE IF NOT EXISTS statutory_grievances (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ticket_id TEXT UNIQUE NOT NULL,
+  complainant_name TEXT NOT NULL,
+  complainant_email TEXT NOT NULL,
+  complainant_phone TEXT,
+  category TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  description TEXT NOT NULL,
+  reported_target TEXT,
+  status TEXT DEFAULT 'acknowledged' CHECK(status IN ('acknowledged', 'under_investigation', 'resolved', 'rejected')),
+  resolution_notes TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  resolved_at DATETIME
+);
+
 -- Subscription Plans Table (Spark, Chemistry, Attraction, Dream Match)
 CREATE TABLE IF NOT EXISTS subscription_plans (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

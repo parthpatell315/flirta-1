@@ -135,6 +135,14 @@ const Matches = {
         </div>
       </div>
 
+      <!-- Mandatory Safety & Legal Protection Advisory in Chat -->
+      <div style="margin: 8px 12px; padding: 10px 14px; background: rgba(0,0,0,0.03); border: 1px dashed var(--color-border); border-radius: 8px; font-size: 0.78rem; line-height: 1.4; color: #666666; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+        <div>
+          <strong style="color: #444444;">Safety Advisory:</strong> Meet strictly at public Navratri venues. Never send money, cash, or UPI payments. Commercial solicitations or escort requests are strictly unlawful.
+        </div>
+        <a href="javascript:void(0)" onclick="Legal.open('safety')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline; white-space: nowrap; font-size: 0.76rem;">Safety Rules</a>
+      </div>
+
       <div class="chat-messages" id="chat-messages-container">
         <div style="text-align: center; color: var(--color-text-muted); font-size: 0.88rem; padding: 20px;">
           End-to-end match messaging enabled. Plan your Navratri 2026 celebrations!

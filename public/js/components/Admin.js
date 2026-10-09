@@ -44,6 +44,9 @@ const Admin = {
           <button class="btn btn-sm ${this.activeTab === 'moderation' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('moderation')">
             Moderation Queue (<span id="tab-report-count">0</span>)
           </button>
+          <button class="btn btn-sm ${this.activeTab === 'grievances' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('grievances')">
+            Statutory Grievances (<span id="tab-grievance-count">0</span>)
+          </button>
         </div>
 
         <div id="admin-view-content">
@@ -64,12 +67,13 @@ const Admin = {
 
   async loadData() {
     try {
-      const [metricsRes, reportsRes, eventsRes, plansRes, txRes] = await Promise.all([
+      const [metricsRes, reportsRes, eventsRes, plansRes, txRes, grievRes] = await Promise.all([
         API.get('/api/admin/metrics'),
         API.get('/api/admin/reports'),
         API.get('/api/admin/events'),
         API.get('/api/admin/plans'),
-        API.get('/api/admin/transactions')
+        API.get('/api/admin/transactions'),
+        API.get('/api/admin/grievances').catch(() => ({ grievances: [] }))
       ]);
 
       this.metrics = metricsRes.metrics;
@@ -78,9 +82,13 @@ const Admin = {
       this.events = eventsRes.events || [];
       this.plans = plansRes.plans || [];
       this.transactions = txRes.transactions || [];
+      this.grievances = grievRes.grievances || [];
 
       const countEl = document.getElementById('tab-report-count');
       if (countEl) countEl.textContent = this.reports.filter(r => r.status === 'pending').length;
+
+      const grvCountEl = document.getElementById('tab-grievance-count');
+      if (grvCountEl) grvCountEl.textContent = this.grievances.filter(g => g.status === 'acknowledged' || g.status === 'under_investigation').length;
 
       this.renderCurrentTab();
     } catch (err) {
@@ -100,6 +108,8 @@ const Admin = {
       this.renderFinanceTab(area);
     } else if (this.activeTab === 'moderation') {
       this.renderModerationTab(area);
+    } else if (this.activeTab === 'grievances') {
+      this.renderGrievancesTab(area);
     } else {
       this.renderEventsTab(area);
     }
@@ -335,6 +345,71 @@ const Admin = {
     `;
   },
 
+  renderGrievancesTab(area) {
+    area.innerHTML = `
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px;">
+          <h3 style="font-size: 1.3rem; margin: 0;">IT Rules 2021 Statutory Grievances (${this.grievances.length})</h3>
+          <span style="font-size: 0.8rem; color: var(--color-text-muted);">Mandatory 24h ack / 15d resolution</span>
+        </div>
+
+        ${this.grievances.length === 0 ? `
+          <p style="color: var(--color-text-muted); text-align: center; padding: 20px;">No statutory grievances filed. All clear!</p>
+        ` : `
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            ${this.grievances.map(g => `
+              <div style="padding: 16px; background: #F9FAFB; border-radius: 12px; border: 1px solid var(--color-border);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                  <div>
+                    <strong style="color: var(--color-primary); font-size: 0.95rem;">Ticket: ${g.ticket_id}</strong>
+                    <span style="font-size: 0.82rem; color: var(--color-text-muted); margin-left: 8px;">Category: <strong>${escapeHtml(g.category)}</strong></span>
+                  </div>
+                  <span class="partner-badge" style="background: ${g.status === 'resolved' ? 'var(--color-success-soft)' : 'var(--color-danger-soft)'}; color: ${g.status === 'resolved' ? 'var(--color-success)' : 'var(--color-danger)'};">
+                    ${g.status.toUpperCase()}
+                  </span>
+                </div>
+
+                <h4 style="font-size: 1rem; margin: 4px 0 8px 0; color: var(--color-text-primary);">${escapeHtml(g.subject)}</h4>
+
+                <div style="font-size: 0.88rem; color: #444; background: #FFFFFF; padding: 12px; border-radius: 8px; border: 1px solid var(--color-border); margin-bottom: 10px; line-height: 1.5;">
+                  ${escapeHtml(g.description)}
+                  ${g.reported_target ? `<div style="margin-top: 6px; font-size: 0.82rem; color: var(--color-primary);">Reported Target: ${escapeHtml(g.reported_target)}</div>` : ''}
+                </div>
+
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 12px; display: flex; gap: 16px; flex-wrap: wrap;">
+                  <span>Complainant: <strong>${escapeHtml(g.complainant_name)}</strong> (<a href="mailto:${g.complainant_email}">${g.complainant_email}</a>)</span>
+                  ${g.complainant_phone ? `<span>Phone: ${escapeHtml(g.complainant_phone)}</span>` : ''}
+                  <span>Logged: ${new Date(g.created_at).toLocaleString()}</span>
+                  ${g.resolved_at ? `<span>Resolved: ${new Date(g.resolved_at).toLocaleString()}</span>` : ''}
+                </div>
+
+                ${g.resolution_notes ? `
+                  <div style="font-size: 0.84rem; color: #065F46; background: rgba(16,185,129,0.08); padding: 8px 12px; border-radius: 6px; margin-bottom: 10px;">
+                    <strong>Resolution Notes:</strong> ${escapeHtml(g.resolution_notes)}
+                  </div>
+                ` : ''}
+
+                ${g.status !== 'resolved' ? `
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="Admin.resolveGrievance(${g.id}, 'under_investigation')">
+                      Mark Under Investigation
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="Admin.resolveGrievance(${g.id}, 'resolved')">
+                      ✓ Mark Resolved & Closed
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="Admin.resolveGrievance(${g.id}, 'rejected')">
+                      Reject / Invalid
+                    </button>
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    `;
+  },
+
   renderEventsTab(area) {
     area.innerHTML = `
       <!-- Add New Event Section -->
@@ -397,6 +472,18 @@ const Admin = {
     try {
       await API.patch(`/api/admin/reports/${reportId}`, { status, actionTaken, notes });
       showToast(`Report marked as ${status}.`, 'success');
+      await this.loadData();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  },
+
+  async resolveGrievance(grievanceId, status) {
+    const notes = prompt(`Resolution or investigation notes for grievance #${grievanceId}:`, `Status changed to ${status}`);
+    if (notes === null) return;
+    try {
+      await API.patch(`/api/admin/grievances/${grievanceId}`, { status, resolutionNotes: notes });
+      showToast(`Grievance updated to ${status}.`, 'success');
       await this.loadData();
     } catch (err) {
       showToast(err.message, 'error');

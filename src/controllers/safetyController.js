@@ -104,3 +104,55 @@ exports.submitReport = (req, res) => {
     return res.status(500).json({ error: 'Failed to submit report.' });
   }
 };
+
+// IT Rules 2021 Statutory Grievance Redressal Submission
+exports.submitGrievance = (req, res) => {
+  try {
+    const db = getDb();
+    const {
+      name,
+      email,
+      phone,
+      category,
+      subject,
+      description,
+      reportedTarget
+    } = req.body;
+
+    if (!name || !name.trim() || !email || !email.trim() || !subject || !subject.trim() || !description || !description.trim()) {
+      return res.status(400).json({ error: 'Name, email, subject, and description are required for statutory grievance filing.' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
+    const ticketId = `GRV-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    db.prepare(`
+      INSERT INTO statutory_grievances (
+        ticket_id, complainant_name, complainant_email, complainant_phone,
+        category, subject, description, reported_target, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'acknowledged')
+    `).run(
+      ticketId,
+      name.trim(),
+      email.toLowerCase().trim(),
+      (phone || '').trim(),
+      category || 'Safety and Moderation',
+      subject.trim(),
+      description.trim(),
+      (reportedTarget || '').trim()
+    );
+
+    return res.status(201).json({
+      success: true,
+      ticketId,
+      acknowledgment: 'Your grievance has been officially registered under IT (Intermediary Guidelines) Rules, 2021. A formal acknowledgment ticket has been logged. Our Grievance Officer will review and respond within the statutory timeframe.'
+    });
+  } catch (err) {
+    console.error('submitGrievance error:', err);
+    return res.status(500).json({ error: 'Failed to register statutory grievance.' });
+  }
+};

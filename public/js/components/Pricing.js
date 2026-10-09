@@ -40,7 +40,7 @@ const Pricing = {
             <li>This platform functions strictly as a peer-to-peer social discovery and matchmaking service for cultural dance networking. We do not offer or facilitate paid, rented, or commercial companion services.</li>
             <li>All user profiles require mandatory mobile OTP and identity verification before interaction is enabled.</li>
             <li>Subscription fees are strictly for digital matching features and profile filters; we do not guarantee offline meetings or partner availability.</li>
-            <li>To report suspicious profiles or fraud, please visit our Grievance Redressal page or email our designated Grievance Officer at <a href="mailto:compliance@yourdomain.com" style="color: var(--color-primary); text-decoration: underline;">compliance@yourdomain.com</a>.</li>
+            <li>To report suspicious profiles or fraud, please visit our <a href="javascript:void(0)" onclick="Legal.open('grievance')" style="color: var(--color-primary); text-decoration: underline; font-weight: 600;">Grievance Redressal page</a> or email our designated Grievance Officer at <a href="mailto:compliance@flirta.in" style="color: var(--color-primary); text-decoration: underline;">compliance@flirta.in</a>.</li>
           </ol>
         </div>
 

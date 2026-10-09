@@ -222,3 +222,42 @@ exports.setPrimaryPhoto = (req, res) => {
     return res.status(500).json({ error: 'Failed to update primary photo.' });
   }
 };
+
+// DPDP Act 2023 Statutory Right to Erasure / Account Deletion
+exports.deleteAccount = (req, res) => {
+  try {
+    const userId = req.user.id;
+    const db = getDb();
+
+    // 1. Find profile photos to clean disk storage
+    const profile = db.prepare('SELECT id FROM profiles WHERE user_id = ?').get(userId);
+    if (profile) {
+      const photos = db.prepare('SELECT photo_url FROM profile_photos WHERE profile_id = ?').all(profile.id);
+      for (const ph of photos) {
+        try {
+          const filename = path.basename(ph.photo_url);
+          const filePath = path.join(__dirname, '../../public/uploads/avatars', filename);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        } catch (e) {
+          console.warn('Could not remove avatar on user deletion:', e.message);
+        }
+      }
+    }
+
+    // 2. Cascade delete user and all associated records
+    db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+
+    // 3. Clear auth session cookie
+    res.clearCookie('token');
+
+    return res.json({
+      success: true,
+      message: 'Your account and personal data have been permanently erased in compliance with DPDP Act 2023 regulations.'
+    });
+  } catch (err) {
+    console.error('deleteAccount error:', err);
+    return res.status(500).json({ error: 'Failed to delete account.' });
+  }
+};
