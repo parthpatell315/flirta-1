@@ -142,7 +142,7 @@ const Profile = {
           <input type="text" id="prof-name" class="form-control" value="${escapeHtml(p.display_name || '')}" required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
           <div class="form-group">
             <label class="form-label">City</label>
             <select id="prof-city" class="form-control">

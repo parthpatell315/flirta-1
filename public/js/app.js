@@ -75,20 +75,25 @@ function updateNavigationUI(state) {
 
     mobileNav.innerHTML = `
       <button class="mobile-nav-item" data-route="/discover" onclick="Router.navigate('/discover')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
         <span>Discover</span>
       </button>
       <button class="mobile-nav-item" data-route="/likes-received" onclick="Router.navigate('/likes-received')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
         <span>Likes</span>
-        ${state.likesReceivedCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 4px; right: 8px;">${state.likesReceivedCount}</span>` : ''}
+        ${state.likesReceivedCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 2px; right: 12px; font-size: 0.65rem; min-width: 16px; height: 16px;">${state.likesReceivedCount}</span>` : ''}
       </button>
       <button class="mobile-nav-item" data-route="/matches" onclick="Router.navigate('/matches')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         <span>Matches</span>
-        ${state.matchesCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 4px; right: 8px;">${state.matchesCount}</span>` : ''}
+        ${state.matchesCount > 0 ? `<span class="nav-badge" style="position: absolute; top: 2px; right: 12px; font-size: 0.65rem; min-width: 16px; height: 16px;">${state.matchesCount}</span>` : ''}
       </button>
       <button class="mobile-nav-item" data-route="/pricing" onclick="Router.navigate('/pricing')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         <span>Plans</span>
       </button>
       <button class="mobile-nav-item" data-route="/profile" onclick="Router.navigate('/profile')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         <span>Profile</span>
       </button>
     `;
@@ -118,12 +123,15 @@ function updateNavigationUI(state) {
 
     mobileNav.innerHTML = `
       <button class="mobile-nav-item active" data-route="/garba-partner" onclick="Router.navigate('/garba-partner')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span>Home</span>
       </button>
       <button class="mobile-nav-item" data-route="/pricing" onclick="Router.navigate('/pricing')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         <span>Plans</span>
       </button>
       <button class="mobile-nav-item" onclick="openAuthModal('login')">
+        <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
         <span>Sign In</span>
       </button>
     `;

@@ -34,16 +34,16 @@ const Legal = {
     modal.innerHTML = `
       <div class="modal-box" style="max-width: 820px; max-height: 88vh; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
         <!-- Header -->
-        <div style="padding: 20px 24px; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; background: #FFFFFF;">
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; background: #FFFFFF;">
           <div>
-            <div style="font-size: 0.76rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; color: var(--color-primary);">Trust, Safety & Legal Governance</div>
-            <h2 style="font-size: 1.4rem; margin: 2px 0 0 0; color: var(--color-text-primary);">Flirta Compliance Center</h2>
+            <div style="font-size: 0.74rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; color: var(--color-primary);">Trust, Safety & Legal Governance</div>
+            <h2 style="font-size: clamp(1.15rem, 3.5vw, 1.4rem); margin: 2px 0 0 0; color: var(--color-text-primary);">Flirta Compliance Center</h2>
           </div>
-          <button class="close-btn" onclick="Legal.close()" style="background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--color-text-muted);">×</button>
+          <button class="close-btn" onclick="Legal.close()" style="background: #F3F4F6; border: none; font-size: 1.4rem; cursor: pointer; color: var(--color-text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
 
         <!-- Navigation Tabs -->
-        <div style="display: flex; gap: 4px; padding: 10px 20px; background: #F8F9FA; border-bottom: 1px solid var(--color-border); overflow-x: auto;">
+        <div style="display: flex; gap: 6px; padding: 10px 16px; background: #F8F9FA; border-bottom: 1px solid var(--color-border); overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap;">
           <button class="btn btn-sm ${this.activeTab === 'terms' ? 'btn-primary' : 'btn-secondary'}" onclick="Legal.switchTab('terms')">Terms of Service</button>
           <button class="btn btn-sm ${this.activeTab === 'anti-escort' ? 'btn-primary' : 'btn-secondary'}" onclick="Legal.switchTab('anti-escort')">Anti-Escort Policy</button>
           <button class="btn btn-sm ${this.activeTab === 'privacy' ? 'btn-primary' : 'btn-secondary'}" onclick="Legal.switchTab('privacy')">Privacy Policy</button>
@@ -162,7 +162,7 @@ const Legal = {
           <h3 style="margin-top: 0; color: var(--color-text-primary);">Community Safety & Offline Meeting Advisory</h3>
           <p style="color: #666; font-size: 0.85rem;">Practical guidance for safe festive partner discovery during Navratri 2026</p>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 18px 0;">
             <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 16px;">
               <strong style="color: #059669; display: block; margin-bottom: 8px;">What You SHOULD Do:</strong>
               <ul style="padding-left: 18px; margin: 0; font-size: 0.88rem; display: flex; flex-direction: column; gap: 6px;">
@@ -201,7 +201,7 @@ const Legal = {
 
           <h4 style="margin: 0 0 12px 0; color: var(--color-text-primary);">Submit an Official Statutory Grievance Ticket</h4>
           <form onsubmit="Legal.handleGrievanceSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
               <div>
                 <label class="form-label" style="font-size: 0.82rem;">Your Legal Name *</label>
                 <input type="text" id="grv-name" class="form-control" required placeholder="Full Name">
@@ -212,7 +212,7 @@ const Legal = {
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
               <div>
                 <label class="form-label" style="font-size: 0.82rem;">Phone Number (Optional)</label>
                 <input type="tel" id="grv-phone" class="form-control" placeholder="+91 98765 43210">

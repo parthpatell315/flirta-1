@@ -46,7 +46,7 @@ const Matches = {
       State.setCounts(this.matches.length, State.unreadMessagesCount);
       this.renderMatchesList();
 
-      if (this.matches.length > 0 && !this.activeConversationId) {
+      if (this.matches.length > 0 && !this.activeConversationId && window.innerWidth > 768) {
         this.openConversation(this.matches[0]);
       }
     } catch (err) {
@@ -54,6 +54,15 @@ const Matches = {
         <p style="color: var(--color-danger); text-align: center;">Error: ${err.message}</p>
       `;
     }
+  },
+
+  backToList() {
+    this.activeConversationId = null;
+    this.activeMatch = null;
+    if (this.pollingInterval) clearInterval(this.pollingInterval);
+    const view = document.querySelector('.matches-view');
+    if (view) view.classList.remove('has-active-chat');
+    this.renderMatchesList();
   },
 
   renderMatchesList() {
@@ -110,6 +119,9 @@ const Matches = {
     this.activeConversationId = match.conversation_id;
     this.renderMatchesList();
 
+    const view = document.querySelector('.matches-view');
+    if (view) view.classList.add('has-active-chat');
+
     const chatArea = document.getElementById('active-chat-area');
     if (!chatArea) return;
 
@@ -118,7 +130,10 @@ const Matches = {
 
     chatArea.innerHTML = `
       <div class="chat-header">
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn btn-secondary btn-sm mobile-back-btn" onclick="Matches.backToList()" aria-label="Back to matches list">
+            ←
+          </button>
           <img src="${avatar}" class="match-avatar" style="width: 42px; height: 42px;" onerror="this.src='${defaultAvatar}'">
           <div>
             <h3 style="font-size: 1.05rem;">${match.display_name}</h3>

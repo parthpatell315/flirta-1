@@ -14,13 +14,13 @@ const Pricing = {
           <div class="hero-tag" style="margin-bottom: 14px;">
             <span>Flirta Premium Passes</span>
           </div>
-          <h1 style="font-size: 2.8rem; margin-bottom: 14px; letter-spacing: -0.02em;">
+          <h1 style="font-size: clamp(1.75rem, 5vw, 2.8rem); margin-bottom: 14px; letter-spacing: -0.02em;">
             Unlock Your Dream Garba Partner
           </h1>
-          <p style="color: var(--color-text-secondary); max-width: 620px; margin: 0 auto 20px; font-size: 1.1rem;">
+          <p style="color: var(--color-text-secondary); max-width: 620px; margin: 0 auto 18px; font-size: clamp(0.95rem, 2.5vw, 1.1rem);">
             Supercharge your Navratri 2026 discovery with higher daily likes, instant reveal of who liked you, and peak-night profile boosts.
           </p>
-          <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--color-primary); background: var(--color-primary-soft); padding: 6px 16px; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--color-primary-border);">
+          <div style="display: inline-flex; align-items: center; justify-content: center; text-align: center; gap: 8px; font-size: 0.84rem; color: var(--color-primary); background: var(--color-primary-soft); padding: 6px 14px; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--color-primary-border); line-height: 1.4; max-width: 100%;">
             🔒 Secure Matchmaking • Navratri Festival Access • One-Time Pass (No Auto-Renewal)
           </div>
         </div>

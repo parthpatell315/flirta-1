@@ -262,6 +262,56 @@ const Discover = {
         </div>
       </div>
     `;
+
+    const cardEl = cardArea.querySelector('.partner-card');
+    if (cardEl) {
+      this.attachSwipeGestures(cardEl, p.user_id);
+    }
+  },
+
+  attachSwipeGestures(cardEl, userId) {
+    if (!cardEl) return;
+    let startX = 0, startY = 0, currentX = 0;
+    let isDragging = false;
+
+    cardEl.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      currentX = startX;
+      isDragging = true;
+      cardEl.style.transition = 'none';
+    }, { passive: true });
+
+    cardEl.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentX = e.touches[0].clientX;
+      const diffX = currentX - startX;
+      const diffY = e.touches[0].clientY - startY;
+
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        const rotation = diffX * 0.05;
+        cardEl.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`;
+        cardEl.style.opacity = Math.max(0.65, 1 - Math.abs(diffX) / 500);
+      }
+    }, { passive: true });
+
+    cardEl.addEventListener('touchend', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diffX = currentX - startX;
+      cardEl.style.transition = 'transform 0.28s ease, opacity 0.28s ease';
+
+      if (diffX > 80) {
+        cardEl.style.transform = 'translateX(100vw) rotate(16deg)';
+        setTimeout(() => this.handleAction(userId, 'like'), 140);
+      } else if (diffX < -80) {
+        cardEl.style.transform = 'translateX(-100vw) rotate(-16deg)';
+        setTimeout(() => this.handleAction(userId, 'pass'), 140);
+      } else {
+        cardEl.style.transform = 'translateX(0) rotate(0)';
+        cardEl.style.opacity = '1';
+      }
+    });
   },
 
   resetFilters() {
