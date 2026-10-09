@@ -159,12 +159,12 @@ const Profile = {
         </div>
 
         <!-- Discoverability Toggle -->
-        <div class="form-group" style="padding: 14px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 20px;">
+        <div class="form-group" style="padding: 16px; background: #F9FAFB; border: 1px solid var(--color-border); border-radius: 12px; margin-top: 20px;">
           <label class="form-checkbox">
             <input type="checkbox" id="prof-discoverable" ${p.is_discoverable === 1 ? 'checked' : ''}>
             <div>
-              <strong style="color: #FFF;">Visible in Partner Discovery</strong>
-              <div style="font-size: 0.8rem; color: var(--color-text-muted);">
+              <strong style="color: var(--color-text-primary);">Visible in Partner Discovery</strong>
+              <div style="font-size: 0.82rem; color: var(--color-text-secondary); margin-top: 2px;">
                 When turned off, other dancers will not be able to discover or swipe on your profile. Existing matches remain active.
               </div>
             </div>

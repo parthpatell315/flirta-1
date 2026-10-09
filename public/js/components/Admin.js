@@ -111,23 +111,23 @@ const Admin = {
         ` : `
           <div style="display: flex; flex-direction: column; gap: 14px;">
             ${this.reports.map(rep => `
-              <div style="padding: 14px; background: rgba(20,5,36,0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
-                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-                  <strong style="color: var(--color-gold-light);">Report #${rep.id} · Target: ${rep.target_type.toUpperCase()} #${rep.target_id}</strong>
-                  <span class="partner-badge" style="background: ${rep.status === 'pending' ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}; border-color: ${rep.status === 'pending' ? 'var(--color-danger)' : 'var(--color-success)'};">
+              <div style="padding: 16px; background: #F9FAFB; border-radius: 12px; border: 1px solid var(--color-border);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                  <strong style="color: var(--color-primary); font-size: 0.95rem;">Report #${rep.id} · Target: ${rep.target_type.toUpperCase()} #${rep.target_id}</strong>
+                  <span class="partner-badge" style="background: ${rep.status === 'pending' ? 'var(--color-danger-soft)' : 'var(--color-success-soft)'}; color: ${rep.status === 'pending' ? 'var(--color-danger)' : 'var(--color-success)'}; border-color: ${rep.status === 'pending' ? 'var(--color-primary-border)' : 'var(--color-success)'};">
                     ${rep.status.toUpperCase()}
                   </span>
                 </div>
-                <div style="font-size: 0.88rem; color: var(--color-cream); margin-bottom: 6px;">
-                  <strong>Reason:</strong> ${escapeHtml(rep.reason)} ${rep.details ? `— <em>${escapeHtml(rep.details)}</em>` : ''}
+                <div style="font-size: 0.92rem; color: var(--color-text-primary); margin-bottom: 6px;">
+                  <strong>Reason:</strong> ${escapeHtml(rep.reason)} ${rep.details ? `— <span style="color: var(--color-text-secondary);">${escapeHtml(rep.details)}</span>` : ''}
                 </div>
-                <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 10px;">
+                <div style="font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 12px;">
                   Reported by: ${rep.reporter_name} (${rep.reporter_email}) on ${new Date(rep.created_at).toLocaleString()}
                 </div>
 
                 ${rep.target_preview ? `
-                  <div style="font-size: 0.84rem; background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px;">
-                    <strong>Target Preview:</strong>
+                  <div style="font-size: 0.86rem; background: #FFFFFF; border: 1px solid var(--color-border); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;">
+                    <strong style="color: var(--color-text-primary);">Target Preview:</strong>
                     ${rep.target_type === 'user' ? `User: ${rep.target_preview.display_name} (${rep.target_preview.email}) · Status: ${rep.target_preview.status}` : ''}
                     ${rep.target_type === 'message' ? `Content: "${escapeHtml(rep.target_preview.content)}" from ${rep.target_preview.sender_name}` : ''}
                     ${rep.target_type === 'group' ? `Group: "${escapeHtml(rep.target_preview.name)}" by ${rep.target_preview.creator_name}` : ''}

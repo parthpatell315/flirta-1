@@ -235,10 +235,10 @@ const Discover = {
     const celebrationOverlay = document.createElement('div');
     celebrationOverlay.className = 'modal-overlay open';
     celebrationOverlay.innerHTML = `
-      <div class="modal-box" style="text-align: center; border-color: var(--color-gold); background: linear-gradient(135deg, #2A0845, #1F0B35);">
+      <div class="modal-box" style="text-align: center; border: 2px solid var(--color-primary); background: #FFFFFF; box-shadow: var(--shadow-lg);">
         <div style="font-size: 3.5rem; animation: bounce 1s infinite;">🎉 🪘 🎉</div>
-        <h2 style="font-size: 2rem; color: var(--color-gold-light); margin: 12px 0;">It's a Garba Jodi Match!</h2>
-        <p style="color: var(--color-text-secondary); margin-bottom: 20px;">
+        <h2 style="font-size: 2rem; color: var(--color-primary); margin: 12px 0;">It's a Garba Jodi Match!</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: 1rem;">
           You and <strong>${profile.display_name}</strong> both liked each other! You can now coordinate your Garba nights and chat.
         </p>
         <div style="display: flex; gap: 14px; justify-content: center;">

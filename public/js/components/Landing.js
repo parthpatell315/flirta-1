@@ -127,7 +127,7 @@ const Landing = {
         </section>
 
         <!-- Safety & Privacy Guarantee -->
-        <section class="card" style="margin: 60px 0; background: linear-gradient(135deg, rgba(31,11,53,0.9), rgba(44,18,74,0.9)); border: 1px solid var(--color-gold);">
+        <section class="card" style="margin: 60px 0; background: linear-gradient(135deg, var(--color-primary-soft), var(--color-secondary-soft)); border: 1px solid var(--color-primary-border);">
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; align-items: center;">
             <div>
               <span class="partner-badge" style="margin-bottom: 12px; display: inline-block;">Community Integrity</span>
@@ -135,7 +135,7 @@ const Landing = {
               <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
                 GarbaJodi is committed to a respectful and safe cultural celebration:
               </p>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; color: var(--color-cream-muted); font-size: 0.94rem;">
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; color: var(--color-text-secondary); font-size: 0.94rem;">
                 <li>🔒 <strong>Strict 18+ Verification:</strong> Minors are not permitted on the platform.</li>
                 <li>🛡️ <strong>Mutual Consent Messaging:</strong> Only mutual matches can send direct messages.</li>
                 <li>🚫 <strong>Instant Block & Report:</strong> One-tap safety tools actively monitored by admins.</li>
@@ -144,8 +144,8 @@ const Landing = {
             </div>
             <div style="text-align: center; padding: 20px;">
               <div style="font-size: 4.5rem; margin-bottom: 10px;">🪔</div>
-              <h3 style="color: var(--color-gold-light); margin-bottom: 8px;">Garba First, Dating Optional</h3>
-              <p style="color: var(--color-text-muted); font-size: 0.9rem;">Whether you want to learn steps, join a team, or find romance, your preferences are clearly honored.</p>
+              <h3 style="color: var(--color-primary); margin-bottom: 8px;">Garba First, Dating Optional</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Whether you want to learn steps, join a team, or find romance, your preferences are clearly honored.</p>
             </div>
           </div>
         </section>
@@ -154,21 +154,21 @@ const Landing = {
         <section style="margin: 60px 0;">
           <h2 class="section-title">Frequently Asked Questions</h2>
           <div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 30px auto 0;">
-            <div class="card" style="padding: 20px;">
-              <h3 style="font-size: 1.1rem; color: var(--color-gold-light); margin-bottom: 8px;">Is GarbaJodi strictly for dating?</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.92rem;">
+            <div class="card" style="padding: 24px;">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Is GarbaJodi strictly for dating?</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
                 No! GarbaJodi is designed for discovering dance partners, making friends, and joining dance circles for Navratri. While you can opt into dating if interested, connection preferences are fully customizable.
               </p>
             </div>
-            <div class="card" style="padding: 20px;">
-              <h3 style="font-size: 1.1rem; color: var(--color-gold-light); margin-bottom: 8px;">Who can register on the platform?</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.92rem;">
+            <div class="card" style="padding: 24px;">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Who can register on the platform?</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
                 All participants must be at least 18 years of age. Birthdates and adult eligibility declarations are strictly checked upon account creation.
               </p>
             </div>
-            <div class="card" style="padding: 20px;">
-              <h3 style="font-size: 1.1rem; color: var(--color-gold-light); margin-bottom: 8px;">Can anyone message me directly?</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.92rem;">
+            <div class="card" style="padding: 24px;">
+              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Can anyone message me directly?</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
                 No. Private messaging is exclusively unlocked when both dancers have sent mutual likes to one another, preventing unsolicited messages.
               </p>
             </div>
@@ -176,14 +176,14 @@ const Landing = {
         </section>
 
         <!-- Footer -->
-        <footer style="margin-top: 80px; padding: 40px 0 20px; border-top: 1px solid var(--color-plum-border); text-align: center;">
-          <div style="margin-bottom: 16px; font-weight: 800; font-size: 1.3rem; color: var(--color-cream);">
+        <footer style="margin-top: 80px; padding: 40px 0 20px; border-top: 1px solid var(--color-border); text-align: center;">
+          <div style="margin-bottom: 16px; font-weight: 800; font-size: 1.3rem; color: var(--color-text-primary);">
             GarbaJodi · Navratri 2026
           </div>
-          <p style="color: var(--color-text-muted); font-size: 0.88rem; max-width: 600px; margin: 0 auto 18px;">
+          <p style="color: var(--color-text-secondary); font-size: 0.88rem; max-width: 600px; margin: 0 auto 18px;">
             Connecting Garba dancers across Ahmedabad, Vadodara, Surat, Mumbai, and Rajkot. Celebrating Gujarati heritage and safe festive togetherness.
           </p>
-          <div style="display: flex; justify-content: center; gap: 20px; font-size: 0.84rem; color: var(--color-gold-light); margin-bottom: 20px;">
+          <div style="display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; font-weight: 600; color: var(--color-primary); margin-bottom: 20px;">
             <a href="javascript:void(0)" onclick="alert('Privacy Policy: All profile data is handled with strict confidentiality. Contact information is never sold or exposed.')">Privacy Policy</a>
             <a href="javascript:void(0)" onclick="alert('Terms of Service: Respectful conduct, 18+ adult age eligibility, and genuine cultural appreciation required.')">Terms of Use</a>
             <a href="javascript:void(0)" onclick="alert('Safety Guidelines: Meet in well-lit public Garba venues, never share financial details, use in-app report tools.')">Safety Guidelines</a>
