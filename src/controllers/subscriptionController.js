@@ -20,6 +20,8 @@ function getUserActiveSubscription(db, userId) {
       p.daily_likes_limit,
       p.boost_credits,
       p.can_see_likes,
+      p.can_see_photo,
+      p.can_see_all_photos,
       p.priority_level,
       p.features_json
     FROM user_subscriptions us
@@ -111,6 +113,8 @@ exports.getMySubscription = (req, res) => {
         endDate: activeSub.end_date,
         remainingBoosts: activeSub.remaining_boosts,
         canSeeLikes: activeSub.can_see_likes === 1,
+        canSeePrimaryPhoto: activeSub.can_see_photo === 1 || activeSub.price_inr >= 249,
+        canSeeAllPhotos: activeSub.can_see_all_photos === 1 || activeSub.price_inr >= 549,
         priorityLevel: activeSub.priority_level,
         features: parsedFeatures
       } : null,

@@ -43,6 +43,18 @@ function getDb(customPath = null) {
     // Column already exists
   }
 
+  // Safe column migration for subscription_plans photo access
+  try {
+    db.exec('ALTER TABLE subscription_plans ADD COLUMN can_see_photo INTEGER NOT NULL DEFAULT 0;');
+  } catch {}
+  try {
+    db.exec('ALTER TABLE subscription_plans ADD COLUMN can_see_all_photos INTEGER NOT NULL DEFAULT 0;');
+  } catch {}
+  try {
+    db.exec('UPDATE subscription_plans SET can_see_photo = 1 WHERE price_inr >= 249;');
+    db.exec('UPDATE subscription_plans SET can_see_all_photos = 1 WHERE price_inr >= 549;');
+  } catch {}
+
   if (!customPath) {
     dbInstance = db;
   }

@@ -108,6 +108,24 @@ exports.discoverProfiles = (req, res) => {
 
     const rawProfiles = db.prepare(dataQuery).all(...params, pageLimit, offset);
 
+    // Check requester's subscription photo access privileges:
+    // Free: Photo locked (requires Spark ₹249 plan to view 1 photo)
+    // Spark (₹249): 1 photo unlocked (requires Chemistry ₹549 plan to explore all photos)
+    // Chemistry (₹549+): All photos unlocked
+    const activeSub = db.prepare(`
+      SELECT p.code, p.price_inr, p.can_see_photo, p.can_see_all_photos
+      FROM user_subscriptions us
+      JOIN subscription_plans p ON us.plan_id = p.id
+      WHERE us.user_id = ?
+        AND us.status = 'active'
+        AND us.end_date > CURRENT_TIMESTAMP
+      ORDER BY p.priority_level DESC, us.id DESC
+      LIMIT 1
+    `).get(userId);
+
+    const canSeePrimaryPhoto = !!(activeSub && (activeSub.can_see_photo === 1 || activeSub.price_inr >= 249));
+    const canSeeAllPhotos = !!(activeSub && (activeSub.can_see_all_photos === 1 || activeSub.price_inr >= 549));
+
     // Enrich each profile with secondary photos and attending events (strictly non-sensitive)
     const profiles = rawProfiles.map(prof => {
       const allPhotos = db.prepare('SELECT photo_url FROM profile_photos WHERE profile_id = ? ORDER BY is_primary DESC, id ASC').all(prof.profile_id);
@@ -128,6 +146,29 @@ exports.discoverProfiles = (req, res) => {
         parsedConnTypes = ['partner'];
       }
 
+      const rawPrimary = prof.primary_photo || (allPhotos[0] ? allPhotos[0].photo_url : null);
+      let returnedPrimaryPhoto = null;
+      let returnedPhotos = [];
+      let photoLocked = false;
+      let explorePhotosLocked = false;
+
+      if (!canSeePrimaryPhoto) {
+        photoLocked = true;
+        returnedPrimaryPhoto = null;
+        returnedPhotos = [];
+        explorePhotosLocked = true;
+      } else if (!canSeeAllPhotos) {
+        photoLocked = false;
+        returnedPrimaryPhoto = rawPrimary;
+        returnedPhotos = rawPrimary ? [rawPrimary] : [];
+        explorePhotosLocked = allPhotos.length > 1;
+      } else {
+        photoLocked = false;
+        returnedPrimaryPhoto = rawPrimary;
+        returnedPhotos = allPhotos.map(p => p.photo_url);
+        explorePhotosLocked = false;
+      }
+
       return {
         profile_id: prof.profile_id,
         user_id: prof.user_id,
@@ -142,14 +183,24 @@ exports.discoverProfiles = (req, res) => {
         connection_types: parsedConnTypes,
         preferred_dates: prof.preferred_dates,
         availability: prof.availability,
-        photos: allPhotos.map(p => p.photo_url),
-        primary_photo: prof.primary_photo || (allPhotos[0] ? allPhotos[0].photo_url : null),
+        photo_locked: photoLocked,
+        explore_photos_locked: explorePhotosLocked,
+        can_see_primary_photo: canSeePrimaryPhoto,
+        can_see_all_photos: canSeeAllPhotos,
+        total_photos_count: allPhotos.length,
+        photos: returnedPhotos,
+        primary_photo: returnedPrimaryPhoto,
         attending_events: attendingEvents
       };
     });
 
     return res.json({
       profiles,
+      user_subscription: {
+        can_see_primary_photo: canSeePrimaryPhoto,
+        can_see_all_photos: canSeeAllPhotos,
+        plan_code: activeSub ? activeSub.code : 'free'
+      },
       pagination: {
         total: totalCount,
         page: parseInt(page, 10),

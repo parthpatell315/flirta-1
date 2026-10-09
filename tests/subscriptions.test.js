@@ -167,4 +167,90 @@ test('Flirta Subscription & Monetization Test Suite', async (t) => {
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ priceInr: 249 });
   });
+
+  await t.test('Free user has photos locked in discovery feed (photo_locked: true, primary_photo: null)', async () => {
+    const freeUser = await createSubscriberUser('free_explorer');
+    const res = await request(app)
+      .get('/api/discovery')
+      .set('Authorization', `Bearer ${freeUser.token}`);
+
+    assert.equal(res.status, 200);
+    assert.equal(res.body.user_subscription.can_see_primary_photo, false);
+    assert.equal(res.body.user_subscription.can_see_all_photos, false);
+    assert.ok(res.body.profiles.length > 0);
+    const first = res.body.profiles[0];
+    assert.equal(first.photo_locked, true);
+    assert.equal(first.primary_photo, null);
+    assert.deepEqual(first.photos, []);
+  });
+
+  await t.test('Spark plan (₹249) unlocks 1 primary photo but locks multi-photo gallery exploration', async () => {
+    const sparkUser = await createSubscriberUser('spark_user');
+    const orderRes = await request(app)
+      .post('/api/subscriptions/create-order')
+      .set('Authorization', `Bearer ${sparkUser.token}`)
+      .send({ planCode: 'spark' });
+
+    assert.equal(orderRes.status, 201);
+
+    const verifyRes = await request(app)
+      .post('/api/subscriptions/verify-payment')
+      .set('Authorization', `Bearer ${sparkUser.token}`)
+      .send({
+        orderId: orderRes.body.orderId,
+        paymentMethod: 'UPI'
+      });
+
+    assert.equal(verifyRes.status, 200);
+
+    const discRes = await request(app)
+      .get('/api/discovery')
+      .set('Authorization', `Bearer ${sparkUser.token}`);
+
+    assert.equal(discRes.status, 200);
+    assert.equal(discRes.body.user_subscription.can_see_primary_photo, true);
+    assert.equal(discRes.body.user_subscription.can_see_all_photos, false);
+    assert.ok(discRes.body.profiles.length > 0);
+    const profileWithMultiple = discRes.body.profiles.find(p => p.total_photos_count > 1);
+    if (profileWithMultiple) {
+      assert.equal(profileWithMultiple.photo_locked, false);
+      assert.ok(profileWithMultiple.primary_photo !== null);
+      assert.equal(profileWithMultiple.photos.length, 1);
+      assert.equal(profileWithMultiple.explore_photos_locked, true);
+    }
+  });
+
+  await t.test('Chemistry plan (₹549) unlocks all photos and full gallery exploration', async () => {
+    const chemUser = await createSubscriberUser('chem_user');
+    const orderRes = await request(app)
+      .post('/api/subscriptions/create-order')
+      .set('Authorization', `Bearer ${chemUser.token}`)
+      .send({ planCode: 'chemistry' });
+
+    assert.equal(orderRes.status, 201);
+
+    const verifyRes = await request(app)
+      .post('/api/subscriptions/verify-payment')
+      .set('Authorization', `Bearer ${chemUser.token}`)
+      .send({
+        orderId: orderRes.body.orderId,
+        paymentMethod: 'UPI'
+      });
+
+    assert.equal(verifyRes.status, 200);
+
+    const discRes = await request(app)
+      .get('/api/discovery')
+      .set('Authorization', `Bearer ${chemUser.token}`);
+
+    assert.equal(discRes.status, 200);
+    assert.equal(discRes.body.user_subscription.can_see_primary_photo, true);
+    assert.equal(discRes.body.user_subscription.can_see_all_photos, true);
+    const profileWithMultiple = discRes.body.profiles.find(p => p.total_photos_count > 1);
+    if (profileWithMultiple) {
+      assert.equal(profileWithMultiple.photo_locked, false);
+      assert.equal(profileWithMultiple.explore_photos_locked, false);
+      assert.ok(profileWithMultiple.photos.length > 1);
+    }
+  });
 });

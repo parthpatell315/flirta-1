@@ -192,6 +192,8 @@ CREATE TABLE IF NOT EXISTS subscription_plans (
   daily_likes_limit INTEGER NOT NULL DEFAULT 25,
   boost_credits INTEGER NOT NULL DEFAULT 0,
   can_see_likes INTEGER NOT NULL DEFAULT 0,
+  can_see_photo INTEGER NOT NULL DEFAULT 0,
+  can_see_all_photos INTEGER NOT NULL DEFAULT 0,
   priority_level INTEGER NOT NULL DEFAULT 1,
   features_json TEXT NOT NULL,
   is_active INTEGER NOT NULL DEFAULT 1,

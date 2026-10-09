@@ -118,6 +118,12 @@ const Pricing = {
                 <strong style="color: var(--color-primary);">${p.daily_likes_limit === -1 ? 'Unlimited' : p.daily_likes_limit + ' / day'}</strong>
               </div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>Profile Photos:</span>
+                <strong style="color: ${p.price_inr >= 549 ? 'var(--color-success)' : p.price_inr >= 249 ? 'var(--color-primary)' : 'var(--color-text-muted)'};">
+                  ${p.price_inr >= 549 ? 'All Photos Unlocked' : p.price_inr >= 249 ? '1 Photo Unlocked' : '✕ Locked'}
+                </strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                 <span>Who Liked Me:</span>
                 <strong style="color: ${p.can_see_likes ? 'var(--color-success)' : 'var(--color-text-muted)'};">${p.can_see_likes ? '✓ Unlocked' : '✕ Locked'}</strong>
               </div>
@@ -175,7 +181,7 @@ const Pricing = {
             <strong style="font-size: 1.5rem; color: var(--color-primary);">₹${plan.price_inr}</strong>
           </div>
           <div style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.4;">
-            Includes 9 nights active festival access · ${plan.daily_likes_limit === -1 ? 'Unlimited' : plan.daily_likes_limit} daily interest allowances · ${plan.can_see_likes ? 'Who Liked You unlocked' : 'Basic partner discovery'} · ${plan.boost_credits} profile boosts.
+            Includes 9 nights active festival access · ${plan.price_inr >= 549 ? 'Explore all photos & full dancer gallery' : '1 clear profile photo unlocked'} · ${plan.daily_likes_limit === -1 ? 'Unlimited' : plan.daily_likes_limit} daily interest allowances · ${plan.can_see_likes ? 'Who Liked You unlocked' : 'Basic partner discovery'} · ${plan.boost_credits} profile boosts.
           </div>
         </div>
 

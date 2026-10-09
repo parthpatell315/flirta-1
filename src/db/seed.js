@@ -150,10 +150,13 @@ async function seed() {
         daily_likes_limit: 25,
         boost_credits: 0,
         can_see_likes: 0,
+        can_see_photo: 1,
+        can_see_all_photos: 0,
         priority_level: 1,
         is_popular: 0,
         features_json: JSON.stringify([
           'Discover local cultural dance enthusiasts',
+          'Unlock 1 profile photo per dancer',
           'Set preferences for age, location, and dance style',
           '25 daily interest expressions (likes)',
           'Filter by Navratri event dates',
@@ -168,10 +171,13 @@ async function seed() {
         daily_likes_limit: 60,
         boost_credits: 1,
         can_see_likes: 1,
+        can_see_photo: 1,
+        can_see_all_photos: 1,
         priority_level: 2,
         is_popular: 1,
         features_json: JSON.stringify([
           'Everything included in Spark',
+          'Explore all photos & full dancer photo gallery',
           '60 daily interest expressions',
           'See who liked you (Instant Mutual Matching)',
           'Advanced community filters',
@@ -187,10 +193,13 @@ async function seed() {
         daily_likes_limit: 120,
         boost_credits: 3,
         can_see_likes: 1,
+        can_see_photo: 1,
+        can_see_all_photos: 1,
         priority_level: 3,
         is_popular: 0,
         features_json: JSON.stringify([
           'Everything included in Chemistry',
+          'Explore all photos & full dancer photo gallery',
           '120 daily interest expressions',
           '3 Profile Boost Credits (High Visibility)',
           'Enhanced partner matching algorithm',
@@ -206,10 +215,13 @@ async function seed() {
         daily_likes_limit: -1, // Unlimited
         boost_credits: 8,
         can_see_likes: 1,
+        can_see_photo: 1,
+        can_see_all_photos: 1,
         priority_level: 4,
         is_popular: 0,
         features_json: JSON.stringify([
           'Everything included in Attraction',
+          'Explore all photos & full dancer photo gallery',
           'Unlimited daily likes & interest expressions',
           '8 Profile Boost Credits for peak Navratri nights',
           'Top priority visibility in discovery deck',
@@ -222,17 +234,20 @@ async function seed() {
     const insertPlan = db.prepare(`
       INSERT INTO subscription_plans (
         code, name, price_inr, duration_days, daily_likes_limit,
-        boost_credits, can_see_likes, priority_level, is_popular, features_json, is_active
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        boost_credits, can_see_likes, can_see_photo, can_see_all_photos, priority_level, is_popular, features_json, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `);
 
     for (const pl of defaultPlans) {
       insertPlan.run(
         pl.code, pl.name, pl.price_inr, pl.duration_days, pl.daily_likes_limit,
-        pl.boost_credits, pl.can_see_likes, pl.priority_level, pl.is_popular, pl.features_json
+        pl.boost_credits, pl.can_see_likes, pl.can_see_photo, pl.can_see_all_photos, pl.priority_level, pl.is_popular, pl.features_json
       );
     }
     console.log(`Seeded ${defaultPlans.length} Flirta subscription plans.`);
+  } else {
+    db.prepare('UPDATE subscription_plans SET can_see_photo = 1 WHERE price_inr >= 249').run();
+    db.prepare('UPDATE subscription_plans SET can_see_all_photos = 1 WHERE price_inr >= 549').run();
   }
 
   // 3. Seed Realistic Discoverable Dancers for Partner Matching
@@ -249,7 +264,11 @@ async function seed() {
       bio: 'Lifelong Garba lover! Looking for an energetic partner to sync Dodhiya steps and celebrate Navratri with style.',
       hobbies: 'Chaniya Choli design, Folk Singing, Dhol beats',
       connectionTypes: ['partner', 'friendship'],
-      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
+      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      extraPhotos: [
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       email: 'rohan.patel@example.com',
@@ -263,7 +282,10 @@ async function seed() {
       bio: 'Vadodara Garba regular for 7 years. Ready with traditional Kediya. Need a dedicated partner for all 9 nights.',
       hobbies: 'Fitness, Photography, Folk Raas',
       connectionTypes: ['partner', 'friendship'],
-      photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'
+      photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
+      extraPhotos: [
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       email: 'priya.mehta@example.com',
@@ -277,7 +299,10 @@ async function seed() {
       bio: 'Excited for Surat Garba! Love vibrant chaniyas, energetic music, and meeting friendly dance partners.',
       hobbies: 'Dance choreography, Coffee, Dandiya',
       connectionTypes: ['partner', 'friendship', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80'
+      photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
+      extraPhotos: [
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       email: 'harsh.desai@example.com',
@@ -291,7 +316,10 @@ async function seed() {
       bio: 'Mumbai resident looking for a fun dance partner to groove together till midnight.',
       hobbies: 'Live music, Food walks, Badminton',
       connectionTypes: ['partner', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
+      photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+      extraPhotos: [
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       email: 'ananya.joshi@example.com',
@@ -319,7 +347,10 @@ async function seed() {
       bio: 'Passionate Garba dancer in Indore! Ready with authentic chaniya choli. Seeking an energetic dance partner for Navratri 2026.',
       hobbies: 'Folk Choreography, Fashion, Travel',
       connectionTypes: ['partner', 'friendship', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80'
+      photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80',
+      extraPhotos: [
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+      ]
     },
     {
       email: 'manav.shah@example.com',
@@ -364,6 +395,15 @@ async function seed() {
         VALUES (?, ?, 1)
       `).run(pId, d.photoUrl);
 
+      if (d.extraPhotos && d.extraPhotos.length) {
+        for (const extraUrl of d.extraPhotos) {
+          db.prepare(`
+            INSERT INTO profile_photos (profile_id, photo_url, is_primary)
+            VALUES (?, ?, 0)
+          `).run(pId, extraUrl);
+        }
+      }
+
       // Attach attendance to an event
       const ev = db.prepare('SELECT id FROM events WHERE city = ? LIMIT 1').get(d.city);
       if (ev) {
@@ -372,6 +412,16 @@ async function seed() {
           VALUES (?, ?, 'attending')
           ON CONFLICT DO NOTHING
         `).run(uId, ev.id);
+      }
+    } else {
+      const p = db.prepare('SELECT id FROM profiles WHERE user_id = ?').get(existing.id);
+      if (p && d.extraPhotos) {
+        for (const extraUrl of d.extraPhotos) {
+          const hasPhoto = db.prepare('SELECT id FROM profile_photos WHERE profile_id = ? AND photo_url = ?').get(p.id, extraUrl);
+          if (!hasPhoto) {
+            db.prepare('INSERT INTO profile_photos (profile_id, photo_url, is_primary) VALUES (?, ?, 0)').run(p.id, extraUrl);
+          }
+        }
       }
     }
   }

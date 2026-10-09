@@ -3,6 +3,7 @@
 const Discover = {
   profiles: [],
   currentIndex: 0,
+  currentPhotoIndex: 0,
   filters: {
     city: '',
     experience: '',
@@ -233,13 +234,51 @@ const Discover = {
     }
 
     const p = this.profiles[this.currentIndex];
-    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name)}&background=FF6B00&color=fff&size=512`;
-    const photoUrl = p.primary_photo || defaultAvatar;
+    this.currentPhotoIndex = 0;
+    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name)}&background=111827&color=fff&size=512`;
+    const photosList = (p.photos && p.photos.length > 0) ? p.photos : (p.primary_photo ? [p.primary_photo] : []);
+    const photoUrl = photosList[0] || p.primary_photo || defaultAvatar;
+    const isPhotoLocked = !!p.photo_locked;
 
     cardArea.innerHTML = `
       <div class="partner-card">
-        <div class="partner-card-media">
-          <img src="${photoUrl}" alt="${p.display_name}" class="partner-card-img" onerror="this.src='${defaultAvatar}'">
+        <div class="partner-card-media" id="partner-media-container">
+          ${isPhotoLocked ? `
+            <img src="${defaultAvatar}" alt="${p.display_name}" class="partner-card-img" style="filter: blur(14px) brightness(0.65); transform: scale(1.08);">
+            <div class="photo-locked-overlay" onclick="Router.navigate('/pricing')">
+              <div class="photo-lock-icon-badge">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Photo Protected</span>
+              </div>
+              <p style="font-size: 0.88rem; color: #FFFFFF; font-weight: 700; margin: 8px 0 12px; text-shadow: 0 1px 4px rgba(0,0,0,0.8); line-height: 1.35; max-width: 250px;">
+                Buy Spark Plan (₹249) to unlock profile photo
+              </p>
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); Router.navigate('/pricing');" style="box-shadow: 0 4px 14px rgba(236,29,36,0.5); font-weight: 800;">
+                Unlock Photo (₹249)
+              </button>
+            </div>
+          ` : `
+            <img id="partner-active-img" src="${photoUrl}" alt="${p.display_name}" class="partner-card-img" onerror="this.src='${defaultAvatar}'">
+
+            ${p.can_see_all_photos && photosList.length > 1 ? `
+              <div class="story-bars-container">
+                ${photosList.map((_, idx) => `
+                  <div class="story-bar-segment ${idx === 0 ? 'active' : ''}"></div>
+                `).join('')}
+              </div>
+              <div class="photo-nav-tap tap-left" onclick="Discover.prevPhoto()" aria-label="Previous photo"></div>
+              <div class="photo-nav-tap tap-right" onclick="Discover.nextPhoto()" aria-label="Next photo"></div>
+              <div class="photo-count-badge">
+                1 / ${photosList.length} Photos
+              </div>
+            ` : p.explore_photos_locked ? `
+              <div class="photo-explore-locked-badge" onclick="Discover.promptExploreAllPhotos('${p.display_name.replace(/'/g, "\\'")}', ${p.total_photos_count})">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>1 of ${p.total_photos_count} Photos • Explore All (₹549)</span>
+              </div>
+            ` : ''}
+          `}
+
           <div class="partner-card-overlay">
             <div>
               <div class="partner-card-name">${p.display_name}, ${p.age}</div>
@@ -369,6 +408,7 @@ const Discover = {
 
       await this.updateAllowanceUI();
       this.currentIndex++;
+      this.currentPhotoIndex = 0;
       this.renderCurrentCard();
     } catch (err) {
       if (err.message && err.message.includes('daily interest allowance')) {
@@ -378,6 +418,42 @@ const Discover = {
       } else {
         showToast(err.message, 'error');
       }
+    }
+  },
+
+  nextPhoto() {
+    const p = this.profiles[this.currentIndex];
+    if (!p || !p.photos || p.photos.length <= 1) return;
+    this.currentPhotoIndex = (this.currentPhotoIndex + 1) % p.photos.length;
+    this.updateActivePhotoUI(p);
+  },
+
+  prevPhoto() {
+    const p = this.profiles[this.currentIndex];
+    if (!p || !p.photos || p.photos.length <= 1) return;
+    this.currentPhotoIndex = (this.currentPhotoIndex - 1 + p.photos.length) % p.photos.length;
+    this.updateActivePhotoUI(p);
+  },
+
+  updateActivePhotoUI(p) {
+    const imgEl = document.getElementById('partner-active-img');
+    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name)}&background=111827&color=fff&size=512`;
+    if (imgEl && p.photos) {
+      imgEl.src = p.photos[this.currentPhotoIndex] || defaultAvatar;
+    }
+    const countEl = document.querySelector('.photo-count-badge');
+    if (countEl && p.photos) {
+      countEl.textContent = `${this.currentPhotoIndex + 1} / ${p.photos.length} Photos`;
+    }
+    const segments = document.querySelectorAll('.story-bar-segment');
+    segments.forEach((seg, idx) => {
+      seg.classList.toggle('active', idx === this.currentPhotoIndex);
+    });
+  },
+
+  promptExploreAllPhotos(name, count) {
+    if (confirm(`Want to explore all ${count} photos of ${name}?\n\nUpgrade to the Chemistry Plan (₹549) to unlock the full dancer photo gallery and see who liked you!`)) {
+      Router.navigate('/pricing');
     }
   },
 
