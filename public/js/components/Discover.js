@@ -41,12 +41,26 @@ const Discover = {
         <!-- Filter Bar -->
         <div id="filter-panel" class="filter-bar" style="display: flex;">
           <select id="filter-city" onchange="Discover.applyFilters()">
-            <option value="">All Cities</option>
+            <option value="">All Cities (Gujarat, Mumbai & Indore)</option>
             <option value="Ahmedabad" ${this.filters.city === 'Ahmedabad' ? 'selected' : ''}>Ahmedabad</option>
-            <option value="Vadodara" ${this.filters.city === 'Vadodara' ? 'selected' : ''}>Vadodara</option>
             <option value="Surat" ${this.filters.city === 'Surat' ? 'selected' : ''}>Surat</option>
-            <option value="Mumbai" ${this.filters.city === 'Mumbai' ? 'selected' : ''}>Mumbai</option>
+            <option value="Vadodara" ${this.filters.city === 'Vadodara' ? 'selected' : ''}>Vadodara</option>
             <option value="Rajkot" ${this.filters.city === 'Rajkot' ? 'selected' : ''}>Rajkot</option>
+            <option value="Gandhinagar" ${this.filters.city === 'Gandhinagar' ? 'selected' : ''}>Gandhinagar</option>
+            <option value="Bhavnagar" ${this.filters.city === 'Bhavnagar' ? 'selected' : ''}>Bhavnagar</option>
+            <option value="Jamnagar" ${this.filters.city === 'Jamnagar' ? 'selected' : ''}>Jamnagar</option>
+            <option value="Junagadh" ${this.filters.city === 'Junagadh' ? 'selected' : ''}>Junagadh</option>
+            <option value="Anand" ${this.filters.city === 'Anand' ? 'selected' : ''}>Anand</option>
+            <option value="Navsari" ${this.filters.city === 'Navsari' ? 'selected' : ''}>Navsari</option>
+            <option value="Morbi" ${this.filters.city === 'Morbi' ? 'selected' : ''}>Morbi</option>
+            <option value="Bharuch" ${this.filters.city === 'Bharuch' ? 'selected' : ''}>Bharuch</option>
+            <option value="Mehsana" ${this.filters.city === 'Mehsana' ? 'selected' : ''}>Mehsana</option>
+            <option value="Bhuj" ${this.filters.city === 'Bhuj' ? 'selected' : ''}>Bhuj</option>
+            <option value="Porbandar" ${this.filters.city === 'Porbandar' ? 'selected' : ''}>Porbandar</option>
+            <option value="Valsad" ${this.filters.city === 'Valsad' ? 'selected' : ''}>Valsad</option>
+            <option value="Vapi" ${this.filters.city === 'Vapi' ? 'selected' : ''}>Vapi</option>
+            <option value="Mumbai" ${this.filters.city === 'Mumbai' ? 'selected' : ''}>Mumbai</option>
+            <option value="Indore" ${this.filters.city === 'Indore' ? 'selected' : ''}>Indore</option>
           </select>
 
           <select id="filter-experience" onchange="Discover.applyFilters()">
@@ -59,8 +73,7 @@ const Discover = {
           <select id="filter-connection" onchange="Discover.applyFilters()">
             <option value="">All Connection Types</option>
             <option value="partner" ${this.filters.connection_type === 'partner' ? 'selected' : ''}>Garba Partner</option>
-            <option value="friendship" ${this.filters.connection_type === 'friendship' ? 'selected' : ''}>Friendship</option>
-            <option value="group" ${this.filters.connection_type === 'group' ? 'selected' : ''}>Group Circle</option>
+            <option value="friendship" ${this.filters.connection_type === 'friendship' ? 'selected' : ''}>Festive Friendship</option>
             <option value="dating" ${this.filters.connection_type === 'dating' ? 'selected' : ''}>Open to Dating</option>
           </select>
         </div>
@@ -230,19 +243,6 @@ const Discover = {
               <div class="pill-list" style="margin-top: 6px;">
                 <span class="pill">💃 ${p.dance_style}</span>
                 ${p.preferred_language ? `<span class="pill">🗣️ ${p.preferred_language}</span>` : ''}
-              </div>
-            </div>
-          ` : ''}
-
-          ${p.attending_events && p.attending_events.length > 0 ? `
-            <div>
-              <strong style="font-size: 0.84rem; color: var(--color-gold-light); text-transform: uppercase; letter-spacing: 0.5px;">Attending Venues:</strong>
-              <div style="margin-top: 6px; display: flex; flex-direction: column; gap: 6px;">
-                ${p.attending_events.map(ev => `
-                  <div style="font-size: 0.85rem; color: var(--color-cream-muted); background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px;">
-                    🎪 <strong>${ev.name}</strong> (${ev.event_date})
-                  </div>
-                `).join('')}
               </div>
             </div>
           ` : ''}

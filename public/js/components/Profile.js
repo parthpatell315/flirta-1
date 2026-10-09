@@ -147,11 +147,25 @@ const Profile = {
           <div class="form-group">
             <label class="form-label">City</label>
             <select id="prof-city" class="form-control">
-              <option value="Ahmedabad" ${p.city === 'Ahmedabad' ? 'selected' : ''}>Ahmedabad</option>
-              <option value="Vadodara" ${p.city === 'Vadodara' ? 'selected' : ''}>Vadodara</option>
-              <option value="Surat" ${p.city === 'Surat' ? 'selected' : ''}>Surat</option>
+              <option value="Ahmedabad" ${p.city === 'Ahmedabad' ? 'selected' : ''}>Ahmedabad (Gujarat)</option>
+              <option value="Surat" ${p.city === 'Surat' ? 'selected' : ''}>Surat (Gujarat)</option>
+              <option value="Vadodara" ${p.city === 'Vadodara' ? 'selected' : ''}>Vadodara (Gujarat)</option>
+              <option value="Rajkot" ${p.city === 'Rajkot' ? 'selected' : ''}>Rajkot (Gujarat)</option>
+              <option value="Gandhinagar" ${p.city === 'Gandhinagar' ? 'selected' : ''}>Gandhinagar (Gujarat)</option>
+              <option value="Bhavnagar" ${p.city === 'Bhavnagar' ? 'selected' : ''}>Bhavnagar (Gujarat)</option>
+              <option value="Jamnagar" ${p.city === 'Jamnagar' ? 'selected' : ''}>Jamnagar (Gujarat)</option>
+              <option value="Junagadh" ${p.city === 'Junagadh' ? 'selected' : ''}>Junagadh (Gujarat)</option>
+              <option value="Anand" ${p.city === 'Anand' ? 'selected' : ''}>Anand (Gujarat)</option>
+              <option value="Navsari" ${p.city === 'Navsari' ? 'selected' : ''}>Navsari (Gujarat)</option>
+              <option value="Morbi" ${p.city === 'Morbi' ? 'selected' : ''}>Morbi (Gujarat)</option>
+              <option value="Bharuch" ${p.city === 'Bharuch' ? 'selected' : ''}>Bharuch (Gujarat)</option>
+              <option value="Mehsana" ${p.city === 'Mehsana' ? 'selected' : ''}>Mehsana (Gujarat)</option>
+              <option value="Bhuj" ${p.city === 'Bhuj' ? 'selected' : ''}>Bhuj (Gujarat)</option>
+              <option value="Porbandar" ${p.city === 'Porbandar' ? 'selected' : ''}>Porbandar (Gujarat)</option>
+              <option value="Valsad" ${p.city === 'Valsad' ? 'selected' : ''}>Valsad (Gujarat)</option>
+              <option value="Vapi" ${p.city === 'Vapi' ? 'selected' : ''}>Vapi (Gujarat)</option>
               <option value="Mumbai" ${p.city === 'Mumbai' ? 'selected' : ''}>Mumbai</option>
-              <option value="Rajkot" ${p.city === 'Rajkot' ? 'selected' : ''}>Rajkot</option>
+              <option value="Indore" ${p.city === 'Indore' ? 'selected' : ''}>Indore</option>
             </select>
           </div>
 
@@ -196,10 +210,6 @@ const Profile = {
             <label class="form-checkbox">
               <input type="checkbox" id="conn-friendship" ${connectionTypes.includes('friendship') ? 'checked' : ''}>
               <span>🤝 Festive Friendship</span>
-            </label>
-            <label class="form-checkbox">
-              <input type="checkbox" id="conn-group" ${connectionTypes.includes('group') ? 'checked' : ''}>
-              <span>👥 Group Participation</span>
             </label>
             <label class="form-checkbox">
               <input type="checkbox" id="conn-dating" ${connectionTypes.includes('dating') ? 'checked' : ''}>
@@ -254,7 +264,6 @@ const Profile = {
     const connectionTypes = [];
     if (document.getElementById('conn-partner').checked) connectionTypes.push('partner');
     if (document.getElementById('conn-friendship').checked) connectionTypes.push('friendship');
-    if (document.getElementById('conn-group').checked) connectionTypes.push('group');
     if (document.getElementById('conn-dating').checked) connectionTypes.push('dating');
 
     try {

@@ -59,16 +59,6 @@ function updateNavigationUI(state) {
           💎 Plans
         </button>
       </li>
-      <li>
-        <button class="nav-btn" data-route="/events" onclick="Router.navigate('/events')">
-          🎪 Venues
-        </button>
-      </li>
-      <li>
-        <button class="nav-btn" data-route="/groups" onclick="Router.navigate('/groups')">
-          👥 Circles
-        </button>
-      </li>
       ${state.isAdmin() ? `
         <li>
           <button class="nav-btn" data-route="/admin" onclick="Router.navigate('/admin')">
@@ -120,11 +110,6 @@ function updateNavigationUI(state) {
         </button>
       </li>
       <li>
-        <button class="nav-btn" data-route="/events" onclick="Router.navigate('/events')">
-          🎪 Venues
-        </button>
-      </li>
-      <li>
         <button class="nav-btn" onclick="openAuthModal('login')">
           Sign In
         </button>
@@ -144,10 +129,6 @@ function updateNavigationUI(state) {
       <button class="mobile-nav-item" data-route="/pricing" onclick="Router.navigate('/pricing')">
         <span class="mobile-nav-icon">💎</span>
         <span>Plans</span>
-      </button>
-      <button class="mobile-nav-item" data-route="/events" onclick="Router.navigate('/events')">
-        <span class="mobile-nav-icon">🎪</span>
-        <span>Venues</span>
       </button>
       <button class="mobile-nav-item" onclick="openAuthModal('login')">
         <span class="mobile-nav-icon">🔑</span>

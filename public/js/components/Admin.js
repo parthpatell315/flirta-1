@@ -44,9 +44,6 @@ const Admin = {
           <button class="btn btn-sm ${this.activeTab === 'moderation' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('moderation')">
             🛡️ Moderation Queue (<span id="tab-report-count">0</span>)
           </button>
-          <button class="btn btn-sm ${this.activeTab === 'events' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('events')">
-            🎪 Venues & Events
-          </button>
         </div>
 
         <div id="admin-view-content">

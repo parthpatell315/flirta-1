@@ -70,47 +70,13 @@ const Landing = {
             <div class="step-card">
               <div class="step-number">2</div>
               <h3>Discover & Connect</h3>
-              <p>Browse attendee profiles going to United Way Vadodara, GMDC Ahmedabad, and top venues. Send a like with one tap.</p>
+              <p>Browse attendee profiles across Gujarat cities, Mumbai, and Indore. Send an interest with one tap.</p>
             </div>
             <div class="step-card">
               <div class="step-number">3</div>
               <h3>Coordinate & Dance Raas</h3>
-              <p>When you both express interest, a mutual match unlocks private messaging to plan attire, venue entry, and dance steps together.</p>
+              <p>When you both express interest, a mutual match unlocks private messaging to coordinate festive attire, meetups, and dance steps together.</p>
             </div>
-          </div>
-        </section>
-
-        <!-- Featured Events Preview -->
-        <section style="margin: 60px 0;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
-            <div>
-              <h2 style="font-size: 2rem;">Navratri 2026 Verified Venues</h2>
-              <p style="color: var(--color-text-muted);">Real published events open for partner coordination.</p>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="Router.navigate('/events')">View All Venues →</button>
-          </div>
-
-          <div class="events-grid">
-            ${events.length === 0 ? `
-              <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p style="color: var(--color-text-muted);">No published events available right now. Check back shortly!</p>
-              </div>
-            ` : events.map(ev => `
-              <div class="event-card">
-                <div>
-                  <div class="event-date-badge">📅 ${ev.event_date} · ${ev.city}</div>
-                  <h3 style="font-size: 1.25rem; margin-bottom: 8px;">${ev.name}</h3>
-                  <p style="color: var(--color-text-muted); font-size: 0.88rem; margin-bottom: 12px;">📍 ${ev.venue_name}</p>
-                  <p style="color: var(--color-text-secondary); font-size: 0.92rem; line-height: 1.4; margin-bottom: 16px;">
-                    ${ev.description || 'Authentic traditional Garba festival.'}
-                  </p>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
-                  <span style="font-size: 0.85rem; color: var(--color-gold-light);">👥 ${ev.attending_count || 0} Attending</span>
-                  <button class="btn btn-primary btn-sm" onclick="Router.navigate('/events')">Coordinate</button>
-                </div>
-              </div>
-            `).join('')}
           </div>
         </section>
 
@@ -121,7 +87,7 @@ const Landing = {
               <span class="partner-badge" style="margin-bottom: 12px; display: inline-block;">Community Integrity</span>
               <h2 style="font-size: 1.9rem; margin-bottom: 14px;">Safety First, Always</h2>
               <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
-                GarbaJodi is committed to a respectful and safe cultural celebration:
+                Flirta is committed to a respectful and safe cultural celebration:
               </p>
               <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; color: var(--color-text-secondary); font-size: 0.94rem;">
                 <li>🔒 <strong>Strict 18+ Verification:</strong> Minors are not permitted on the platform.</li>
@@ -133,7 +99,7 @@ const Landing = {
             <div style="text-align: center; padding: 20px;">
               <div style="font-size: 4.5rem; margin-bottom: 10px;">🪔</div>
               <h3 style="color: var(--color-primary); margin-bottom: 8px;">Garba First, Dating Optional</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Whether you want to learn steps, join a team, or find romance, your preferences are clearly honored.</p>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Whether you want to sync steps, make festive friends, or find romance, your preferences are clearly honored.</p>
             </div>
           </div>
         </section>
@@ -143,9 +109,9 @@ const Landing = {
           <h2 class="section-title">Frequently Asked Questions</h2>
           <div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 30px auto 0;">
             <div class="card" style="padding: 24px;">
-              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Is GarbaJodi strictly for dating?</h3>
+              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Is Flirta strictly for dating?</h3>
               <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
-                No! GarbaJodi is designed for discovering dance partners, making friends, and joining dance circles for Navratri. While you can opt into dating if interested, connection preferences are fully customizable.
+                No! Flirta is designed for discovering dance partners, making friends, and finding your festive match for Navratri. While you can opt into dating if interested, connection preferences are fully customizable.
               </p>
             </div>
             <div class="card" style="padding: 24px;">
@@ -166,18 +132,18 @@ const Landing = {
         <!-- Footer -->
         <footer style="margin-top: 80px; padding: 40px 0 20px; border-top: 1px solid var(--color-border); text-align: center;">
           <div style="margin-bottom: 16px; font-weight: 800; font-size: 1.3rem; color: var(--color-text-primary);">
-            GarbaJodi · Navratri 2026
+            Flirta · Find Your Dream Garba Partner
           </div>
           <p style="color: var(--color-text-secondary); font-size: 0.88rem; max-width: 600px; margin: 0 auto 18px;">
-            Connecting Garba dancers across Ahmedabad, Vadodara, Surat, Mumbai, and Rajkot. Celebrating Gujarati heritage and safe festive togetherness.
+            Connecting Garba dancers across Gujarat cities, Mumbai, and Indore. Celebrating Gujarati heritage and safe festive togetherness.
           </p>
           <div style="display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; font-weight: 600; color: var(--color-primary); margin-bottom: 20px;">
             <a href="javascript:void(0)" onclick="alert('Privacy Policy: All profile data is handled with strict confidentiality. Contact information is never sold or exposed.')">Privacy Policy</a>
             <a href="javascript:void(0)" onclick="alert('Terms of Service: Respectful conduct, 18+ adult age eligibility, and genuine cultural appreciation required.')">Terms of Use</a>
-            <a href="javascript:void(0)" onclick="alert('Safety Guidelines: Meet in well-lit public Garba venues, never share financial details, use in-app report tools.')">Safety Guidelines</a>
-            <a href="javascript:void(0)" onclick="alert('Contact: support@garbajodi.com · Ahmedabad, Gujarat')">Support & Contact</a>
+            <a href="javascript:void(0)" onclick="alert('Safety Guidelines: Meet in well-lit public celebrations, never share financial details, use in-app report tools.')">Safety Guidelines</a>
+            <a href="javascript:void(0)" onclick="alert('Contact: support@flirta.com · Gujarat, India')">Support & Contact</a>
           </div>
-          <p style="color: var(--color-text-muted); font-size: 0.78rem;">© 2026 GarbaJodi. All rights reserved.</p>
+          <p style="color: var(--color-text-muted); font-size: 0.78rem;">© 2026 Flirta. All rights reserved.</p>
         </footer>
       </div>
     `;

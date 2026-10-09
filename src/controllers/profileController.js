@@ -67,6 +67,9 @@ exports.updateProfile = (req, res) => {
       connTypesString = JSON.stringify(filtered.length ? filtered : ['partner']);
     }
 
+    const { sanitizeCity } = require('../config/cities');
+    const safeCity = sanitizeCity(city);
+
     db.prepare(`
       UPDATE profiles
       SET display_name = ?,
@@ -84,7 +87,7 @@ exports.updateProfile = (req, res) => {
       WHERE id = ?
     `).run(
       displayName.trim(),
-      (city || 'Ahmedabad').trim(),
+      safeCity,
       (preferredLanguage || 'Gujarati').trim(),
       (bio || '').trim(),
       exp,

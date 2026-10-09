@@ -246,7 +246,7 @@ async function seed() {
       garbaExperience: 'advanced',
       danceStyle: 'Dodhiya, 3-Taali, Popat',
       preferredLanguage: 'Gujarati, Hindi, English',
-      bio: 'Lifelong Garba lover! Attending GMDC Mega ground and United Way Vadodara. Looking for an energetic partner to sync Dodhiya steps.',
+      bio: 'Lifelong Garba lover! Looking for an energetic partner to sync Dodhiya steps and celebrate Navratri with style.',
       hobbies: 'Chaniya Choli design, Folk Singing, Dhol beats',
       connectionTypes: ['partner', 'friendship'],
       photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
@@ -260,9 +260,9 @@ async function seed() {
       garbaExperience: 'advanced',
       danceStyle: 'Traditional Baroda Style, Tran-Taali',
       preferredLanguage: 'Gujarati, English',
-      bio: 'United Way regular for 7 years. Ready with traditional Kediya. Need a dedicated partner or group circle for all 9 nights.',
+      bio: 'Vadodara Garba regular for 7 years. Ready with traditional Kediya. Need a dedicated partner for all 9 nights.',
       hobbies: 'Fitness, Photography, Folk Raas',
-      connectionTypes: ['partner', 'group'],
+      connectionTypes: ['partner', 'friendship'],
       photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'
     },
     {
@@ -274,7 +274,7 @@ async function seed() {
       garbaExperience: 'intermediate',
       danceStyle: 'Popat, 2-Taali, Free Style',
       preferredLanguage: 'Gujarati, Hindi',
-      bio: 'Excited for Sarsana Garba in Surat! Love vibrant chaniyas, energetic music, and meeting friendly dancers.',
+      bio: 'Excited for Surat Garba! Love vibrant chaniyas, energetic music, and meeting friendly dance partners.',
       hobbies: 'Dance choreography, Coffee, Dandiya',
       connectionTypes: ['partner', 'friendship', 'dating'],
       photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80'
@@ -286,9 +286,9 @@ async function seed() {
       age: 28,
       city: 'Mumbai',
       garbaExperience: 'intermediate',
-      danceStyle: 'Kora Kendra Dandiya, 3-Taali',
+      danceStyle: 'Mumbai Dandiya, 3-Taali',
       preferredLanguage: 'Hindi, Gujarati, English',
-      bio: 'Borivali resident heading to Kora Kendra grounds. Looking for a fun dance partner to groove together till midnight.',
+      bio: 'Mumbai resident looking for a fun dance partner to groove together till midnight.',
       hobbies: 'Live music, Food walks, Badminton',
       connectionTypes: ['partner', 'dating'],
       photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
@@ -302,10 +302,38 @@ async function seed() {
       garbaExperience: 'advanced',
       danceStyle: 'Kathiyawadi Heech, 3-Taali',
       preferredLanguage: 'Gujarati, Hindi',
-      bio: 'Kathiyawadi Heech expert. Love high-energy dhol and fast-paced circles. Join my circle or be my Garba partner!',
+      bio: 'Kathiyawadi Heech expert. Love high-energy dhol and fast-paced beats. Looking for my Garba partner!',
       hobbies: 'Traditional Art, Folk Dance, Dholak',
-      connectionTypes: ['partner', 'group', 'friendship'],
+      connectionTypes: ['partner', 'friendship'],
       photoUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      email: 'kavya.verma@example.com',
+      displayName: 'Kavya Verma',
+      dob: '2001-03-14',
+      age: 25,
+      city: 'Indore',
+      garbaExperience: 'advanced',
+      danceStyle: 'Dodhiya, 2-Taali, Fast Beats',
+      preferredLanguage: 'Hindi, Gujarati',
+      bio: 'Passionate Garba dancer in Indore! Ready with authentic chaniya choli. Seeking an energetic dance partner for Navratri 2026.',
+      hobbies: 'Folk Choreography, Fashion, Travel',
+      connectionTypes: ['partner', 'friendship', 'dating'],
+      photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      email: 'manav.shah@example.com',
+      displayName: 'Manav Shah',
+      dob: '2000-08-22',
+      age: 26,
+      city: 'Gandhinagar',
+      garbaExperience: 'intermediate',
+      danceStyle: '3-Taali, Popat, Free Style',
+      preferredLanguage: 'Gujarati, Hindi, English',
+      bio: 'Gandhinagar resident eager for Navratri nights. Looking for a partner who loves vibrant Gujarati folk music.',
+      hobbies: 'Dhol Beats, Fitness, Photography',
+      connectionTypes: ['partner', 'dating'],
+      photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80'
     }
   ];
 

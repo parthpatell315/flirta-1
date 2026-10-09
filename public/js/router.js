@@ -48,8 +48,7 @@ const Router = {
     else if (path.startsWith('/pricing')) matchedPath = '/pricing';
     else if (path.startsWith('/likes-received')) matchedPath = '/likes-received';
     else if (path.startsWith('/matches')) matchedPath = '/matches';
-    else if (path.startsWith('/events')) matchedPath = '/events';
-    else if (path.startsWith('/groups')) matchedPath = '/groups';
+    else if (path.startsWith('/events') || path.startsWith('/groups')) matchedPath = '/discover';
     else if (path.startsWith('/profile')) matchedPath = '/profile';
     else if (path.startsWith('/admin')) matchedPath = '/admin';
 

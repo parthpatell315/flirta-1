@@ -64,6 +64,9 @@ exports.register = async (req, res) => {
 
     const userId = Number(userResult.lastInsertRowid);
 
+const { sanitizeCity } = require('../config/cities');
+    const safeCity = sanitizeCity(city);
+
     db.prepare(`
       INSERT INTO profiles (
         user_id, display_name, dob, age, city, preferred_language,
@@ -74,7 +77,7 @@ exports.register = async (req, res) => {
       displayName.trim(),
       dob,
       age,
-      (city || 'Ahmedabad').trim(),
+      safeCity,
       'Gujarati, Hindi',
       'Excited for Navratri 2026! Looking forward to energetic Raas and traditional Garba.',
       ['beginner', 'intermediate', 'advanced'].includes(garbaExperience) ? garbaExperience : 'intermediate'
