@@ -1,5 +1,11 @@
 const bcrypt = require('bcryptjs');
 const { getDb } = require('./database');
+const { seed1000Dancers } = require('./seed1000');
+const {
+  REAL_INDIAN_FEMALE_PHOTOS,
+  REAL_INDIAN_MALE_PHOTOS,
+  buildIndianPhotoUrl
+} = require('./indianPhotoLibrary');
 
 async function seed() {
   const db = getDb();
@@ -250,7 +256,7 @@ async function seed() {
     db.prepare('UPDATE subscription_plans SET can_see_all_photos = 1 WHERE price_inr >= 549').run();
   }
 
-  // 3. Seed Realistic Discoverable Dancers for Partner Matching
+  // 3. Seed Realistic Discoverable Dancers for Partner Matching (100% Verified Indian Portraits)
   const initialDancers = [
     {
       email: 'diya.shah@example.com',
@@ -264,10 +270,10 @@ async function seed() {
       bio: 'Lifelong Garba lover! Looking for an energetic partner to sync Dodhiya steps and celebrate Navratri with style.',
       hobbies: 'Chaniya Choli design, Folk Singing, Dhol beats',
       connectionTypes: ['partner', 'friendship'],
-      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[0], 0),
       extraPhotos: [
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+        buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[6], 1),
+        buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[8], 2)
       ]
     },
     {
@@ -282,9 +288,9 @@ async function seed() {
       bio: 'Vadodara Garba regular for 7 years. Ready with traditional Kediya. Need a dedicated partner for all 9 nights.',
       hobbies: 'Fitness, Photography, Folk Raas',
       connectionTypes: ['partner', 'friendship'],
-      photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[0], 0),
       extraPhotos: [
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'
+        buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[9], 1)
       ]
     },
     {
@@ -299,9 +305,9 @@ async function seed() {
       bio: 'Excited for Surat Garba! Love vibrant chaniyas, energetic music, and meeting friendly dance partners.',
       hobbies: 'Dance choreography, Coffee, Dandiya',
       connectionTypes: ['partner', 'friendship', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[1], 1),
       extraPhotos: [
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
+        buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[4], 2)
       ]
     },
     {
@@ -316,9 +322,9 @@ async function seed() {
       bio: 'Mumbai resident looking for a fun dance partner to groove together till midnight.',
       hobbies: 'Live music, Food walks, Badminton',
       connectionTypes: ['partner', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[1], 1),
       extraPhotos: [
-        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80'
+        buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[2], 2)
       ]
     },
     {
@@ -333,7 +339,7 @@ async function seed() {
       bio: 'Kathiyawadi Heech expert. Love high-energy dhol and fast-paced beats. Looking for my Garba partner!',
       hobbies: 'Traditional Art, Folk Dance, Dholak',
       connectionTypes: ['partner', 'friendship'],
-      photoUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[2], 2)
     },
     {
       email: 'kavya.verma@example.com',
@@ -347,9 +353,9 @@ async function seed() {
       bio: 'Passionate Garba dancer in Indore! Ready with authentic chaniya choli. Seeking an energetic dance partner for Navratri 2026.',
       hobbies: 'Folk Choreography, Fashion, Travel',
       connectionTypes: ['partner', 'friendship', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80',
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[3], 3),
       extraPhotos: [
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+        buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[5], 4)
       ]
     },
     {
@@ -364,7 +370,83 @@ async function seed() {
       bio: 'Gandhinagar resident eager for Navratri nights. Looking for a partner who loves vibrant Gujarati folk music.',
       hobbies: 'Dhol Beats, Fitness, Photography',
       connectionTypes: ['partner', 'dating'],
-      photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80'
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[3], 3)
+    },
+    {
+      email: 'aakash.parikh@example.com',
+      displayName: 'Aakash Parikh',
+      dob: '1998-05-18',
+      age: 28,
+      city: 'Ahmedabad',
+      garbaExperience: 'advanced',
+      danceStyle: '3-Taali, Dodhiya, Heech',
+      preferredLanguage: 'Gujarati, Hindi, English',
+      bio: 'Regular at GMDC and Rajpath Club. Looking for a synced Dodhiya partner to rock Navratri 2026.',
+      hobbies: 'Traditional Dandiya, Fitness, Music',
+      connectionTypes: ['partner', 'friendship'],
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[4], 4),
+      extraPhotos: [
+        buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[5], 5)
+      ]
+    },
+    {
+      email: 'tanvi.rawal@example.com',
+      displayName: 'Tanvi Rawal',
+      dob: '2000-10-10',
+      age: 26,
+      city: 'Vadodara',
+      garbaExperience: 'advanced',
+      danceStyle: 'United Way Traditional, 3-Taali',
+      preferredLanguage: 'Gujarati, Hindi, English',
+      bio: 'Vadodara United Way pass holder! Passionate about pure traditional steps and Gujarati culture.',
+      hobbies: 'Folk Singing, Photography, Design',
+      connectionTypes: ['partner', 'dating'],
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[7], 5),
+      extraPhotos: [
+        buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[9], 6)
+      ]
+    },
+    {
+      email: 'nidhi.vashi@example.com',
+      displayName: 'Nidhi Vashi',
+      dob: '2002-01-25',
+      age: 24,
+      city: 'Surat',
+      garbaExperience: 'intermediate',
+      danceStyle: 'Sarsana Style, Popat, 2-Taali',
+      preferredLanguage: 'Gujarati, Hindi',
+      bio: 'Surat cultural dancer! Love Dandiya Raas with energetic dhol rhythm.',
+      hobbies: 'Costume styling, Dandiya, Food',
+      connectionTypes: ['partner', 'friendship'],
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[10], 7)
+    },
+    {
+      email: 'jayesh.trivedi@example.com',
+      displayName: 'Jayesh Trivedi',
+      dob: '1999-03-30',
+      age: 27,
+      city: 'Bhavnagar',
+      garbaExperience: 'advanced',
+      danceStyle: 'Gohilwad Heech, 3-Taali',
+      preferredLanguage: 'Gujarati, Hindi',
+      bio: 'Bhavnagar local ready with vibrant Kediya. Love pure Kathiyawadi folk steps.',
+      hobbies: 'Dholak, Folk Raas, Fitness',
+      connectionTypes: ['partner', 'friendship'],
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_MALE_PHOTOS[6], 6)
+    },
+    {
+      email: 'hetal.rathod@example.com',
+      displayName: 'Hetal Rathod',
+      dob: '2002-06-19',
+      age: 24,
+      city: 'Jamnagar',
+      garbaExperience: 'intermediate',
+      danceStyle: 'Sanedo, 3-Taali, Dodhiya',
+      preferredLanguage: 'Gujarati, Hindi',
+      bio: 'Jamnagar Dandiya enthusiast. Seeking a fun dance companion for the 9 festive nights.',
+      hobbies: 'Bandhani Styling, Folk Music',
+      connectionTypes: ['partner', 'dating'],
+      photoUrl: buildIndianPhotoUrl(REAL_INDIAN_FEMALE_PHOTOS[11], 8)
     }
   ];
 
@@ -424,6 +506,51 @@ async function seed() {
         }
       }
     }
+  }
+
+  // Assign demo passes for immediate testing:
+  // Diya Shah -> Attraction Pass (₹749) with 3 boost credits and all photos unlocked
+  const diyaUser = db.prepare('SELECT id FROM users WHERE email = ?').get('diya.shah@example.com');
+  const attractionPlan = db.prepare("SELECT id FROM subscription_plans WHERE code = 'attraction'").get();
+  if (diyaUser && attractionPlan) {
+    const existingSub = db.prepare("SELECT id FROM user_subscriptions WHERE user_id = ? AND status = 'active'").get(diyaUser.id);
+    if (!existingSub) {
+      db.prepare(`
+        INSERT INTO user_subscriptions (user_id, plan_id, status, start_date, end_date, remaining_boosts)
+        VALUES (?, ?, 'active', CURRENT_TIMESTAMP, datetime('now', '+9 days'), 3)
+      `).run(diyaUser.id, attractionPlan.id);
+    }
+  }
+
+  // Rohan Patel -> Chemistry Pass (₹549) with all photos unlocked
+  const rohanUser = db.prepare('SELECT id FROM users WHERE email = ?').get('rohan.patel@example.com');
+  const chemistryPlan = db.prepare("SELECT id FROM subscription_plans WHERE code = 'chemistry'").get();
+  if (rohanUser && chemistryPlan) {
+    const existingSub = db.prepare("SELECT id FROM user_subscriptions WHERE user_id = ? AND status = 'active'").get(rohanUser.id);
+    if (!existingSub) {
+      db.prepare(`
+        INSERT INTO user_subscriptions (user_id, plan_id, status, start_date, end_date, remaining_boosts)
+        VALUES (?, ?, 'active', CURRENT_TIMESTAMP, datetime('now', '+9 days'), 1)
+      `).run(rohanUser.id, chemistryPlan.id);
+    }
+  }
+
+  // Test Profile -> Kavita Patel with Dream Match Pass
+  const testUser = db.prepare('SELECT id FROM users WHERE email = ?').get('test@flirta.in');
+  const dreamPlan = db.prepare("SELECT id FROM subscription_plans WHERE code = 'dream_match'").get();
+  if (testUser && dreamPlan) {
+    const existingSub = db.prepare("SELECT id FROM user_subscriptions WHERE user_id = ? AND status = 'active'").get(testUser.id);
+    if (!existingSub) {
+      db.prepare(`
+        INSERT INTO user_subscriptions (user_id, plan_id, status, start_date, end_date, remaining_boosts)
+        VALUES (?, ?, 'active', CURRENT_TIMESTAMP, datetime('now', '+30 days'), 8)
+      `).run(testUser.id, dreamPlan.id);
+    }
+  }
+
+  // 4. Seed up to 1000 authentic Indian dancer profiles (mostly girls) with real human photography
+  if (process.env.NODE_ENV !== 'test') {
+    await seed1000Dancers(db, 1000);
   }
 
   console.log('Seeding complete.');

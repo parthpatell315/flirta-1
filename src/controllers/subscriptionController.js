@@ -476,4 +476,179 @@ exports.handleWebhook = (req, res) => {
   }
 };
 
+// 8. Initiate PayU India Hosted Checkout
+exports.initiatePayU = (req, res) => {
+  try {
+    const db = getDb();
+    const userId = req.user.id;
+    const { planId, planCode } = req.body;
+
+    let plan = null;
+    if (planId) {
+      plan = db.prepare('SELECT * FROM subscription_plans WHERE id = ? AND is_active = 1').get(parseInt(planId, 10));
+    } else if (planCode) {
+      plan = db.prepare('SELECT * FROM subscription_plans WHERE code = ? AND is_active = 1').get(planCode.toLowerCase().trim());
+    }
+
+    if (!plan) {
+      return res.status(404).json({ error: 'Subscription plan not found or currently inactive.' });
+    }
+
+    const user = db.prepare('SELECT email FROM users WHERE id = ?').get(userId);
+    const profile = db.prepare('SELECT display_name FROM profiles WHERE user_id = ?').get(userId);
+    const firstname = (profile && profile.display_name ? profile.display_name.split(' ')[0] : 'Dancer').replace(/[^a-zA-Z0-9]/g, '') || 'Dancer';
+    const email = (user && user.email) ? user.email : 'dancer@flirta.in';
+
+    // Unique transaction ID for PayU
+    const txnid = `FLIRTA_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+    const amount = Number(plan.price_inr).toFixed(2);
+    const productinfo = `Flirta ${plan.name} Pass`;
+
+    const key = config.PAYU_MERCHANT_KEY;
+    const salt = config.PAYU_MERCHANT_SALT;
+    const actionUrl = config.PAYU_ENV === 'live' 
+      ? 'https://secure.payu.in/_payment' 
+      : 'https://test.payu.in/_payment';
+
+    const surl = `${config.BASE_URL}/api/subscriptions/payu/callback`;
+    const furl = `${config.BASE_URL}/api/subscriptions/payu/callback`;
+
+    // UDF parameters to track user and plan
+    const udf1 = String(userId);
+    const udf2 = String(plan.id);
+    const udf3 = String(plan.code);
+    const udf4 = '';
+    const udf5 = '';
+
+    // PayU Formula: sha512(key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5||||||SALT)
+    const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}||||||${salt}`;
+    const hash = crypto.createHash('sha512').update(hashString).digest('hex');
+
+    // Create payment transaction record in database
+    db.prepare(`
+      INSERT INTO payment_transactions (
+        user_id, plan_id, order_id, amount_inr, currency, status, payment_method
+      ) VALUES (?, ?, ?, ?, 'INR', 'created', 'PayU')
+    `).run(userId, plan.id, txnid, plan.price_inr);
+
+    return res.json({
+      success: true,
+      actionUrl,
+      params: {
+        key,
+        txnid,
+        amount,
+        productinfo,
+        firstname,
+        email,
+        phone: '9999999999',
+        surl,
+        furl,
+        hash,
+        udf1,
+        udf2,
+        udf3,
+        udf4,
+        udf5,
+        service_provider: 'payu_paisa'
+      }
+    });
+  } catch (err) {
+    console.error('initiatePayU error:', err);
+    return res.status(500).json({ error: 'Failed to initiate PayU payment session.' });
+  }
+};
+
+// 9. Handle PayU India Callback (surl / furl)
+exports.handlePayUCallback = (req, res) => {
+  try {
+    const db = getDb();
+    const {
+      key,
+      txnid,
+      amount,
+      productinfo,
+      firstname,
+      email,
+      status,
+      hash,
+      mihpayid,
+      udf1, // userId
+      udf2, // planId
+      udf3,
+      udf4,
+      udf5,
+      additionalCharges
+    } = req.body;
+
+    const salt = config.PAYU_MERCHANT_SALT;
+
+    // Verify reverse hash:
+    // sha512([additionalCharges|]SALT|status||||||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|key)
+    let hashSequence = '';
+    if (additionalCharges) {
+      hashSequence += `${additionalCharges}|`;
+    }
+    hashSequence += `${salt}|${status || ''}||||||${udf5 || ''}|${udf4 || ''}|${udf3 || ''}|${udf2 || ''}|${udf1 || ''}|${email || ''}|${firstname || ''}|${productinfo || ''}|${amount || ''}|${txnid || ''}|${key || ''}`;
+
+    const calculatedHash = crypto.createHash('sha512').update(hashSequence).digest('hex');
+    const isValidSignature = (hash && hash.toLowerCase() === calculatedHash.toLowerCase());
+
+    if (!isValidSignature && config.PAYU_ENV === 'live') {
+      console.error('PayU Callback Hash Mismatch:', { received: hash, calculated: calculatedHash });
+      return res.redirect(`/pricing?payu_status=failed&reason=Tampered+signature`);
+    }
+
+    const userId = parseInt(udf1, 10);
+    const planId = parseInt(udf2, 10);
+
+    if (status === 'success') {
+      const plan = db.prepare('SELECT * FROM subscription_plans WHERE id = ?').get(planId);
+      if (!plan) {
+        return res.redirect('/pricing?payu_status=failed&reason=Plan+not+found');
+      }
+
+      // Update payment_transactions
+      db.prepare(`
+        UPDATE payment_transactions
+        SET status = 'captured', payment_id = ?, signature = ?
+        WHERE order_id = ?
+      `).run(mihpayid || txnid, hash || 'payu_verified', txnid);
+
+      // Create or extend user subscription
+      const durationDays = plan.duration_days || 9;
+      const endDate = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString();
+
+      db.prepare(`
+        INSERT INTO user_subscriptions (
+          user_id, plan_id, status, start_date, end_date, remaining_boosts
+        ) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, ?, ?)
+      `).run(userId, plan.id, endDate, plan.boost_credits || 0);
+
+      // Log telemetry event
+      db.prepare(`
+        INSERT INTO analytics_events (user_id, event_name, event_payload)
+        VALUES (?, 'payu_subscription_activated', ?)
+      `).run(userId, JSON.stringify({ planCode: plan.code, price: plan.price_inr, txnid }));
+
+      return res.redirect(`/pricing?payu_status=success&plan=${encodeURIComponent(plan.name)}&amount=${plan.price_inr}`);
+    } else {
+      // Payment Failed or Cancelled
+      if (txnid) {
+        db.prepare(`
+          UPDATE payment_transactions
+          SET status = 'failed'
+          WHERE order_id = ?
+        `).run(txnid);
+      }
+
+      const errorMessage = req.body.error_Message || req.body.field9 || 'Payment was cancelled or rejected by PayU';
+      return res.redirect(`/pricing?payu_status=failed&reason=${encodeURIComponent(errorMessage)}`);
+    }
+  } catch (err) {
+    console.error('handlePayUCallback error:', err);
+    return res.redirect('/pricing?payu_status=failed&reason=Internal+processing+error');
+  }
+};
+
 module.exports.getUserActiveSubscription = getUserActiveSubscription;

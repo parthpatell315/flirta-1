@@ -18,6 +18,11 @@ const Discover = {
       return;
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('city')) {
+      this.filters.city = urlParams.get('city');
+    }
+
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container discovery-container">
@@ -37,6 +42,20 @@ const Discover = {
               Filters
             </button>
           </div>
+        </div>
+
+        <!-- Horizontal City-Wise Selector Chips -->
+        <div class="city-selector-bar" id="city-selector-strip">
+          <button class="city-chip ${!this.filters.city ? 'active' : ''}" data-city="" onclick="Discover.selectQuickCity('')">All Cities</button>
+          <button class="city-chip ${this.filters.city === 'Ahmedabad' ? 'active' : ''}" data-city="Ahmedabad" onclick="Discover.selectQuickCity('Ahmedabad')">Ahmedabad</button>
+          <button class="city-chip ${this.filters.city === 'Surat' ? 'active' : ''}" data-city="Surat" onclick="Discover.selectQuickCity('Surat')">Surat</button>
+          <button class="city-chip ${this.filters.city === 'Vadodara' ? 'active' : ''}" data-city="Vadodara" onclick="Discover.selectQuickCity('Vadodara')">Vadodara</button>
+          <button class="city-chip ${this.filters.city === 'Rajkot' ? 'active' : ''}" data-city="Rajkot" onclick="Discover.selectQuickCity('Rajkot')">Rajkot</button>
+          <button class="city-chip ${this.filters.city === 'Gandhinagar' ? 'active' : ''}" data-city="Gandhinagar" onclick="Discover.selectQuickCity('Gandhinagar')">Gandhinagar</button>
+          <button class="city-chip ${this.filters.city === 'Bhavnagar' ? 'active' : ''}" data-city="Bhavnagar" onclick="Discover.selectQuickCity('Bhavnagar')">Bhavnagar</button>
+          <button class="city-chip ${this.filters.city === 'Jamnagar' ? 'active' : ''}" data-city="Jamnagar" onclick="Discover.selectQuickCity('Jamnagar')">Jamnagar</button>
+          <button class="city-chip ${this.filters.city === 'Mumbai' ? 'active' : ''}" data-city="Mumbai" onclick="Discover.selectQuickCity('Mumbai')">Mumbai</button>
+          <button class="city-chip ${this.filters.city === 'Indore' ? 'active' : ''}" data-city="Indore" onclick="Discover.selectQuickCity('Indore')">Indore</button>
         </div>
 
         <!-- Filter Bar (Collapsed by default for clean mobile discovery) -->
@@ -180,6 +199,24 @@ const Discover = {
     }
   },
 
+  selectQuickCity(city) {
+    this.filters.city = city;
+    const cityEl = document.getElementById('filter-city');
+    if (cityEl) cityEl.value = city;
+    this.updateCityChipsUI();
+    this.updateFilterButtonBadge();
+    this.currentIndex = 0;
+    this.loadProfiles();
+  },
+
+  updateCityChipsUI() {
+    const chips = document.querySelectorAll('.city-chip');
+    chips.forEach(chip => {
+      const chipCity = chip.getAttribute('data-city') || '';
+      chip.classList.toggle('active', chipCity.toLowerCase() === (this.filters.city || '').toLowerCase());
+    });
+  },
+
   applyFilters() {
     const cityEl = document.getElementById('filter-city');
     const expEl = document.getElementById('filter-experience');
@@ -187,6 +224,7 @@ const Discover = {
     this.filters.city = cityEl ? cityEl.value : '';
     this.filters.experience = expEl ? expEl.value : '';
     this.filters.connection_type = connEl ? connEl.value : '';
+    this.updateCityChipsUI();
     this.updateFilterButtonBadge();
     this.currentIndex = 0;
     this.loadProfiles();
@@ -391,6 +429,7 @@ const Discover = {
     if (cityEl) cityEl.value = '';
     if (expEl) expEl.value = '';
     if (connEl) connEl.value = '';
+    this.updateCityChipsUI();
     this.updateFilterButtonBadge();
     this.currentIndex = 0;
     this.loadProfiles();

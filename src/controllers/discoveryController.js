@@ -14,11 +14,11 @@ exports.discoverProfiles = (req, res) => {
       min_age,
       max_age,
       page = 1,
-      limit = 20
+      limit = 1000
     } = req.query;
 
-    const offset = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(50, Math.max(1, parseInt(limit, 10)));
-    const pageLimit = Math.min(50, Math.max(1, parseInt(limit, 10)));
+    const offset = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(1000, Math.max(1, parseInt(limit, 10)));
+    const pageLimit = Math.min(1000, Math.max(1, parseInt(limit, 10)));
 
     let whereClause = `
       WHERE u.id != ?

@@ -57,71 +57,115 @@ const Landing = {
         </div>
 
         <!-- How Matching Works -->
-        <section style="margin: 60px 0;">
+        <section class="landing-section">
           <h2 class="section-title">How Flirta Works</h2>
           <p class="section-subtitle">Three simple steps to finding your ideal dance companion this festival season.</p>
           
           <div class="steps-grid">
             <div class="step-card">
               <div class="step-number">1</div>
-              <h3>Curate Your Dance Profile</h3>
-              <p>Share your favorite Garba steps (Dodhiya, Popat, 3-Taali), dance skill level, preferred cities, and whether you are seeking a dance partner, friends, or dating.</p>
+              <div>
+                <h3>Curate Your Dance Profile</h3>
+                <p>Share your favorite Garba steps (Dodhiya, Popat, 3-Taali), dance skill level, preferred cities, and whether you are seeking a dance partner, friends, or dating.</p>
+              </div>
             </div>
             <div class="step-card">
               <div class="step-number">2</div>
-              <h3>Discover & Connect</h3>
-              <p>Browse attendee profiles across Gujarat cities, Mumbai, and Indore. Send an interest with one tap.</p>
+              <div>
+                <h3>Discover & Connect</h3>
+                <p>Browse attendee profiles across Gujarat cities, Mumbai, and Indore. Send an interest with one tap.</p>
+              </div>
             </div>
             <div class="step-card">
               <div class="step-number">3</div>
-              <h3>Coordinate & Dance Raas</h3>
-              <p>When you both express interest, a mutual match unlocks private messaging to coordinate festive attire, meetups, and dance steps together.</p>
+              <div>
+                <h3>Coordinate & Dance Raas</h3>
+                <p>When you both express interest, a mutual match unlocks private messaging to coordinate festive attire, meetups, and dance steps together.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Find Garba Partners City-Wise -->
+        <section class="landing-section">
+          <h2 class="section-title">Explore Partners by City</h2>
+          <p class="section-subtitle">Find dedicated Garba dancers, coordinate attire, and enjoy 9 nights of Raas across Gujarat, Mumbai & Indore.</p>
+          <div class="city-cards-grid">
+            <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Ahmedabad')">
+              <h3 style="color: var(--color-primary);">Ahmedabad</h3>
+              <p>Heritage Garba & Mega Venues</p>
+              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+            </div>
+            <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Surat')">
+              <h3 style="color: var(--color-primary);">Surat</h3>
+              <p>High Energy & Vibrant Beats</p>
+              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+            </div>
+            <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Vadodara')">
+              <h3 style="color: var(--color-primary);">Vadodara</h3>
+              <p>Cultural Capital & United Way</p>
+              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+            </div>
+            <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Rajkot')">
+              <h3 style="color: var(--color-primary);">Rajkot</h3>
+              <p>Kathiyawadi Heech & Dhol</p>
+              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+            </div>
+            <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Mumbai')">
+              <h3 style="color: var(--color-primary);">Mumbai</h3>
+              <p>Dandiya Raas & Dome Nights</p>
+              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+            </div>
+            <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Indore')">
+              <h3 style="color: var(--color-primary);">Indore</h3>
+              <p>Sarafa Food & Festive Garba</p>
+              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
             </div>
           </div>
         </section>
 
         <!-- Safety & Privacy Guarantee -->
-        <section class="card" style="margin: 60px 0; background: linear-gradient(135deg, var(--color-primary-soft), var(--color-secondary-soft)); border: 1px solid var(--color-primary-border);">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; align-items: center;">
+        <section class="card landing-section safety-card-section" style="background: linear-gradient(135deg, var(--color-primary-soft), var(--color-secondary-soft)); border: 1px solid var(--color-primary-border);">
+          <div class="safety-grid">
             <div>
               <span class="partner-badge" style="margin-bottom: 12px; display: inline-block;">Community Integrity</span>
-              <h2 style="font-size: 1.9rem; margin-bottom: 14px;">Safety First, Always</h2>
-              <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
+              <h2 style="font-size: clamp(1.4rem, 4vw, 1.9rem); margin-bottom: 12px;">Safety First, Always</h2>
+              <p style="color: var(--color-text-secondary); margin-bottom: 14px;">
                 Flirta is committed to a respectful and safe cultural celebration:
               </p>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; color: var(--color-text-secondary); font-size: 0.94rem;">
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; color: var(--color-text-secondary); font-size: 0.92rem; padding: 0;">
                 <li><strong>Strict 18+ Verification:</strong> Minors are not permitted on the platform.</li>
                 <li><strong>Mutual Consent Messaging:</strong> Only mutual matches can send direct messages.</li>
                 <li><strong>Instant Block & Report:</strong> One-tap safety tools actively monitored by admins.</li>
                 <li><strong>Privacy Protection:</strong> Sensitive personal contact details are never made public.</li>
               </ul>
             </div>
-            <div style="text-align: center; padding: 20px;">
-              <h3 style="color: var(--color-primary); margin-bottom: 8px;">Garba First, Dating Optional</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Whether you want to sync steps, make festive friends, or find romance, your preferences are clearly honored.</p>
+            <div style="text-align: center; padding: 14px; background: rgba(255,255,255,0.7); border-radius: var(--radius-md);">
+              <h3 style="color: var(--color-primary); margin-bottom: 8px; font-size: 1.15rem;">Garba First, Dating Optional</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin: 0;">Whether you want to sync steps, make festive friends, or find romance, your preferences are clearly honored.</p>
             </div>
           </div>
         </section>
 
         <!-- FAQ Section -->
-        <section style="margin: 60px 0;">
+        <section class="landing-section">
           <h2 class="section-title">Frequently Asked Questions</h2>
-          <div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 30px auto 0;">
-            <div class="card" style="padding: 24px;">
-              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Is Flirta strictly for dating?</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
+          <div class="faq-list">
+            <div class="card faq-card">
+              <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-bottom: 6px;">Is Flirta strictly for dating?</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.92rem; margin: 0;">
                 No! Flirta is designed for discovering dance partners, making friends, and finding your festive match for Navratri. While you can opt into dating if interested, connection preferences are fully customizable.
               </p>
             </div>
-            <div class="card" style="padding: 24px;">
-              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Who can register on the platform?</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
+            <div class="card faq-card">
+              <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-bottom: 6px;">Who can register on the platform?</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.92rem; margin: 0;">
                 All participants must be at least 18 years of age. Birthdates and adult eligibility declarations are strictly checked upon account creation.
               </p>
             </div>
-            <div class="card" style="padding: 24px;">
-              <h3 style="font-size: 1.15rem; color: var(--color-primary); margin-bottom: 8px;">Can anyone message me directly?</h3>
-              <p style="color: var(--color-text-secondary); font-size: 0.94rem;">
+            <div class="card faq-card">
+              <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-bottom: 6px;">Can anyone message me directly?</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.92rem; margin: 0;">
                 No. Private messaging is exclusively unlocked when both dancers have sent mutual likes to one another, preventing unsolicited messages.
               </p>
             </div>
@@ -129,21 +173,21 @@ const Landing = {
         </section>
 
         <!-- Footer -->
-        <footer style="margin-top: 80px; padding: 40px 0 20px; border-top: 1px solid var(--color-border); text-align: center;">
-          <div style="margin-bottom: 16px; font-weight: 800; font-size: 1.3rem; color: var(--color-text-primary);">
+        <footer class="landing-footer">
+          <div style="margin-bottom: 12px; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary);">
             Flirta · Find Your Dream Garba Partner
           </div>
-          <p style="color: var(--color-text-secondary); font-size: 0.88rem; max-width: 600px; margin: 0 auto 18px;">
+          <p style="color: var(--color-text-secondary); font-size: 0.86rem; max-width: 600px; margin: 0 auto 16px;">
             Connecting Garba dancers across Gujarat cities, Mumbai, and Indore. Celebrating Gujarati heritage and safe festive togetherness.
           </p>
-          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; font-size: 0.85rem; font-weight: 600; color: var(--color-primary); margin-bottom: 20px;">
+          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 14px 18px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); margin-bottom: 16px;">
             <a href="javascript:void(0)" onclick="Legal.open('terms')">Terms of Service</a>
             <a href="javascript:void(0)" onclick="Legal.open('anti-escort')">Anti-Escort Policy</a>
             <a href="javascript:void(0)" onclick="Legal.open('privacy')">Privacy Policy</a>
             <a href="javascript:void(0)" onclick="Legal.open('safety')">Safety Guidelines</a>
             <a href="javascript:void(0)" onclick="Legal.open('grievance')">Grievance Redressal (IT Rules)</a>
           </div>
-          <p style="color: var(--color-text-muted); font-size: 0.78rem;">© 2026 Flirta. All rights reserved. Intermediary safe harbour under Section 79 IT Act 2000.</p>
+          <p style="color: var(--color-text-muted); font-size: 0.76rem; margin: 0;">© 2026 Flirta. All rights reserved. Intermediary safe harbour under Section 79 IT Act 2000.</p>
         </footer>
       </div>
     `;

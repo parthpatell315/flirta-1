@@ -253,4 +253,66 @@ test('Flirta Subscription & Monetization Test Suite', async (t) => {
       assert.ok(profileWithMultiple.photos.length > 1);
     }
   });
+
+  await t.test('PayU initiate creates valid transaction, parameters and SHA-512 signature', async () => {
+    const payuUser = await createSubscriberUser('payu_tester');
+    const initRes = await request(app)
+      .post('/api/subscriptions/payu/initiate')
+      .set('Authorization', `Bearer ${payuUser.token}`)
+      .send({ planCode: 'spark' });
+
+    assert.equal(initRes.status, 200);
+    assert.equal(initRes.body.success, true);
+    assert.ok(initRes.body.actionUrl);
+    assert.ok(initRes.body.params);
+    assert.equal(initRes.body.params.amount, '249.00');
+    assert.equal(initRes.body.params.productinfo, 'Flirta Spark Pass');
+    assert.ok(initRes.body.params.txnid.startsWith('FLIRTA_'));
+    assert.ok(initRes.body.params.hash.length === 128); // 128 hex chars for SHA512
+  });
+
+  await t.test('PayU callback verifies signature and activates festival subscription pass', async () => {
+    const payuUser = await createSubscriberUser('payu_callback_tester');
+    const initRes = await request(app)
+      .post('/api/subscriptions/payu/initiate')
+      .set('Authorization', `Bearer ${payuUser.token}`)
+      .send({ planCode: 'chemistry' });
+
+    assert.equal(initRes.status, 200);
+    const p = initRes.body.params;
+
+    // Build valid reverse hash: sha512(SALT|status||||||udf5|udf4|udf3|udf2|udf1|email|firstname|productinfo|amount|txnid|key)
+    const crypto = require('crypto');
+    const { PAYU_MERCHANT_KEY, PAYU_MERCHANT_SALT } = require('../src/config/config');
+    const cbHashString = `${PAYU_MERCHANT_SALT}|success||||||${p.udf5 || ''}|${p.udf4 || ''}|${p.udf3 || ''}|${p.udf2 || ''}|${p.udf1 || ''}|${p.email}|${p.firstname}|${p.productinfo}|${p.amount}|${p.txnid}|${PAYU_MERCHANT_KEY}`;
+    const cbHash = crypto.createHash('sha512').update(cbHashString).digest('hex');
+
+    const cbRes = await request(app)
+      .post('/api/subscriptions/payu/callback')
+      .type('form')
+      .send({
+        status: 'success',
+        txnid: p.txnid,
+        amount: p.amount,
+        productinfo: p.productinfo,
+        firstname: p.firstname,
+        email: p.email,
+        udf1: p.udf1,
+        udf2: p.udf2,
+        hash: cbHash
+      });
+
+    // Should redirect to pricing page with success status
+    assert.equal(cbRes.status, 302);
+    assert.ok(cbRes.headers.location.includes('payu_status=success'));
+
+    // Verify user now has Chemistry active via discovery
+    const discRes = await request(app)
+      .get('/api/discovery')
+      .set('Authorization', `Bearer ${payuUser.token}`);
+
+    assert.equal(discRes.status, 200);
+    assert.equal(discRes.body.user_subscription.can_see_primary_photo, true);
+    assert.equal(discRes.body.user_subscription.can_see_all_photos, true);
+  });
 });

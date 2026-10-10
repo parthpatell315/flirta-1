@@ -14,7 +14,9 @@ router.post('/verify-payment', requireAuth, actionLimiter, subscriptionControlle
 router.get('/likes-received', requireAuth, subscriptionController.getLikesReceived);
 router.post('/boost', requireAuth, actionLimiter, subscriptionController.activateBoost);
 
-// Webhook
+// Webhook & PayU Gateway
 router.post('/webhook', subscriptionController.handleWebhook);
+router.post('/payu/initiate', requireAuth, actionLimiter, subscriptionController.initiatePayU);
+router.post('/payu/callback', subscriptionController.handlePayUCallback);
 
 module.exports = router;

@@ -51,7 +51,7 @@ app.get('/api/health', (req, res) => {
 
 // Single Page Application fallback for frontend routes
 app.use((req, res, next) => {
-  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+  if ((req.method === 'GET' || req.method === 'HEAD') && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
     return res.sendFile(path.join(__dirname, '../public/index.html'));
   }
   next();

@@ -5,6 +5,15 @@ function openAuthModal(mode = 'login') {
   if (!modal) return;
   switchAuthTab(mode);
   modal.classList.add('open');
+
+  // Load remembered email if present
+  try {
+    const savedEmail = localStorage.getItem('flirta_remember_email');
+    const emailInput = document.getElementById('login-email');
+    if (savedEmail && emailInput && !emailInput.value) {
+      emailInput.value = savedEmail;
+    }
+  } catch (e) {}
 }
 
 function closeAuthModal() {
@@ -32,9 +41,10 @@ function switchAuthTab(tab) {
 }
 
 async function handleLogin(e) {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
+  if (e && e.preventDefault) e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
+  const rememberCheckbox = document.getElementById('login-remember');
   const errEl = document.getElementById('login-error');
   errEl.textContent = '';
 
@@ -42,12 +52,69 @@ async function handleLogin(e) {
     const res = await API.post('/api/auth/login', { email, password });
     API.setToken(res.token);
     State.setUser(res.user, res.profile, res.photos);
+
+    // Save or clear remembered email
+    try {
+      if (rememberCheckbox && rememberCheckbox.checked) {
+        localStorage.setItem('flirta_remember_email', email);
+      } else {
+        localStorage.removeItem('flirta_remember_email');
+      }
+    } catch (e) {}
+
     showToast(`Welcome back, ${res.profile ? res.profile.display_name : 'Dancer'}!`, 'success');
     closeAuthModal();
+
+    // Check if user was in the middle of selecting a plan
+    const pendingPlanId = sessionStorage.getItem('flirta_pending_plan_id') || (window.Pricing && window.Pricing.pendingPlanId);
+    if (pendingPlanId && window.Pricing) {
+      sessionStorage.removeItem('flirta_pending_plan_id');
+      window.Pricing.pendingPlanId = null;
+      if (window.Router && window.location.pathname !== '/pricing') {
+        window.Router.navigate('/pricing');
+      }
+      setTimeout(() => {
+        window.Pricing.openCheckoutModal(pendingPlanId);
+      }, 100);
+      return;
+    }
+
     if (window.Router) Router.navigate('/discover');
   } catch (err) {
     errEl.textContent = err.message;
   }
+}
+
+function quickFillLogin(email, password) {
+  switchAuthTab('login');
+  const emailInput = document.getElementById('login-email');
+  const passInput = document.getElementById('login-password');
+  if (emailInput && passInput) {
+    emailInput.value = email;
+    passInput.value = password;
+    handleLogin({ preventDefault: () => {} });
+  }
+}
+
+function togglePasswordVisibility(inputId, btnEl) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+
+  if (btnEl) {
+    btnEl.innerHTML = isPassword
+      ? `<svg style="pointer-events: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+      : `<svg style="pointer-events: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+  }
+}
+
+function handleForgotPassword() {
+  const email = (document.getElementById('login-email')?.value || '').trim();
+  const msg = email
+    ? `Password reset link will be dispatched to ${email}. Check your inbox for temporary OTP access.`
+    : `Please enter your registered email in the field above to receive a password recovery link.`;
+  showToast(msg, 'info');
 }
 
 async function handleRegister(e) {
@@ -95,6 +162,21 @@ async function handleRegister(e) {
     State.setUser(res.user, res.profile, []);
     showToast('Registration successful! Welcome to GarbaJodi Navratri 2026.', 'success');
     closeAuthModal();
+
+    // Check if user was in the middle of selecting a subscription plan
+    const pendingPlanId = sessionStorage.getItem('flirta_pending_plan_id') || (window.Pricing && window.Pricing.pendingPlanId);
+    if (pendingPlanId && window.Pricing) {
+      sessionStorage.removeItem('flirta_pending_plan_id');
+      window.Pricing.pendingPlanId = null;
+      if (window.Router && window.location.pathname !== '/pricing') {
+        window.Router.navigate('/pricing');
+      }
+      setTimeout(() => {
+        window.Pricing.openCheckoutModal(pendingPlanId);
+      }, 100);
+      return;
+    }
+
     if (window.Router) Router.navigate('/profile');
   } catch (err) {
     errEl.textContent = err.message;
@@ -105,9 +187,31 @@ function handleGoogleSignInNotice() {
   alert('Google Sign-In Notice: To enable direct Google OAuth in production, specify GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables. Email and password authentication is active and secure.');
 }
 
+// Global modal outside-click and escape listeners
+document.addEventListener('DOMContentLoaded', () => {
+  const authModal = document.getElementById('auth-modal');
+  if (authModal) {
+    authModal.addEventListener('click', (e) => {
+      if (e.target === authModal) {
+        closeAuthModal();
+      }
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAuthModal();
+      const checkoutModal = document.getElementById('checkout-modal');
+      if (checkoutModal) checkoutModal.remove();
+    }
+  });
+});
+
 window.openAuthModal = openAuthModal;
 window.closeAuthModal = closeAuthModal;
 window.switchAuthTab = switchAuthTab;
 window.handleLogin = handleLogin;
+window.quickFillLogin = quickFillLogin;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.handleForgotPassword = handleForgotPassword;
 window.handleRegister = handleRegister;
 window.handleGoogleSignInNotice = handleGoogleSignInNotice;

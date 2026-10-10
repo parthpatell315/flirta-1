@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const request = require('supertest');
 const app = require('../src/app');
 const { getDb } = require('../src/db/database');
+const { seed } = require('../src/db/seed');
 
 async function createTestUser(suffix) {
   const email = `safety_user_${suffix}_${Date.now()}@example.com`;
@@ -21,6 +22,7 @@ async function createTestUser(suffix) {
 
 test('GarbaJodi Safety & Admin Test Suite', async (t) => {
   getDb();
+  await seed();
   const reporter = await createTestUser('reporter');
   const offender = await createTestUser('offender');
 
