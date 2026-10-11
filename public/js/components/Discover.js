@@ -105,7 +105,7 @@ const Discover = {
         <!-- Card Deck View -->
         <div id="discover-card-area">
           <div style="text-align: center; padding: 60px 20px;">
-            <p style="color: var(--color-primary);">Loading dancers...</p>
+            <p style="color: var(--color-primary);">Finding your matches...</p>
           </div>
         </div>
       </div>
@@ -261,7 +261,7 @@ const Discover = {
         <div class="card" style="text-align: center; padding: 50px 20px;">
           <h2 style="font-size: 1.6rem; margin-bottom: 12px;">You've Caught Up!</h2>
           <p style="color: var(--color-text-secondary); max-width: 440px; margin: 0 auto 24px;">
-            You have reviewed all available Garba profiles matching your current filters. Adjust your filters to meet more dancers!
+            You have reviewed all available Garba profiles matching your current filters. Adjust your filters to discover more matches!
           </p>
           <div style="display: flex; gap: 12px; justify-content: center;">
             <button class="btn btn-secondary" onclick="Discover.resetFilters()">Clear Filters</button>
@@ -319,11 +319,19 @@ const Discover = {
 
           <div class="partner-card-overlay">
             <div>
-              <div class="partner-card-name">${p.display_name}, ${p.age}</div>
+              <div class="partner-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span>${p.display_name}, ${p.age}</span>
+                ${(p.auth_provider === 'google' || p.is_phone_verified) ? `
+                  <span class="badge" title="Verified Member" style="background: rgba(16, 185, 129, 0.95); color: #FFFFFF; font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; letter-spacing: 0.02em; text-shadow: none;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    ${p.auth_provider === 'google' ? 'Google Verified' : 'Verified'}
+                  </span>
+                ` : ''}
+              </div>
               <div class="partner-card-meta">
                 <span>${p.city}</span>
                 <span>·</span>
-                <span style="text-transform: capitalize;">${p.garba_experience} Dancer</span>
+                <span style="text-transform: capitalize;">${p.garba_experience} Garba Partner</span>
               </div>
             </div>
             <span class="partner-badge">Navratri 2026</span>
@@ -491,7 +499,7 @@ const Discover = {
   },
 
   promptExploreAllPhotos(name, count) {
-    if (confirm(`Want to explore all ${count} photos of ${name}?\n\nUpgrade to the Chemistry Plan (₹549) to unlock the full dancer photo gallery and see who liked you!`)) {
+    if (confirm(`Want to explore all ${count} photos of ${name}?\n\nUpgrade to the Chemistry Plan (₹549) to unlock all photos of your match and see who liked you!`)) {
       Router.navigate('/pricing');
     }
   },

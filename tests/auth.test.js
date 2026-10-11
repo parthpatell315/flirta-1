@@ -124,4 +124,72 @@ test('GarbaJodi Auth & Eligibility Test Suite', async (t) => {
     assert.equal(adminRes.status, 403);
     assert.match(adminRes.body.error, /Administrator privileges required/i);
   });
+
+  await t.test('Password less than 8 chars or missing numbers/letters is rejected', async () => {
+    // Too short (7 chars)
+    const shortRes = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: `short_${Date.now()}@example.com`,
+        password: 'Pass123',
+        displayName: 'Short Password',
+        dob: '2000-01-01',
+        isAdultConfirmed: true,
+        city: 'Ahmedabad'
+      });
+    assert.equal(shortRes.status, 400);
+    assert.match(shortRes.body.error, /at least 8 characters/i);
+
+    // Missing numbers
+    const noNumRes = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: `nonum_${Date.now()}@example.com`,
+        password: 'PasswordOnly',
+        displayName: 'No Number',
+        dob: '2000-01-01',
+        isAdultConfirmed: true,
+        city: 'Ahmedabad'
+      });
+    assert.equal(noNumRes.status, 400);
+    assert.match(noNumRes.body.error, /at least one letter and one number/i);
+  });
+
+  await t.test('Auth config endpoint returns public security configuration', async () => {
+    const res = await request(app).get('/api/auth/config');
+    assert.equal(res.status, 200);
+    assert.equal(typeof res.body.enableDemoLogin, 'boolean');
+    assert.equal(typeof res.body.turnstileSiteKey, 'string');
+    assert.equal(typeof res.body.googleClientId, 'string');
+  });
+
+  await t.test('Google Auth flow: authenticates user, auto-provisions profile, and issues JWT', async () => {
+    const googleEmail = `google_test_${Date.now()}@flirta.network`;
+    const googleRes = await request(app)
+      .post('/api/auth/google')
+      .send({
+        credential: 'mock_google_token',
+        mockEmail: googleEmail,
+        mockName: 'Aanya Google'
+      });
+
+    assert.equal(googleRes.status, 200);
+    assert.ok(googleRes.body.token);
+    assert.equal(googleRes.body.user.email, googleEmail);
+    assert.equal(googleRes.body.user.role, 'user');
+    assert.equal(googleRes.body.profile.display_name, 'Aanya Google');
+    assert.equal(googleRes.body.profile.is_adult_verified, 1);
+
+    // Subsequent Google login for existing user returns same account
+    const secondLogin = await request(app)
+      .post('/api/auth/google')
+      .send({
+        credential: 'mock_google_token',
+        mockEmail: googleEmail
+      });
+
+    assert.equal(secondLogin.status, 200);
+    assert.ok(secondLogin.body.token);
+    assert.equal(secondLogin.body.user.id, googleRes.body.user.id);
+  });
 });

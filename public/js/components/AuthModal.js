@@ -1,4 +1,177 @@
-// GarbaJodi Auth Modal Component
+// Flirta Auth Modal Component (Email, Secure Password & Google Authentication)
+
+let authConfig = {
+  enableDemoLogin: false,
+  turnstileSiteKey: '',
+  googleClientId: ''
+};
+let turnstileWidgetId = null;
+
+async function fetchAuthConfig() {
+  try {
+    const res = await API.get('/api/auth/config');
+    authConfig = res || { enableDemoLogin: false, turnstileSiteKey: '', googleClientId: '' };
+    renderDemoAccountsUI();
+    initTurnstileIfNeeded();
+    initGoogleIdentity();
+  } catch (err) {
+    console.debug('Could not load auth config:', err);
+  }
+}
+
+function renderDemoAccountsUI() {
+  const container = document.getElementById('demo-accounts-container');
+  if (!container) return;
+
+  if (authConfig.enableDemoLogin) {
+    container.style.display = 'block';
+    container.innerHTML = `
+      <div style="font-size: 0.74rem; font-weight: 700; color: #b45309; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
+        Developer Demo Accounts (Non-Production Only):
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillLogin('test@flirta.in', 'TestPassword123')">Test Account</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillLogin('diya.shah@example.com', 'Dancer2026!')">Diya</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillLogin('rohan.mehta@example.com', 'Dancer2026!')">Rohan</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillLogin('admin@garbajodi.com', 'AdminGarba2026!')">Admin</button>
+      </div>
+    `;
+  } else {
+    container.style.display = 'none';
+    container.innerHTML = '';
+  }
+}
+
+function initTurnstileIfNeeded() {
+  if (!authConfig.turnstileSiteKey) return;
+  if (document.getElementById('cloudflare-turnstile-script')) return;
+
+  const script = document.createElement('script');
+  script.id = 'cloudflare-turnstile-script';
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.async = true;
+  script.defer = true;
+  script.onload = () => {
+    renderTurnstileWidget();
+  };
+  document.head.appendChild(script);
+}
+
+function renderTurnstileWidget() {
+  const target = document.getElementById('turnstile-signup-widget');
+  if (target && window.turnstile && authConfig.turnstileSiteKey && turnstileWidgetId === null) {
+    try {
+      turnstileWidgetId = window.turnstile.render('#turnstile-signup-widget', {
+        sitekey: authConfig.turnstileSiteKey,
+        theme: 'light'
+      });
+    } catch (e) {
+      console.debug('Turnstile render error:', e);
+    }
+  }
+}
+
+// Google Identity Services (GIS) Integration
+function initGoogleIdentity() {
+  if (!authConfig.googleClientId) return;
+
+  const checkGsi = () => {
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: authConfig.googleClientId,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+      } catch (e) {
+        console.debug('Google GIS init error:', e);
+      }
+    } else {
+      setTimeout(checkGsi, 200);
+    }
+  };
+
+  checkGsi();
+}
+
+async function handleGoogleCredentialResponse(response) {
+  if (!response || !response.credential) {
+    showToast('Google sign-in was cancelled or failed.', 'error');
+    return;
+  }
+
+  try {
+    const res = await API.post('/api/auth/google', { credential: response.credential });
+    completeAuthSuccess(res);
+  } catch (err) {
+    showToast(err.message || 'Google authentication failed.', 'error');
+  }
+}
+
+async function handleGoogleSignIn() {
+  // If Google Client ID is configured and GIS is available
+  if (authConfig.googleClientId && window.google && window.google.accounts && window.google.accounts.id) {
+    try {
+      window.google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // If One Tap is skipped/blocked, navigate to standard OAuth flow
+          window.location.href = '/api/auth/google';
+        }
+      });
+      return;
+    } catch (e) {
+      console.debug('Google prompt error, falling back to redirect:', e);
+      window.location.href = '/api/auth/google';
+      return;
+    }
+  }
+
+  // If GOOGLE_CLIENT_ID is not configured in .env yet:
+  // Provide clear instructions + instant developer/test login
+  const testEmail = prompt(
+    'Google Sign-In Configuration Notice:\n\n' +
+    'To enable live Google OAuth in production, specify GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your .env file.\n\n' +
+    'For instant testing right now, enter your test Google email (or click OK to use default):',
+    'user.google@flirta.network'
+  );
+
+  if (!testEmail) return;
+
+  try {
+    const res = await API.post('/api/auth/google', {
+      mockEmail: testEmail.trim(),
+      mockName: testEmail.split('@')[0],
+      isMock: true
+    });
+    completeAuthSuccess(res);
+  } catch (err) {
+    showToast(err.message || 'Google sign-in failed.', 'error');
+  }
+}
+
+function completeAuthSuccess(res) {
+  API.setToken(res.token);
+  State.setUser(res.user, res.profile, res.photos || []);
+  showToast(res.message || `Welcome to Flirta, ${res.profile?.display_name || 'Friend'}!`, 'success');
+  closeAuthModal();
+
+  // Check if user was in the middle of selecting a plan
+  const pendingPlanId = sessionStorage.getItem('flirta_pending_plan_id') || (window.Pricing && window.Pricing.pendingPlanId);
+  if (pendingPlanId && window.Pricing) {
+    sessionStorage.removeItem('flirta_pending_plan_id');
+    window.Pricing.pendingPlanId = null;
+    if (window.Router && window.location.pathname !== '/pricing') {
+      window.Router.navigate('/pricing');
+    }
+    setTimeout(() => {
+      window.Pricing.openCheckoutModal(pendingPlanId);
+    }, 100);
+    return;
+  }
+
+  if (window.Router) Router.navigate('/discover');
+}
 
 function openAuthModal(mode = 'login') {
   const modal = document.getElementById('auth-modal');
@@ -14,6 +187,8 @@ function openAuthModal(mode = 'login') {
       emailInput.value = savedEmail;
     }
   } catch (e) {}
+
+  fetchAuthConfig();
 }
 
 function closeAuthModal() {
@@ -27,16 +202,14 @@ function switchAuthTab(tab) {
   const loginTabBtn = document.getElementById('tab-login-btn');
   const regTabBtn = document.getElementById('tab-reg-btn');
 
-  if (tab === 'login') {
-    loginForm.style.display = 'block';
-    registerForm.style.display = 'none';
-    loginTabBtn.classList.add('active');
-    regTabBtn.classList.remove('active');
-  } else {
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'block';
-    loginTabBtn.classList.remove('active');
-    regTabBtn.classList.add('active');
+  if (loginForm) loginForm.style.display = tab === 'login' ? 'block' : 'none';
+  if (registerForm) registerForm.style.display = tab === 'register' ? 'block' : 'none';
+
+  if (loginTabBtn) loginTabBtn.classList.toggle('active', tab === 'login');
+  if (regTabBtn) regTabBtn.classList.toggle('active', tab === 'register');
+
+  if (tab === 'register') {
+    renderTurnstileWidget();
   }
 }
 
@@ -46,7 +219,7 @@ async function handleLogin(e) {
   const password = document.getElementById('login-password').value;
   const rememberCheckbox = document.getElementById('login-remember');
   const errEl = document.getElementById('login-error');
-  errEl.textContent = '';
+  if (errEl) errEl.textContent = '';
 
   try {
     const res = await API.post('/api/auth/login', { email, password });
@@ -62,7 +235,7 @@ async function handleLogin(e) {
       }
     } catch (e) {}
 
-    showToast(`Welcome back, ${res.profile ? res.profile.display_name : 'Dancer'}!`, 'success');
+    showToast(`Welcome back, ${res.profile ? res.profile.display_name : 'Friend'}!`, 'success');
     closeAuthModal();
 
     // Check if user was in the middle of selecting a plan
@@ -81,11 +254,15 @@ async function handleLogin(e) {
 
     if (window.Router) Router.navigate('/discover');
   } catch (err) {
-    errEl.textContent = err.message;
+    if (errEl) errEl.textContent = err.message;
   }
 }
 
 function quickFillLogin(email, password) {
+  if (!authConfig.enableDemoLogin) {
+    showToast('Demo login is disabled in this environment.', 'error');
+    return;
+  }
   switchAuthTab('login');
   const emailInput = document.getElementById('login-email');
   const passInput = document.getElementById('login-password');
@@ -112,29 +289,39 @@ function togglePasswordVisibility(inputId, btnEl) {
 function handleForgotPassword() {
   const email = (document.getElementById('login-email')?.value || '').trim();
   const msg = email
-    ? `Password reset link will be dispatched to ${email}. Check your inbox for temporary OTP access.`
-    : `Please enter your registered email in the field above to receive a password recovery link.`;
+    ? `Password recovery instructions dispatched to ${email}. Check your inbox.`
+    : `Please enter your registered email in the field above to receive a recovery link.`;
   showToast(msg, 'info');
 }
 
 async function handleRegister(e) {
   e.preventDefault();
-  const displayName = document.getElementById('reg-name').value;
-  const email = document.getElementById('reg-email').value;
+  const displayName = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
   const dob = document.getElementById('reg-dob').value;
   const city = document.getElementById('reg-city').value;
   const experience = document.getElementById('reg-experience').value;
   const isAdultConfirmed = document.getElementById('reg-adult-confirm').checked;
   const errEl = document.getElementById('reg-error');
-  errEl.textContent = '';
+  if (errEl) errEl.textContent = '';
 
   if (!isAdultConfirmed) {
-    errEl.textContent = 'You must confirm you are at least 18 years old to join GarbaJodi.';
+    if (errEl) errEl.textContent = 'You must confirm you are at least 18 years old and agree to the Terms, Privacy Policy and Anti-Escort Policy.';
     return;
   }
 
-  // Calculate age client-side for immediate feedback
+  // Password Hardening Validation
+  if (password.length < 8) {
+    if (errEl) errEl.textContent = 'Password must be at least 8 characters long.';
+    return;
+  }
+  if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+    if (errEl) errEl.textContent = 'Password must include both letters and numbers for account security.';
+    return;
+  }
+
+  // Strict DOB Age Verification Client-Side
   const birthDate = new Date(dob);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
@@ -142,9 +329,17 @@ async function handleRegister(e) {
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  if (age < 18) {
-    errEl.textContent = 'Eligibility requirement: You must be at least 18 years old to register.';
+  if (isNaN(age) || age < 18) {
+    if (errEl) errEl.textContent = 'Eligibility requirement: You must be at least 18 years old to join Flirta.';
     return;
+  }
+
+  // Get Turnstile token if enabled
+  let turnstileToken = '';
+  if (window.turnstile && turnstileWidgetId !== null) {
+    try {
+      turnstileToken = window.turnstile.getResponse(turnstileWidgetId);
+    } catch (e) {}
   }
 
   try {
@@ -155,40 +350,20 @@ async function handleRegister(e) {
       dob,
       city,
       garbaExperience: experience,
-      isAdultConfirmed
+      isAdultConfirmed,
+      turnstileToken
     });
 
-    API.setToken(res.token);
-    State.setUser(res.user, res.profile, []);
-    showToast('Registration successful! Welcome to GarbaJodi Navratri 2026.', 'success');
-    closeAuthModal();
-
-    // Check if user was in the middle of selecting a subscription plan
-    const pendingPlanId = sessionStorage.getItem('flirta_pending_plan_id') || (window.Pricing && window.Pricing.pendingPlanId);
-    if (pendingPlanId && window.Pricing) {
-      sessionStorage.removeItem('flirta_pending_plan_id');
-      window.Pricing.pendingPlanId = null;
-      if (window.Router && window.location.pathname !== '/pricing') {
-        window.Router.navigate('/pricing');
-      }
-      setTimeout(() => {
-        window.Pricing.openCheckoutModal(pendingPlanId);
-      }, 100);
-      return;
-    }
-
-    if (window.Router) Router.navigate('/profile');
+    completeAuthSuccess(res);
   } catch (err) {
-    errEl.textContent = err.message;
+    if (errEl) errEl.textContent = err.message;
   }
-}
-
-function handleGoogleSignInNotice() {
-  alert('Google Sign-In Notice: To enable direct Google OAuth in production, specify GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables. Email and password authentication is active and secure.');
 }
 
 // Global modal outside-click and escape listeners
 document.addEventListener('DOMContentLoaded', () => {
+  fetchAuthConfig();
+
   const authModal = document.getElementById('auth-modal');
   if (authModal) {
     authModal.addEventListener('click', (e) => {
@@ -214,4 +389,5 @@ window.quickFillLogin = quickFillLogin;
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.handleForgotPassword = handleForgotPassword;
 window.handleRegister = handleRegister;
-window.handleGoogleSignInNotice = handleGoogleSignInNotice;
+window.handleGoogleSignIn = handleGoogleSignIn;
+window.handleGoogleCredentialResponse = handleGoogleCredentialResponse;

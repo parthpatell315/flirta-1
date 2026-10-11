@@ -12,17 +12,21 @@ async function seed() {
   console.log('Seeding initial data...');
 
   // 1. Seed Admin user if not exists
-  const adminEmail = 'admin@garbajodi.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@garbajodi.com';
   const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(adminEmail);
 
   let adminId;
   if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash('AdminGarba2026!', 10);
-    const result = db.prepare(`
-      INSERT INTO users (email, password_hash, role, status)
-      VALUES (?, ?, 'admin', 'active')
-    `).run(adminEmail, passwordHash);
-    adminId = Number(result.lastInsertRowid);
+    const adminPassword = process.env.ADMIN_PASSWORD || (process.env.NODE_ENV === 'production' ? null : 'AdminGarba2026!');
+    if (!adminPassword) {
+      console.warn('Production security: ADMIN_PASSWORD env variable is not set. Skipping default admin account creation.');
+    } else {
+      const passwordHash = await bcrypt.hash(adminPassword, 12);
+      const result = db.prepare(`
+        INSERT INTO users (email, password_hash, role, status)
+        VALUES (?, ?, 'admin', 'active')
+      `).run(adminEmail, passwordHash);
+      adminId = Number(result.lastInsertRowid);
 
     // Create Admin Profile
     db.prepare(`
@@ -46,7 +50,8 @@ async function seed() {
       0, // not discoverable in user dating/matching pool
       1
     );
-    console.log('Admin account created: admin@garbajodi.com');
+    console.log('Admin account created: ' + adminEmail);
+    }
   } else {
     adminId = existingAdmin.id;
   }
@@ -162,7 +167,7 @@ async function seed() {
         is_popular: 0,
         features_json: JSON.stringify([
           'Discover local cultural dance enthusiasts',
-          'Unlock 1 profile photo per dancer',
+          'Unlock 1 profile photo for your match',
           'Set preferences for age, location, and dance style',
           '25 daily interest expressions (likes)',
           'Filter by Navratri event dates',
@@ -183,7 +188,7 @@ async function seed() {
         is_popular: 1,
         features_json: JSON.stringify([
           'Everything included in Spark',
-          'Explore all photos & full dancer photo gallery',
+          'Explore all photos & full photo gallery of your match',
           '60 daily interest expressions',
           'See who liked you (Instant Mutual Matching)',
           'Advanced community filters',
@@ -205,7 +210,7 @@ async function seed() {
         is_popular: 0,
         features_json: JSON.stringify([
           'Everything included in Chemistry',
-          'Explore all photos & full dancer photo gallery',
+          'Explore all photos & full photo gallery of your match',
           '120 daily interest expressions',
           '3 Profile Boost Credits (High Visibility)',
           'Enhanced partner matching algorithm',
@@ -227,7 +232,7 @@ async function seed() {
         is_popular: 0,
         features_json: JSON.stringify([
           'Everything included in Attraction',
-          'Explore all photos & full dancer photo gallery',
+          'Explore all photos & full photo gallery of your match',
           'Unlimited daily likes & interest expressions',
           '8 Profile Boost Credits for peak Navratri nights',
           'Top priority visibility in discovery deck',

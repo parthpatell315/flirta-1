@@ -323,7 +323,7 @@ const Pricing = {
             ${durationLabel}
           </div>
           <div style="font-size: 0.84rem; color: var(--color-text-secondary); line-height: 1.45;">
-            Includes ${this.durationMode === 'single' ? '1 night' : '9 nights'} active festival access · ${plan.price_inr >= 549 ? 'Explore all dancer photos' : '1 clear profile photo unlocked'} · ${plan.daily_likes_limit === -1 ? 'Unlimited' : plan.daily_likes_limit} daily interest allowances · ${plan.can_see_likes ? 'Who Liked You unlocked' : 'Basic discovery'} · ${plan.boost_credits} profile boosts.
+            Includes ${this.durationMode === 'single' ? '1 night' : '9 nights'} active festival access · ${plan.price_inr >= 549 ? 'Explore all photos of your match' : '1 clear profile photo unlocked'} · ${plan.daily_likes_limit === -1 ? 'Unlimited' : plan.daily_likes_limit} daily interest allowances · ${plan.can_see_likes ? 'Who Liked You unlocked' : 'Basic discovery'} · ${plan.boost_credits} profile boosts.
           </div>
         </div>
 
@@ -341,16 +341,11 @@ const Pricing = {
               <button type="button" class="btn btn-primary btn-sm" onclick="Pricing.goToAuth('login')">Sign In & Continue</button>
               <button type="button" class="btn btn-secondary btn-sm" onclick="Pricing.goToAuth('register')">Join (18+)</button>
             </div>
-            <div style="margin-top: 10px; font-size: 0.76rem; color: var(--color-text-muted);">
-              Instant test login:
-              <a href="javascript:void(0)" onclick="Pricing.quickLoginAndCheckout('test@flirta.in', 'TestPassword123')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline; margin-right: 6px;">★ Test Account (All Unlocked)</a> ·
-              <a href="javascript:void(0)" onclick="Pricing.quickLoginAndCheckout('diya.shah@example.com', 'Dancer2026!')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline; margin-left: 4px;">Diya (Ahmedabad)</a>
-            </div>
           </div>
         ` : `
           <!-- Verified User Badge -->
           <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid var(--color-success); padding: 10px 14px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.86rem;">
-            <span>Dancer Account: <strong>${State.user.email}</strong></span>
+            <span>Account: <strong>${State.user.email}</strong></span>
             <span style="color: var(--color-success); font-weight: 700; font-size: 0.8rem;">✓ 18+ Verified</span>
           </div>
         `}
@@ -402,19 +397,6 @@ const Pricing = {
     if (modal) modal.remove();
     if (typeof openAuthModal === 'function') {
       openAuthModal(mode);
-    }
-  },
-
-  async quickLoginAndCheckout(email, password) {
-    try {
-      const res = await API.post('/api/auth/login', { email, password });
-      API.setToken(res.token);
-      State.setUser(res.user, res.profile, res.photos);
-      showToast(`Welcome back, ${res.profile ? res.profile.display_name : 'Dancer'}!`, 'success');
-      // Re-render checkout modal with user now authenticated
-      this.openCheckoutModal(this.selectedPlanId);
-    } catch (err) {
-      showToast(err.message || 'Login failed', 'error');
     }
   },
 

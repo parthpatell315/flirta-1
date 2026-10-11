@@ -10,8 +10,26 @@ const generalLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 50,
-  message: { error: 'Too many authentication attempts, please try again in 15 minutes.' }
+  max: 15,
+  message: { error: 'Too many login attempts. For security, please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many registration attempts from this network. Please wait an hour.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const otpLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 6,
+  message: { error: 'Too many OTP requests. Please wait 10 minutes before requesting again.' },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 
 const actionLimiter = rateLimit({
@@ -23,5 +41,7 @@ const actionLimiter = rateLimit({
 module.exports = {
   generalLimiter,
   authLimiter,
+  registerLimiter,
+  otpLimiter,
   actionLimiter
 };

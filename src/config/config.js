@@ -18,5 +18,16 @@ module.exports = {
     .trim()
     .replace(/XyIY$/, 'XylY'), // Resilience against common OCR/visual typo ('I' vs 'l')
   PAYU_ENV: (process.env.PAYU_ENV || 'live').trim().toLowerCase().startsWith('live') ? 'live' : 'test',
-  BASE_URL: (process.env.BASE_URL || 'https://flirta.network').trim().replace(/\/+$/, '')
+  BASE_URL: (process.env.BASE_URL || 'https://flirta.network').trim().replace(/\/+$/, ''),
+
+  // Demo Login Guard: strictly disabled in production
+  ENABLE_DEMO_LOGIN: process.env.ENABLE_DEMO_LOGIN === 'true' && process.env.NODE_ENV !== 'production',
+
+  // Cloudflare Turnstile / Bot Verification
+  TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY || '',
+  TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY || '',
+
+  // Google OAuth & Google Identity Services (GIS)
+  GOOGLE_CLIENT_ID: (process.env.GOOGLE_CLIENT_ID || '').trim(),
+  GOOGLE_CLIENT_SECRET: (process.env.GOOGLE_CLIENT_SECRET || '').trim()
 };

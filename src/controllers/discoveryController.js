@@ -98,6 +98,8 @@ exports.discoverProfiles = (req, res) => {
         p.connection_types,
         p.preferred_dates,
         p.availability,
+        COALESCE(p.is_phone_verified, u.is_phone_verified, 0) as is_phone_verified,
+        COALESCE(u.auth_provider, 'local') as auth_provider,
         (SELECT photo_url FROM profile_photos WHERE profile_id = p.id AND is_primary = 1 LIMIT 1) as primary_photo
       FROM profiles p
       JOIN users u ON p.user_id = u.id

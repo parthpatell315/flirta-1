@@ -20,8 +20,12 @@ exports.getProfile = (req, res) => {
       connectionTypes = ['partner'];
     }
 
+    const user = db.prepare('SELECT phone, is_phone_verified FROM users WHERE id = ?').get(req.user.id);
+
     return res.json({
       ...profile,
+      phone: user?.phone || profile.phone || '',
+      is_phone_verified: (user?.is_phone_verified || profile.is_phone_verified) ? 1 : 0,
       connection_types: connectionTypes,
       photos
     });

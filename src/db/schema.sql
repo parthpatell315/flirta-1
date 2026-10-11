@@ -5,6 +5,8 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT UNIQUE NOT NULL,
+  phone TEXT UNIQUE,
+  is_phone_verified INTEGER DEFAULT 0,
   password_hash TEXT NOT NULL,
   role TEXT DEFAULT 'user' CHECK(role IN ('user', 'admin')),
   status TEXT DEFAULT 'active' CHECK(status IN ('active', 'suspended')),
@@ -247,8 +249,20 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Phone Verification OTPs
+CREATE TABLE IF NOT EXISTS phone_otps (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  phone TEXT NOT NULL,
+  otp_hash TEXT NOT NULL,
+  expires_at DATETIME NOT NULL,
+  attempts INTEGER DEFAULT 0,
+  is_verified INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_phone_otps_phone ON phone_otps(phone);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_city ON profiles(city);
 CREATE INDEX IF NOT EXISTS idx_events_date ON events(event_date);

@@ -3,6 +3,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const config = require('./config/config');
 const { generalLimiter } = require('./middleware/rateLimiter');
+const { csrfProtection } = require('./middleware/csrf');
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
@@ -18,6 +19,7 @@ const analyticsRoutes = require('./routes/analyticsRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Body & Cookie parsers
 app.use(express.json({ limit: '2mb' }));
@@ -26,6 +28,7 @@ app.use(cookieParser());
 
 // Apply global rate limiting to all API endpoints in production/testing
 app.use('/api', generalLimiter);
+app.use('/api', csrfProtection);
 
 // Serve static assets (CSS, JS, Uploaded Photos)
 app.use('/uploads', express.static(config.UPLOAD_DIR));

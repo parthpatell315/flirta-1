@@ -356,6 +356,8 @@ exports.getLikesReceived = (req, res) => {
         p.bio,
         p.dance_style,
         p.connection_types,
+        COALESCE(p.is_phone_verified, u.is_phone_verified, 0) as is_phone_verified,
+        COALESCE(u.auth_provider, 'local') as auth_provider,
         l.created_at as liked_at,
         (SELECT photo_url FROM profile_photos WHERE profile_id = p.id AND is_primary = 1 LIMIT 1) as primary_photo
       FROM likes l
@@ -496,8 +498,8 @@ exports.initiatePayU = (req, res) => {
 
     const user = db.prepare('SELECT email FROM users WHERE id = ?').get(userId);
     const profile = db.prepare('SELECT display_name FROM profiles WHERE user_id = ?').get(userId);
-    const firstname = (profile && profile.display_name ? profile.display_name.split(' ')[0] : 'Dancer').replace(/[^a-zA-Z0-9]/g, '') || 'Dancer';
-    const email = (user && user.email) ? user.email : 'dancer@flirta.in';
+    const firstname = (profile && profile.display_name ? profile.display_name.split(' ')[0] : 'Member').replace(/[^a-zA-Z0-9]/g, '') || 'Member';
+    const email = (user && user.email) ? user.email : 'member@flirta.in';
 
     // Unique transaction ID for PayU
     const txnid = `FLIRTA_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;

@@ -11,7 +11,14 @@ const Router = {
     '/events': Events,
     '/groups': Groups,
     '/profile': Profile,
-    '/admin': Admin
+    '/admin': Admin,
+    '/terms': LegalPages,
+    '/privacy': LegalPages,
+    '/anti-escort-policy': LegalPages,
+    '/safety': LegalPages,
+    '/refund-policy': LegalPages,
+    '/contact': LegalPages,
+    '/grievance': LegalPages
   },
 
   init() {
@@ -51,6 +58,13 @@ const Router = {
     else if (path.startsWith('/events') || path.startsWith('/groups')) matchedPath = '/discover';
     else if (path.startsWith('/profile')) matchedPath = '/profile';
     else if (path.startsWith('/admin')) matchedPath = '/admin';
+    else if (path.startsWith('/terms')) matchedPath = '/terms';
+    else if (path.startsWith('/privacy')) matchedPath = '/privacy';
+    else if (path.startsWith('/anti-escort-policy') || path.startsWith('/anti-escort')) matchedPath = '/anti-escort-policy';
+    else if (path.startsWith('/safety')) matchedPath = '/safety';
+    else if (path.startsWith('/refund-policy') || path.startsWith('/refund')) matchedPath = '/refund-policy';
+    else if (path.startsWith('/contact')) matchedPath = '/contact';
+    else if (path.startsWith('/grievance')) matchedPath = '/grievance';
 
     // Cleanup previous polling in Matches if moving away
     if (matchedPath !== '/matches' && window.Matches && window.Matches.cleanup) {

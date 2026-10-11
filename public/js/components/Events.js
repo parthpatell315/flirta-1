@@ -121,7 +121,7 @@ const Events = {
                 <strong>${ev.attending_count || 0}</strong> attending · <strong>${ev.interested_count || 0}</strong> interested
               </span>
               <button class="btn btn-secondary btn-sm" onclick="Events.viewAttendees(${ev.id}, '${ev.name.replace(/'/g, "\\'")}')">
-                View Dancers
+                Find Your Match
               </button>
             </div>
 
@@ -171,7 +171,7 @@ const Events = {
       modal.innerHTML = `
         <div class="modal-box">
           <div class="modal-header">
-            <h3>Dancers at ${eventName}</h3>
+            <h3>Matches at ${eventName}</h3>
             <button class="close-btn" onclick="this.closest('.modal-overlay').remove()">×</button>
           </div>
           <p style="font-size: 0.86rem; color: var(--color-text-muted); margin-bottom: 16px;">

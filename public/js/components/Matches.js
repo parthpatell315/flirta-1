@@ -74,7 +74,7 @@ const Matches = {
         <div style="text-align: center; padding: 40px 10px;">
           <h4 style="margin-bottom: 8px;">No Mutual Matches Yet</h4>
           <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 16px;">
-            Keep discovering profiles to connect with more dancers.
+            Keep discovering profiles to find your match.
           </p>
           <button class="btn btn-primary btn-sm" onclick="Router.navigate('/discover')">Discover Partners</button>
         </div>
@@ -137,7 +137,7 @@ const Matches = {
           <img src="${avatar}" class="match-avatar" style="width: 42px; height: 42px;" onerror="this.src='${defaultAvatar}'">
           <div>
             <h3 style="font-size: 1.05rem;">${match.display_name}</h3>
-            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">${match.city} · ${match.garba_experience} dancer</span>
+            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">${match.city} · ${match.garba_experience} match</span>
           </div>
         </div>
         <div style="display: flex; gap: 8px;">

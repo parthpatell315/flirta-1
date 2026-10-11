@@ -16,7 +16,7 @@ const LikesReceived = {
           <div>
             <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Who Liked You</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.95rem;">
-              Dancers who expressed interest in meeting you this Navratri 2026.
+              Profiles waiting to be your match this Navratri 2026.
             </p>
           </div>
           <button class="btn btn-secondary btn-sm" onclick="Router.navigate('/pricing')">
@@ -61,12 +61,12 @@ const LikesReceived = {
       container.innerHTML = `
         <div class="card" style="text-align: center; padding: 50px 24px; border: 2px dashed var(--color-primary-border); background: var(--color-primary-soft);">
           <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--color-text-primary);">
-            ${totalCount > 0 ? `${totalCount} Dancers Expressed Interest in You!` : 'Unlock Who Liked You'}
+            ${totalCount > 0 ? `${totalCount} Potential Matches Expressed Interest in You!` : 'Unlock Who Liked You'}
           </h2>
           <p style="color: var(--color-text-secondary); max-width: 480px; margin: 0 auto 24px; font-size: 1rem; line-height: 1.5;">
             ${totalCount > 0
-              ? `There are ${totalCount} dancers waiting to connect with you. Upgrade to the Chemistry plan to reveal their profiles and match back instantly!`
-              : `When other dancers like your profile, you can instantly see their full identity and match without having to swipe through the deck.`}
+              ? `There are ${totalCount} potential matches waiting to connect with you. Upgrade to the Chemistry plan to reveal their profiles and match back instantly!`
+              : `When someone likes your profile, you can instantly see your match and connect without having to swipe through the deck.`}
           </p>
 
           <!-- Blurred Card Teaser Mockups -->
@@ -90,7 +90,7 @@ const LikesReceived = {
         <div class="card" style="text-align: center; padding: 60px 20px;">
           <h3 style="margin-bottom: 8px;">No Pending Likes Right Now</h3>
           <p style="color: var(--color-text-secondary); max-width: 400px; margin: 0 auto 20px;">
-            You have matched with or reviewed all dancers who sent you interest. Activate a Profile Boost to be seen by more people!
+            You have reviewed all potential matches who sent you interest. Activate a Profile Boost to be seen by more people!
           </p>
           <button class="btn btn-primary btn-sm" onclick="Router.navigate('/discover')">Browse Discovery Deck</button>
         </div>
@@ -110,8 +110,10 @@ const LikesReceived = {
               <div>
                 <div style="position: relative; height: 220px; border-radius: 14px; overflow: hidden; margin-bottom: 14px; background: #111;">
                   <img src="${avatar}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${defaultAvatar}'">
-                  <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); padding: 6px 10px; border-radius: 8px; color: #FFF;">
-                    <div style="font-weight: 800; font-size: 1.05rem;">${l.display_name}, ${l.age}</div>
+                    <div style="font-weight: 800; font-size: 1.05rem; display: flex; align-items: center; gap: 4px;">
+                      <span>${l.display_name}, ${l.age}</span>
+                      ${(l.auth_provider === 'google' || l.is_phone_verified) ? `<span class="badge" style="background:#10B981; color:#fff; font-size:0.65rem; padding:1px 6px; border-radius:10px;">✓ Verified</span>` : ''}
+                    </div>
                     <div style="font-size: 0.78rem; color: var(--color-secondary);">${l.city} · ${l.garba_experience}</div>
                   </div>
                 </div>

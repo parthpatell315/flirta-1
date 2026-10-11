@@ -180,7 +180,7 @@ const Profile = {
 
         <div class="form-group">
           <label class="form-label">Short Bio</label>
-          <textarea id="prof-bio" class="form-control" rows="3" placeholder="Tell other dancers about your festive enthusiasm, preferred venues, and music taste...">${escapeHtml(p.bio || '')}</textarea>
+          <textarea id="prof-bio" class="form-control" rows="3" placeholder="Tell your match about your festive enthusiasm, preferred venues, and music taste...">${escapeHtml(p.bio || '')}</textarea>
         </div>
 
         <div class="form-group">
@@ -224,7 +224,7 @@ const Profile = {
             <div>
               <strong style="color: var(--color-text-primary);">Visible in Partner Discovery</strong>
               <div style="font-size: 0.82rem; color: var(--color-text-secondary); margin-top: 2px;">
-                When turned off, other dancers will not be able to discover or swipe on your profile. Existing matches remain active.
+                When turned off, potential matches will not be able to discover or swipe on your profile. Existing matches remain active.
               </div>
             </div>
           </label>
@@ -239,7 +239,7 @@ const Profile = {
       <div class="card" style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center;">
         <div>
           <h4 style="color: var(--color-danger); margin-bottom: 4px;">Account Settings</h4>
-          <span style="font-size: 0.82rem; color: var(--color-text-muted);">Registered as 18+ verified adult dancer. DPDP Act Right to Erasure enabled.</span>
+          <span style="font-size: 0.82rem; color: var(--color-text-muted);">Registered as 18+ verified adult member. DPDP Act Right to Erasure enabled.</span>
         </div>
         <div style="display: flex; gap: 10px;">
           <button class="btn btn-secondary btn-sm" onclick="Profile.logout()">Log Out</button>
@@ -253,11 +253,13 @@ const Profile = {
           Trust, Safety & Legal Governance
         </div>
         <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; font-weight: 600;">
-          <a href="javascript:void(0)" onclick="Legal.open('terms')" style="color: var(--color-primary);">Terms of Service</a>
-          <a href="javascript:void(0)" onclick="Legal.open('anti-escort')" style="color: var(--color-primary);">Anti-Escort Code</a>
-          <a href="javascript:void(0)" onclick="Legal.open('privacy')" style="color: var(--color-primary);">Privacy Policy (DPDP Act)</a>
-          <a href="javascript:void(0)" onclick="Legal.open('safety')" style="color: var(--color-primary);">Offline Safety Guidelines</a>
-          <a href="javascript:void(0)" onclick="Legal.open('grievance')" style="color: var(--color-primary);">File Statutory Grievance</a>
+          <a href="/terms" data-link style="color: var(--color-primary);">Terms of Service</a>
+          <a href="/privacy" data-link style="color: var(--color-primary);">Privacy Policy (DPDP Act)</a>
+          <a href="/anti-escort-policy" data-link style="color: var(--color-primary);">Anti-Escort Code</a>
+          <a href="/safety" data-link style="color: var(--color-primary);">Offline Safety Guidelines</a>
+          <a href="/refund-policy" data-link style="color: var(--color-primary);">Refund Policy</a>
+          <a href="/contact" data-link style="color: var(--color-primary);">Contact Support</a>
+          <a href="/grievance" data-link style="color: var(--color-primary);">File Statutory Grievance</a>
         </div>
       </div>
     `;
@@ -362,7 +364,7 @@ const Profile = {
     } catch (err) {
       showToast(err.message, 'error');
     }
-  }
+  },
 };
 
 window.Profile = Profile;

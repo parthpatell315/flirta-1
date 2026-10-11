@@ -77,7 +77,7 @@ const Groups = {
 
             <h3 style="font-size: 1.25rem; margin-bottom: 8px;">${g.name}</h3>
             <p style="color: var(--color-text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 14px;">
-              ${g.description || 'Navratri group for passionate dancers.'}
+              ${g.description || 'Navratri group to find your match and celebrate together.'}
             </p>
 
             ${g.event_name ? `

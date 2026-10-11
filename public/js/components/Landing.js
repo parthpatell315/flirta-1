@@ -89,37 +89,37 @@ const Landing = {
         <!-- Find Garba Partners City-Wise -->
         <section class="landing-section">
           <h2 class="section-title">Explore Partners by City</h2>
-          <p class="section-subtitle">Find dedicated Garba dancers, coordinate attire, and enjoy 9 nights of Raas across Gujarat, Mumbai & Indore.</p>
+          <p class="section-subtitle">Find your ideal Garba match, coordinate attire, and enjoy 9 nights of Raas across Gujarat, Mumbai & Indore.</p>
           <div class="city-cards-grid">
             <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Ahmedabad')">
               <h3 style="color: var(--color-primary);">Ahmedabad</h3>
               <p>Heritage Garba & Mega Venues</p>
-              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+              <span class="btn btn-secondary btn-sm">Find Your Match →</span>
             </div>
             <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Surat')">
               <h3 style="color: var(--color-primary);">Surat</h3>
               <p>High Energy & Vibrant Beats</p>
-              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+              <span class="btn btn-secondary btn-sm">Find Your Match →</span>
             </div>
             <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Vadodara')">
               <h3 style="color: var(--color-primary);">Vadodara</h3>
               <p>Cultural Capital & United Way</p>
-              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+              <span class="btn btn-secondary btn-sm">Find Your Match →</span>
             </div>
             <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Rajkot')">
               <h3 style="color: var(--color-primary);">Rajkot</h3>
               <p>Kathiyawadi Heech & Dhol</p>
-              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+              <span class="btn btn-secondary btn-sm">Find Your Match →</span>
             </div>
             <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Mumbai')">
               <h3 style="color: var(--color-primary);">Mumbai</h3>
               <p>Dandiya Raas & Dome Nights</p>
-              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+              <span class="btn btn-secondary btn-sm">Find Your Match →</span>
             </div>
             <div class="card city-nav-card" onclick="Router.navigate('/discover?city=Indore')">
               <h3 style="color: var(--color-primary);">Indore</h3>
               <p>Sarafa Food & Festive Garba</p>
-              <span class="btn btn-secondary btn-sm">Browse Dancers →</span>
+              <span class="btn btn-secondary btn-sm">Find Your Match →</span>
             </div>
           </div>
         </section>
@@ -166,7 +166,7 @@ const Landing = {
             <div class="card faq-card">
               <h3 style="font-size: 1.1rem; color: var(--color-primary); margin-bottom: 6px;">Can anyone message me directly?</h3>
               <p style="color: var(--color-text-secondary); font-size: 0.92rem; margin: 0;">
-                No. Private messaging is exclusively unlocked when both dancers have sent mutual likes to one another, preventing unsolicited messages.
+                No. Private messaging is exclusively unlocked when you and your match have sent mutual likes to one another, preventing unsolicited messages.
               </p>
             </div>
           </div>
@@ -180,16 +180,18 @@ const Landing = {
             </a>
           </div>
           <p style="color: var(--color-text-secondary); font-size: 0.88rem; max-width: 620px; margin: 0 auto 18px; line-height: 1.5;">
-            Connecting Garba dancers across Ahmedabad, Vadodara, Surat, Rajkot, Mumbai, and Indore. Celebrating Gujarati heritage with verified, respectful connections.
+            Connecting you with your match across Ahmedabad, Vadodara, Surat, Rajkot, Mumbai, and Indore. Celebrating Gujarati heritage with verified, respectful connections.
           </p>
           <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 14px 20px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); margin-bottom: 18px;">
-            <a href="javascript:void(0)" onclick="Legal.open('terms')">Terms of Service</a>
-            <a href="javascript:void(0)" onclick="Legal.open('anti-escort')">Anti-Escort Policy</a>
-            <a href="javascript:void(0)" onclick="Legal.open('privacy')">Privacy Policy</a>
-            <a href="javascript:void(0)" onclick="Legal.open('safety')">Safety Guidelines</a>
-            <a href="javascript:void(0)" onclick="Legal.open('grievance')">Grievance Redressal (IT Rules)</a>
+            <a href="/terms" data-link>Terms of Service</a>
+            <a href="/privacy" data-link>Privacy Policy</a>
+            <a href="/anti-escort-policy" data-link>Anti-Escort Policy</a>
+            <a href="/safety" data-link>Safety Guidelines</a>
+            <a href="/refund-policy" data-link>Refund Policy</a>
+            <a href="/contact" data-link>Contact Us</a>
+            <a href="/grievance" data-link>Grievance Officer (IT Rules)</a>
           </div>
-          <p style="color: var(--color-text-muted); font-size: 0.76rem; margin: 0;">© 2026 Flirta. All rights reserved. Intermediary safe harbour under Section 79 IT Act 2000.</p>
+          <p style="color: var(--color-text-muted); font-size: 0.76rem; margin: 0;">© 2026 Flirta. All rights reserved. Intermediary safe harbour under Section 79 IT Act 2000. DPDP Act 2023 compliant.</p>
         </footer>
       </div>
     `;

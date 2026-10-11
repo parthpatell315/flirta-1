@@ -15,7 +15,7 @@ const Admin = {
         <div class="container" style="text-align: center; padding: 60px 20px;">
           <h2 style="color: var(--color-danger); margin-bottom: 12px;">Admin Access Required</h2>
           <p style="color: var(--color-text-secondary); margin-bottom: 20px;">
-            You must be logged into an administrator account (e.g. <code>admin@garbajodi.com</code>) to view the Flirta administrative console.
+            You must be logged into an authorized administrator account to view the Flirta administrative console.
           </p>
           <button class="btn btn-primary" onclick="openAuthModal('login')">Admin Log In</button>
         </div>

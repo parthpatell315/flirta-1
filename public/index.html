@@ -15,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <!-- Header / Navbar -->
@@ -44,8 +45,7 @@
   <!-- Auth Modal (Login / 18+ Register) -->
   <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
     <div class="modal-box">
-      <div class="modal-header">
-        <div style="display: flex; gap: 8px;">
+      <div class="modal-header">        <div style="display: flex; gap: 8px;">
           <button id="tab-login-btn" class="btn btn-sm btn-secondary active" onclick="switchAuthTab('login')">Sign In</button>
           <button id="tab-reg-btn" class="btn btn-sm btn-secondary" onclick="switchAuthTab('register')">Join 18+</button>
         </div>
@@ -59,8 +59,24 @@
         </div>
         <h3 id="auth-modal-title" style="font-size: 1.3rem; margin-bottom: 8px; text-align: center;">Welcome to Flirta</h3>
         <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 20px; text-align: center;">
-          Log into your verified dancer account for Navratri 2026.
+          Log into your account and find your match for Navratri 2026.
         </p>
+
+        <!-- Google 1-Click Sign-In Button -->
+        <button type="button" class="btn btn-secondary btn-block btn-google" onclick="handleGoogleSignIn()" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #FFFFFF; color: #3c4043; border: 1px solid #dadce0; font-weight: 600; font-size: 0.92rem; padding: 10px 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(60,64,67,0.08); cursor: pointer; margin-bottom: 16px;">
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.347 2.825.957 4.039l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div style="margin: 16px 0; text-align: center; position: relative;">
+          <div style="height: 1px; background: rgba(0,0,0,0.08); width: 100%;"></div>
+          <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #FFFFFF; padding: 0 10px; font-size: 0.76rem; font-weight: 700; color: var(--color-text-muted);">OR SIGN IN WITH EMAIL</span>
+        </div>
 
         <form onsubmit="handleLogin(event)">
           <div class="form-group">
@@ -89,38 +105,35 @@
 
           <div id="login-error" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 14px;"></div>
 
-          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          <button type="submit" class="btn btn-primary btn-block">Sign In with Email</button>
         </form>
 
-        <!-- 1-Click Demo Logins for Testing -->
-        <div style="margin-top: 16px; padding: 12px 14px; background: var(--color-bg); border: 1px dashed var(--color-border); border-radius: var(--radius-sm);">
-          <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
-            1-Click Demo Accounts (Instant Test Login):
-          </div>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-            <button type="button" class="btn btn-primary btn-sm" style="font-size: 0.76rem; padding: 4px 10px;" onclick="quickFillLogin('test@flirta.in', 'TestPassword123')">★ Test Account (All Unlocked)</button>
-            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.76rem; padding: 4px 10px;" onclick="quickFillLogin('diya.shah@example.com', 'Dancer2026!')">Diya (Ahmedabad)</button>
-            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.76rem; padding: 4px 10px;" onclick="quickFillLogin('rohan.patel@example.com', 'Dancer2026!')">Rohan (Surat)</button>
-            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.76rem; padding: 4px 10px;" onclick="quickFillLogin('admin@garbajodi.com', 'AdminGarba2026!')">Admin</button>
-          </div>
-        </div>
-
-        <div style="margin: 20px 0; text-align: center; position: relative;">
-          <div style="height: 1px; background: rgba(0,0,0,0.08); width: 100%;"></div>
-          <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #FFFFFF; padding: 0 10px; font-size: 0.78rem; font-weight: 700; color: var(--color-text-muted);">OR</span>
-        </div>
-
-        <button type="button" class="btn btn-secondary btn-block btn-sm" onclick="handleGoogleSignInNotice()">
-          Continue with Google
-        </button>
+        <!-- Dynamic Demo Container: populated strictly if ENABLE_DEMO_LOGIN=true and non-production -->
+        <div id="demo-accounts-container" style="display: none; margin-top: 16px; padding: 12px 14px; background: var(--color-bg); border: 1px dashed var(--color-border); border-radius: var(--radius-sm);"></div>
       </div>
 
       <!-- Register Form Container -->
       <div id="register-form-container" style="display: none;">
-        <h3 style="font-size: 1.3rem; margin-bottom: 6px;">Create Dancers Account</h3>
+        <h3 style="font-size: 1.3rem; margin-bottom: 6px;">Find Your Match</h3>
         <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin-bottom: 18px;">
-          Adult Only (18+ verified platform)
+          Find your dream verified Garba match (18+ only)
         </p>
+
+        <!-- Google 1-Click Sign-Up Button -->
+        <button type="button" class="btn btn-secondary btn-block btn-google" onclick="handleGoogleSignIn()" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #FFFFFF; color: #3c4043; border: 1px solid #dadce0; font-weight: 600; font-size: 0.92rem; padding: 10px 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(60,64,67,0.08); cursor: pointer; margin-bottom: 16px;">
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.347 2.825.957 4.039l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div style="margin: 16px 0; text-align: center; position: relative;">
+          <div style="height: 1px; background: rgba(0,0,0,0.08); width: 100%;"></div>
+          <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #FFFFFF; padding: 0 10px; font-size: 0.76rem; font-weight: 700; color: var(--color-text-muted);">OR REGISTER WITH EMAIL</span>
+        </div>
 
         <form onsubmit="handleRegister(event)">
           <div class="form-group">
@@ -134,12 +147,15 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="reg-password">Password (min 6 characters)</label>
+            <label class="form-label" for="reg-password">Password (min 8 characters with letter & number)</label>
             <div style="position: relative;">
-              <input type="password" id="reg-password" class="form-control" placeholder="Create secure password" required minlength="6" autocomplete="new-password" style="padding-right: 42px;">
+              <input type="password" id="reg-password" class="form-control" placeholder="Create secure password" required minlength="8" autocomplete="new-password" style="padding-right: 42px;">
               <button type="button" onclick="togglePasswordVisibility('reg-password', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; padding: 4px; color: var(--color-text-muted);" aria-label="Toggle password visibility">
                 <svg style="pointer-events: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               </button>
+            </div>
+            <div id="password-strength-hint" style="font-size: 0.76rem; color: var(--color-text-muted); margin-top: 4px;">
+              Must include at least 8 characters with letters and numbers.
             </div>
           </div>
 
@@ -184,16 +200,14 @@
             </select>
           </div>
 
-          <div class="form-group" style="padding: 12px; background: rgba(0,0,0,0.02); border: 1px solid var(--color-border); border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
-            <label class="form-checkbox" style="font-size: 0.82rem; line-height: 1.4;">
-              <input type="checkbox" id="reg-adult-confirm" required>
-              <span>I declare under penalty of law that I am <strong>18 years of age or older</strong> (Strict 18+ adult platform - underage accounts violate POCSO Act).</span>
-            </label>
-            <label class="form-checkbox" style="font-size: 0.82rem; line-height: 1.4;">
-              <input type="checkbox" id="reg-terms-confirm" required>
-              <span>I accept the <a href="javascript:void(0)" onclick="Legal.open('terms')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Terms of Service</a>, <a href="javascript:void(0)" onclick="Legal.open('privacy')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a>, <a href="javascript:void(0)" onclick="Legal.open('anti-escort')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Anti-Escort Policy</a>, and understand offline meetings are at my own risk.</span>
+          <div class="form-group" style="padding: 12px 14px; background: rgba(0,0,0,0.02); border: 1px solid var(--color-border); border-radius: 8px;">
+            <label class="form-checkbox" style="font-size: 0.84rem; line-height: 1.5; display: flex; align-items: flex-start; gap: 8px; margin: 0; cursor: pointer;">
+              <input type="checkbox" id="reg-adult-confirm" required style="margin-top: 3px; cursor: pointer;">
+              <span>I confirm I am 18 years or older and agree to the <a href="/terms" data-link style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Terms</a>, <a href="/privacy" data-link style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a> and <a href="/anti-escort-policy" data-link style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Anti-Escort Policy</a>.</span>
             </label>
           </div>
+
+          <div id="turnstile-signup-widget" style="margin: 10px 0;"></div>
 
           <div id="reg-error" style="color: var(--color-danger); font-size: 0.85rem; margin-bottom: 14px;"></div>
 
@@ -248,6 +262,7 @@
   <script src="/js/state.js"></script>
   <script src="/js/components/SafetyModals.js"></script>
   <script src="/js/components/Legal.js"></script>
+  <script src="/js/components/LegalPages.js"></script>
   <script src="/js/components/Landing.js"></script>
   <script src="/js/components/AuthModal.js"></script>
   <script src="/js/components/Discover.js"></script>

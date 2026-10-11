@@ -14,7 +14,9 @@ const API = {
   },
 
   getHeaders(isMultipart = false) {
-    const headers = {};
+    const headers = {
+      'X-Requested-With': 'XMLHttpRequest'
+    };
     const token = this.getToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;

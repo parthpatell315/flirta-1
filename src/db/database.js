@@ -48,7 +48,6 @@ function getDb(customPath = null) {
     // Column already exists
   }
 
-  // Safe column migration for subscription_plans photo access
   try {
     db.exec('ALTER TABLE subscription_plans ADD COLUMN can_see_photo INTEGER NOT NULL DEFAULT 0;');
   } catch {}
@@ -58,6 +57,30 @@ function getDb(customPath = null) {
   try {
     db.exec('UPDATE subscription_plans SET can_see_photo = 1 WHERE price_inr >= 249;');
     db.exec('UPDATE subscription_plans SET can_see_all_photos = 1 WHERE price_inr >= 549;');
+  } catch {}
+
+  // Safe column migrations for phone verification
+  try {
+    db.exec('ALTER TABLE users ADD COLUMN phone TEXT;');
+  } catch {}
+  try {
+    db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone ON users(phone);');
+  } catch {}
+  try {
+    db.exec('ALTER TABLE users ADD COLUMN is_phone_verified INTEGER NOT NULL DEFAULT 0;');
+  } catch {}
+  try {
+    db.exec('ALTER TABLE profiles ADD COLUMN is_phone_verified INTEGER NOT NULL DEFAULT 0;');
+  } catch {}
+  // Safe column migrations for Google Auth
+  try {
+    db.exec('ALTER TABLE users ADD COLUMN google_id TEXT;');
+  } catch {}
+  try {
+    db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);');
+  } catch {}
+  try {
+    db.exec("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local';");
   } catch {}
 
   if (!customPath) {
