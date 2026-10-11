@@ -541,7 +541,7 @@ exports.initiatePayU = (req, res) => {
         productinfo,
         firstname,
         email,
-        phone: '9999999999',
+        phone: '9876543210',
         surl,
         furl,
         hash,

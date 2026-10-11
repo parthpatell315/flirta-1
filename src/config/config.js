@@ -13,8 +13,10 @@ module.exports = {
   RATE_LIMIT_WINDOW_MS: 15 * 60 * 1000, // 15 mins
   RATE_LIMIT_MAX: 300, // 300 requests per window
   // PayU India Payment Gateway Configuration
-  PAYU_MERCHANT_KEY: process.env.PAYU_MERCHANT_KEY || 'gtKFFx', // Replace with your PayU Merchant Key
-  PAYU_MERCHANT_SALT: process.env.PAYU_MERCHANT_SALT || 'eCwWELxi', // Replace with your PayU Merchant Salt
-  PAYU_ENV: process.env.PAYU_ENV || 'test', // 'test' for sandbox, 'live' for production
-  BASE_URL: process.env.BASE_URL || `http://localhost:${process.env.PORT || 3030}`
+  PAYU_MERCHANT_KEY: (process.env.PAYU_MERCHANT_KEY || 'h2QwsE').trim(),
+  PAYU_MERCHANT_SALT: (process.env.PAYU_MERCHANT_SALT || 'gvFFAuFL5rJBZpJHFGV3RcZOZJG7XylY')
+    .trim()
+    .replace(/XyIY$/, 'XylY'), // Resilience against common OCR/visual typo ('I' vs 'l')
+  PAYU_ENV: (process.env.PAYU_ENV || 'live').trim().toLowerCase().startsWith('live') ? 'live' : 'test',
+  BASE_URL: (process.env.BASE_URL || 'https://flirta.network').trim().replace(/\/+$/, '')
 };

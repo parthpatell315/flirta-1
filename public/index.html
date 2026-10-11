@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Flirta · Find Your Dream Garba Partner</title>
   <meta name="description" content="Find your dream Garba partner for Navratri 2026. Discover compatible dance partners, make friends, and explore connections on Flirta.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <meta property="og:image" content="/images/logo.png">
+  <meta name="theme-color" content="#0d0e16">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -14,9 +20,8 @@
   <!-- Header / Navbar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="/garba-partner" class="brand-logo" onclick="event.preventDefault(); Router.navigate('/garba-partner');">
-        <div class="brand-icon" style="font-weight: 800; font-size: 1rem; color: #FFF; background: var(--color-primary); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">F</div>
-        <span>Flirta</span>
+      <a href="/garba-partner" class="brand-logo" onclick="event.preventDefault(); Router.navigate('/garba-partner');" title="Flirta">
+        <img src="/images/logo.png" alt="Flirta" class="brand-logo-img">
       </a>
       <nav>
         <ul class="nav-links" id="navbar-links">
@@ -49,8 +54,11 @@
 
       <!-- Login Form Container -->
       <div id="login-form-container">
-        <h3 id="auth-modal-title" style="font-size: 1.3rem; margin-bottom: 8px;">Welcome to Flirta</h3>
-        <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 20px;">
+        <div style="text-align: center; margin-bottom: 14px;">
+          <img src="/images/logo-icon.png" alt="Flirta" style="width: 48px; height: 48px; border-radius: 12px; box-shadow: 0 4px 18px rgba(255, 46, 126, 0.35);">
+        </div>
+        <h3 id="auth-modal-title" style="font-size: 1.3rem; margin-bottom: 8px; text-align: center;">Welcome to Flirta</h3>
+        <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 20px; text-align: center;">
           Log into your verified dancer account for Navratri 2026.
         </p>
 

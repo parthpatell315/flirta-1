@@ -292,6 +292,7 @@ test('Flirta Subscription & Monetization Test Suite', async (t) => {
       .type('form')
       .send({
         status: 'success',
+        key: p.key,
         txnid: p.txnid,
         amount: p.amount,
         productinfo: p.productinfo,
@@ -299,6 +300,9 @@ test('Flirta Subscription & Monetization Test Suite', async (t) => {
         email: p.email,
         udf1: p.udf1,
         udf2: p.udf2,
+        udf3: p.udf3,
+        udf4: p.udf4,
+        udf5: p.udf5,
         hash: cbHash
       });
 

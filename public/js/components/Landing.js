@@ -174,13 +174,15 @@ const Landing = {
 
         <!-- Footer -->
         <footer class="landing-footer">
-          <div style="margin-bottom: 12px; font-weight: 800; font-size: 1.25rem; color: var(--color-text-primary);">
-            Flirta · Find Your Dream Garba Partner
+          <div style="margin-bottom: 16px; display: flex; justify-content: center; align-items: center;">
+            <a href="/garba-partner" onclick="event.preventDefault(); Router.navigate('/garba-partner');" style="display: inline-flex; align-items: center; text-decoration: none;">
+              <img src="/images/logo.png" alt="Flirta" class="footer-logo-img">
+            </a>
           </div>
-          <p style="color: var(--color-text-secondary); font-size: 0.86rem; max-width: 600px; margin: 0 auto 16px;">
-            Connecting Garba dancers across Gujarat cities, Mumbai, and Indore. Celebrating Gujarati heritage and safe festive togetherness.
+          <p style="color: var(--color-text-secondary); font-size: 0.88rem; max-width: 620px; margin: 0 auto 18px; line-height: 1.5;">
+            Connecting Garba dancers across Ahmedabad, Vadodara, Surat, Rajkot, Mumbai, and Indore. Celebrating Gujarati heritage with verified, respectful connections.
           </p>
-          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 14px 18px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); margin-bottom: 16px;">
+          <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 14px 20px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); margin-bottom: 18px;">
             <a href="javascript:void(0)" onclick="Legal.open('terms')">Terms of Service</a>
             <a href="javascript:void(0)" onclick="Legal.open('anti-escort')">Anti-Escort Policy</a>
             <a href="javascript:void(0)" onclick="Legal.open('privacy')">Privacy Policy</a>

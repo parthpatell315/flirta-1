@@ -357,27 +357,20 @@ const Pricing = {
 
         <form onsubmit="Pricing.processPayment(event)">
           <div class="form-group">
-            <label class="form-label" style="font-weight: 700; font-size: 0.88rem;">Select Payment Method</label>
+            <label class="form-label" style="font-weight: 700; font-size: 0.88rem;">Payment Method</label>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
-              <div class="payment-method-card ${this.paymentMethod === 'payu' ? 'active' : ''}" data-method="payu" onclick="Pricing.setPaymentMethod('payu')">
-                <input type="radio" name="pay-method" value="payu" ${this.paymentMethod === 'payu' ? 'checked' : ''} accent-color="var(--color-primary)" style="margin-top: 3px; cursor: pointer;">
+              <div class="payment-method-card active" data-method="payu">
+                <input type="hidden" name="pay-method" value="payu">
                 <div style="flex: 1;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <strong style="color: var(--color-text-primary); font-size: 0.95rem;">PayU India Gateway</strong>
-                    <span style="background: var(--color-primary); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;">OFFICIAL</span>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <strong style="color: var(--color-text-primary); font-size: 0.95rem;">PayU India Gateway</strong>
+                      <span style="background: var(--color-primary); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 4px;">OFFICIAL</span>
+                    </div>
+                    <span style="color: var(--color-success); font-weight: 700; font-size: 0.8rem;">256-Bit SSL</span>
                   </div>
-                  <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px;">
-                    UPI (Google Pay, PhonePe, Paytm, BHIM), Cards & NetBanking
-                  </div>
-                </div>
-              </div>
-
-              <div class="payment-method-card ${this.paymentMethod === 'simulator' ? 'active' : ''}" data-method="simulator" onclick="Pricing.setPaymentMethod('simulator')">
-                <input type="radio" name="pay-method" value="simulator" ${this.paymentMethod === 'simulator' ? 'checked' : ''} accent-color="var(--color-primary)" style="margin-top: 3px; cursor: pointer;">
-                <div style="flex: 1;">
-                  <strong style="color: var(--color-text-primary); font-size: 0.95rem;">Instant Sandbox Simulator</strong>
-                  <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px;">
-                    Instant demo pass activation without bank deduction
+                  <div style="font-size: 0.82rem; color: var(--color-text-secondary); line-height: 1.4;">
+                    UPI (Google Pay, PhonePe, Paytm, BHIM), NetBanking, Credit & Debit Cards
                   </div>
                 </div>
               </div>
@@ -443,62 +436,29 @@ const Pricing = {
       ? Math.round(plan.price_inr / 3.5)
       : plan.price_inr;
 
-    if (selectedGateway === 'payu') {
-      if (btn) btn.textContent = 'Connecting to PayU Secure Gateway...';
-      try {
-        const payuRes = await API.post('/api/subscriptions/payu/initiate', { planId: plan.id });
-        if (!payuRes.success || !payuRes.actionUrl) {
-          throw new Error(payuRes.message || 'Could not initiate PayU checkout.');
-        }
-
-        // Build HTML form and submit to PayU
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = payuRes.actionUrl;
-        form.style.display = 'none';
-
-        for (const [key, val] of Object.entries(payuRes.params)) {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = val !== undefined && val !== null ? val : '';
-          form.appendChild(input);
-        }
-
-        document.body.appendChild(form);
-        form.submit();
-      } catch (err) {
-        showToast(err.message, 'error');
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = `Proceed to Secure Payment (₹${displayPrice})`;
-        }
-      }
-      return;
-    }
-
-    // Instant Simulator fallback
-    if (btn) btn.textContent = 'Verifying Transaction...';
+    if (btn) btn.textContent = 'Connecting to PayU Secure Gateway...';
     try {
-      // 1. Create Order
-      const orderRes = await API.post('/api/subscriptions/create-order', { planId: plan.id });
-      const orderId = orderRes.orderId;
+      const payuRes = await API.post('/api/subscriptions/payu/initiate', { planId: plan.id });
+      if (!payuRes.success || !payuRes.actionUrl) {
+        throw new Error(payuRes.message || 'Could not initiate PayU checkout.');
+      }
 
-      // 2. Verify Payment & Activate
-      const verifyRes = await API.post('/api/subscriptions/verify-payment', {
-        orderId,
-        paymentMethod: 'Sandbox Instant'
-      });
+      // Build HTML form and submit to PayU
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = payuRes.actionUrl;
+      form.style.display = 'none';
 
-      // 3. Track Meta Ads Purchase Event
-      MetaAds.trackPurchase(orderId, plan.code, displayPrice);
+      for (const [key, val] of Object.entries(payuRes.params)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = val !== undefined && val !== null ? val : '';
+        form.appendChild(input);
+      }
 
-      showToast(verifyRes.message || 'Subscription Activated!', 'success');
-      const modal = document.getElementById('checkout-modal');
-      if (modal) modal.remove();
-
-      // Refresh state & navigate to discover
-      Router.navigate('/discover');
+      document.body.appendChild(form);
+      form.submit();
     } catch (err) {
       showToast(err.message, 'error');
       if (btn) {
