@@ -84,6 +84,8 @@ function initGoogleIdentity() {
           auto_select: false,
           cancel_on_tap_outside: true
         });
+
+        renderGoogleButton();
       } catch (e) {
         console.debug('Google GIS init error:', e);
       }
@@ -93,6 +95,31 @@ function initGoogleIdentity() {
   };
 
   checkGsi();
+}
+
+function renderGoogleButton() {
+  const container = document.getElementById('google-btn-container');
+  const customBtn = document.getElementById('google-custom-btn');
+  if (container && window.google && window.google.accounts && window.google.accounts.id && authConfig.googleClientId) {
+    try {
+      container.innerHTML = '';
+      window.google.accounts.id.renderButton(container, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'rectangular',
+        logo_alignment: 'left',
+        width: 320
+      });
+      if (customBtn) customBtn.style.display = 'none';
+    } catch (e) {
+      console.debug('Google renderButton error:', e);
+      if (customBtn) customBtn.style.display = 'flex';
+    }
+  } else if (customBtn) {
+    customBtn.style.display = 'flex';
+  }
 }
 
 async function handleGoogleCredentialResponse(response) {
@@ -110,44 +137,30 @@ async function handleGoogleCredentialResponse(response) {
 }
 
 async function handleGoogleSignIn() {
-  // If Google Client ID is configured and GIS is available
+  // 1. If official Google rendered button is present, click it
+  const renderedBtn = document.querySelector('#google-btn-container div[role="button"]');
+  if (renderedBtn) {
+    renderedBtn.click();
+    return;
+  }
+
+  // 2. Try GIS One Tap prompt if available
   if (authConfig.googleClientId && window.google && window.google.accounts && window.google.accounts.id) {
     try {
       window.google.accounts.id.prompt((notification) => {
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // If One Tap is skipped/blocked, navigate to standard OAuth flow
           window.location.href = '/api/auth/google';
         }
       });
       return;
     } catch (e) {
-      console.debug('Google prompt error, falling back to redirect:', e);
       window.location.href = '/api/auth/google';
       return;
     }
   }
 
-  // If GOOGLE_CLIENT_ID is not configured in .env yet:
-  // Provide clear instructions + instant developer/test login
-  const testEmail = prompt(
-    'Google Sign-In Configuration Notice:\n\n' +
-    'To enable live Google OAuth in production, specify GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your .env file.\n\n' +
-    'For instant testing right now, enter your test Google email (or click OK to use default):',
-    'user.google@flirta.network'
-  );
-
-  if (!testEmail) return;
-
-  try {
-    const res = await API.post('/api/auth/google', {
-      mockEmail: testEmail.trim(),
-      mockName: testEmail.split('@')[0],
-      isMock: true
-    });
-    completeAuthSuccess(res);
-  } catch (err) {
-    showToast(err.message || 'Google sign-in failed.', 'error');
-  }
+  // 3. Fallback redirect
+  window.location.href = '/api/auth/google';
 }
 
 function completeAuthSuccess(res) {
@@ -176,18 +189,9 @@ function completeAuthSuccess(res) {
 function openAuthModal(mode = 'login') {
   const modal = document.getElementById('auth-modal');
   if (!modal) return;
-  switchAuthTab(mode);
   modal.classList.add('open');
-
-  // Load remembered email if present
-  try {
-    const savedEmail = localStorage.getItem('flirta_remember_email');
-    const emailInput = document.getElementById('login-email');
-    if (savedEmail && emailInput && !emailInput.value) {
-      emailInput.value = savedEmail;
-    }
-  } catch (e) {}
-
+  renderGoogleButton();
+  renderDemoAccountsUI();
   fetchAuthConfig();
 }
 
@@ -197,20 +201,7 @@ function closeAuthModal() {
 }
 
 function switchAuthTab(tab) {
-  const loginForm = document.getElementById('login-form-container');
-  const registerForm = document.getElementById('register-form-container');
-  const loginTabBtn = document.getElementById('tab-login-btn');
-  const regTabBtn = document.getElementById('tab-reg-btn');
-
-  if (loginForm) loginForm.style.display = tab === 'login' ? 'block' : 'none';
-  if (registerForm) registerForm.style.display = tab === 'register' ? 'block' : 'none';
-
-  if (loginTabBtn) loginTabBtn.classList.toggle('active', tab === 'login');
-  if (regTabBtn) regTabBtn.classList.toggle('active', tab === 'register');
-
-  if (tab === 'register') {
-    renderTurnstileWidget();
-  }
+  // Modal is unified for both sign in and sign up via Google
 }
 
 async function handleLogin(e) {
