@@ -166,6 +166,12 @@ async function handleGoogleSignIn() {
 function completeAuthSuccess(res) {
   API.setToken(res.token);
   State.setUser(res.user, res.profile, res.photos || []);
+  if (typeof window.fbq === 'function') {
+    window.fbq('track', 'CompleteRegistration', {
+      content_name: 'Google Auth',
+      status: true
+    });
+  }
   showToast(res.message || `Welcome to Flirta, ${res.profile?.display_name || 'Friend'}!`, 'success');
   closeAuthModal();
 

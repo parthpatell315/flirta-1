@@ -76,6 +76,9 @@ const Router = {
 
     const component = this.routes[matchedPath] || Landing;
     component.render();
+    if (typeof window.fbq === 'function') {
+      window.fbq('track', 'PageView');
+    }
     window.scrollTo(0, 0);
   },
 

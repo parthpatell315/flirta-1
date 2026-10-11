@@ -27,6 +27,15 @@ const Pricing = {
 
     let statusBannerHtml = '';
     if (payuStatus === 'success') {
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Purchase', {
+          transaction_id: txnid,
+          currency: 'INR'
+        });
+      }
+      if (window.MetaAds && typeof window.MetaAds.trackPurchase === 'function') {
+        window.MetaAds.trackPurchase(txnid || 'txn_success', 'navratri_pass', 0);
+      }
       statusBannerHtml = `
         <div class="card" style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid var(--color-success); padding: 20px 24px; margin-bottom: 30px; border-radius: var(--radius-md); text-align: center;">
           <div style="font-weight: 700; color: var(--color-success); font-size: 1.15rem; margin-bottom: 6px;">
