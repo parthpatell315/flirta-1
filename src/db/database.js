@@ -1,6 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { DatabaseSync } = require('node:sqlite');
+let DatabaseSync;
+try {
+  DatabaseSync = require('node:sqlite').DatabaseSync;
+} catch {
+  DatabaseSync = require('better-sqlite3');
+}
 const config = require('../config/config');
 
 // Ensure database directory exists
