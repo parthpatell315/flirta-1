@@ -82,6 +82,13 @@ function getDb(customPath = null) {
   try {
     db.exec("ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'local';");
   } catch {}
+  try { db.exec('ALTER TABLE users ADD COLUMN referral_code TEXT;'); } catch {}
+  try { db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_referral_code ON users(referral_code);'); } catch {}
+  try { db.exec('ALTER TABLE users ADD COLUMN referred_by_user_id INTEGER;'); } catch {}
+  try { db.exec('ALTER TABLE profiles ADD COLUMN interests TEXT DEFAULT \'[]\';'); } catch {}
+  try { db.exec('ALTER TABLE profiles ADD COLUMN looking_for TEXT DEFAULT \'dating\';'); } catch {}
+  try { db.exec('ALTER TABLE profiles ADD COLUMN is_photo_verified INTEGER NOT NULL DEFAULT 0;'); } catch {}
+  try { db.exec("ALTER TABLE profiles ADD COLUMN moderation_status TEXT NOT NULL DEFAULT 'approved';"); } catch {}
 
   if (!customPath) {
     dbInstance = db;

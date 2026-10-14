@@ -274,3 +274,78 @@ CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id);
 CREATE INDEX IF NOT EXISTS idx_blocks_lookup ON blocks(blocker_id, blocked_id);
 CREATE INDEX IF NOT EXISTS idx_subs_user ON user_subscriptions(user_id, status);
 CREATE INDEX IF NOT EXISTS idx_payments_order ON payment_transactions(order_id);
+
+CREATE TABLE IF NOT EXISTS super_likes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(sender_id, receiver_id)
+);
+
+CREATE TABLE IF NOT EXISTS verification_requests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  selfie_url TEXT NOT NULL,
+  status TEXT NOT NULL CHECK(status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+  reviewer_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  reviewed_at DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS referral_rewards (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  referrer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  referred_user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  reward_type TEXT NOT NULL CHECK(reward_type IN ('premium_days', 'wallet_credit')),
+  premium_days INTEGER NOT NULL DEFAULT 0,
+  wallet_inr INTEGER NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_credits (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  super_likes INTEGER NOT NULL DEFAULT 0,
+  boost_credits INTEGER NOT NULL DEFAULT 0,
+  wallet_inr INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS hosts (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  status TEXT NOT NULL CHECK(status IN ('pending', 'verified', 'rejected')) DEFAULT 'pending',
+  pitch TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  reviewed_at DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS host_ledger (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  host_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  payer_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK(kind IN ('gift', 'session')),
+  gross_inr INTEGER NOT NULL,
+  platform_fee_inr INTEGER NOT NULL,
+  host_earning_inr INTEGER NOT NULL,
+  status TEXT NOT NULL CHECK(status IN ('created', 'captured', 'failed', 'refunded')),
+  order_id TEXT UNIQUE NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS host_payouts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  host_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  amount_inr INTEGER NOT NULL,
+  fee_inr INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL CHECK(status IN ('requested', 'paid', 'rejected')),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS consumable_orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  sku TEXT NOT NULL,
+  order_id TEXT UNIQUE NOT NULL,
+  amount_inr INTEGER NOT NULL,
+  status TEXT NOT NULL CHECK(status IN ('created', 'captured', 'failed')),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

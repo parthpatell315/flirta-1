@@ -44,6 +44,9 @@ const Admin = {
           <button class="btn btn-sm ${this.activeTab === 'moderation' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('moderation')">
             Moderation Queue (<span id="tab-report-count">0</span>)
           </button>
+          <button class="btn btn-sm ${this.activeTab === 'verification' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('verification')">
+            Photo verification
+          </button>
           <button class="btn btn-sm ${this.activeTab === 'grievances' ? 'btn-primary' : 'btn-secondary'}" onclick="Admin.switchTab('grievances')">
             Statutory Grievances (<span id="tab-grievance-count">0</span>)
           </button>
@@ -58,6 +61,46 @@ const Admin = {
     `;
 
     await this.loadData();
+  },
+
+  async renderVerificationTab(area) {
+    area.innerHTML = '<p>Loading verification queue…</p>';
+    try {
+      const res = await API.get('/api/admin/verifications?status=pending');
+      const rows = res.requests || [];
+      if (!rows.length) {
+        area.innerHTML = '<div class="card"><p>No profiles are waiting for photo review.</p></div>';
+        return;
+      }
+      area.innerHTML = `
+        <div class="card">
+          ${rows.map(row => `
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border);">
+              <div>
+                <strong>${row.display_name}</strong>, ${row.age}, ${row.city}
+                <div><a href="${row.selfie_url}" target="_blank" rel="noopener">View selfie</a></div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary btn-sm" onclick="Admin.reviewVerification(${row.id}, 'approved')">Approve</button>
+                <button class="btn btn-secondary btn-sm" onclick="Admin.reviewVerification(${row.id}, 'rejected')">Reject</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      area.innerHTML = `<p>${err.message}</p>`;
+    }
+  },
+
+  async reviewVerification(id, status) {
+    try {
+      const res = await API.patch(`/api/admin/verifications/${id}`, { status });
+      showToast(res.message, 'success');
+      this.render();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
   },
 
   switchTab(tab) {
@@ -110,6 +153,8 @@ const Admin = {
       this.renderModerationTab(area);
     } else if (this.activeTab === 'grievances') {
       this.renderGrievancesTab(area);
+    } else if (this.activeTab === 'verification') {
+      this.renderVerificationTab(area);
     } else {
       this.renderEventsTab(area);
     }

@@ -1,5 +1,16 @@
 const { getDb } = require('../db/database');
 
+const liveStreams = new Map();
+
+function publishMessage(conversationId, message) {
+  const set = liveStreams.get(conversationId);
+  if (!set) return;
+  const payload = `data: ${JSON.stringify({ type: 'message', message })}\n\n`;
+  for (const client of set) {
+    try { client.write(payload); } catch {}
+  }
+}
+
 // Helper to verify that user is an authorized participant in active match
 function verifyConversationAccess(db, conversationId, userId) {
   const conv = db.prepare(`
@@ -172,6 +183,7 @@ exports.sendMessage = (req, res) => {
     }
 
     const createdMsg = db.prepare('SELECT * FROM messages WHERE id = ?').get(messageId);
+    publishMessage(conversationId, createdMsg);
 
     return res.status(201).json({
       message: 'Message sent successfully.',
@@ -181,4 +193,35 @@ exports.sendMessage = (req, res) => {
     console.error('sendMessage error:', err);
     return res.status(500).json({ error: 'Failed to send message.' });
   }
+};
+
+exports.streamMessages = (req, res) => {
+  const db = getDb();
+  const conversationId = parseInt(req.params.id, 10);
+  const access = verifyConversationAccess(db, conversationId, req.user.id);
+  if (access.error) {
+    return res.status(access.status).json({ error: access.error });
+  }
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders?.();
+  res.write(`data: ${JSON.stringify({ type: 'ready', conversationId })}\n\n`);
+
+  if (!liveStreams.has(conversationId)) liveStreams.set(conversationId, new Set());
+  liveStreams.get(conversationId).add(res);
+
+  const heartbeat = setInterval(() => {
+    try { res.write(': ping\n\n'); } catch {}
+  }, 15000);
+
+  req.on('close', () => {
+    clearInterval(heartbeat);
+    const set = liveStreams.get(conversationId);
+    if (set) {
+      set.delete(res);
+      if (set.size === 0) liveStreams.delete(conversationId);
+    }
+  });
 };

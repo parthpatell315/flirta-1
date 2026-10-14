@@ -15,13 +15,13 @@ const Matches = {
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container">
-        <h1 style="font-size: 1.8rem; margin-bottom: 20px;">Your Garba Matches</h1>
+        <h1 style="font-size: 1.8rem; margin-bottom: 20px;">Matches</h1>
 
         <div class="matches-view">
           <!-- Sidebar: Match List -->
           <div class="matches-sidebar" id="matches-list-sidebar">
-            <div style="text-align: center; padding: 30px; color: var(--color-gold-light);">
-              Loading matches...
+            <div style="text-align: center; padding: 30px;">
+              Loading matches…
             </div>
           </div>
 
@@ -29,7 +29,7 @@ const Matches = {
           <div class="chat-window" id="active-chat-area">
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; color: var(--color-text-muted); text-align: center; padding: 20px;">
               <h3 style="color: var(--color-cream); margin-bottom: 8px;">Select a Match</h3>
-              <p style="font-size: 0.92rem; max-width: 320px;">Choose a dance partner from the list to discuss festive plans, attire, and Garba night meetups.</p>
+              <p style="font-size: 0.92rem; max-width: 320px;">Choose a match to start chatting.</p>
             </div>
           </div>
         </div>
@@ -137,48 +137,78 @@ const Matches = {
           <img src="${avatar}" class="match-avatar" style="width: 42px; height: 42px;" onerror="this.src='${defaultAvatar}'">
           <div>
             <h3 style="font-size: 1.05rem;">${match.display_name}</h3>
-            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">${match.city} · ${match.garba_experience} match</span>
+            <span style="font-size: 0.8rem; color: var(--color-text-secondary);">${match.city}${match.is_photo_verified ? ' · Photo verified' : ''}</span>
           </div>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div class="chat-header-actions">
           <button class="btn btn-secondary btn-sm" onclick="Matches.promptUnmatch(${match.match_id}, '${match.display_name.replace(/'/g, "\\'")}')">
             Unmatch
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openReportModal('user', ${match.matched_user_id}, '${match.display_name.replace(/'/g, "\\'")}')">
             Report
           </button>
+          <button class="btn btn-secondary btn-sm" onclick="Matches.blockUser(${match.matched_user_id})">
+            Block
+          </button>
         </div>
       </div>
 
       <!-- Mandatory Safety & Legal Protection Advisory in Chat -->
-      <div style="margin: 8px 12px; padding: 10px 14px; background: rgba(0,0,0,0.03); border: 1px dashed var(--color-border); border-radius: 8px; font-size: 0.78rem; line-height: 1.4; color: #666666; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+      <div class="chat-safety">
         <div>
-          <strong style="color: #444444;">Safety Advisory:</strong> Meet strictly at public Navratri venues. Never send money, cash, or UPI payments. Commercial solicitations or escort requests are strictly unlawful.
+          <strong>Safety:</strong> ${(window.COPY && COPY.safetyChat) || 'Meet in public. Do not send money.'}
         </div>
         <a href="javascript:void(0)" onclick="Legal.open('safety')" style="color: var(--color-primary); font-weight: 700; text-decoration: underline; white-space: nowrap; font-size: 0.76rem;">Safety Rules</a>
       </div>
 
       <div class="chat-messages" id="chat-messages-container">
         <div style="text-align: center; color: var(--color-text-muted); font-size: 0.88rem; padding: 20px;">
-          End-to-end match messaging enabled. Plan your Navratri 2026 celebrations!
+          Loading messages…
         </div>
       </div>
 
       <form class="chat-input-bar" onsubmit="Matches.sendMessage(event)">
-        <input type="text" id="chat-message-input" class="chat-input" placeholder="Say Kem Chho, plan steps, coordinate timing..." autocomplete="off">
+        <input type="text" id="chat-message-input" class="chat-input" placeholder="Write a message" autocomplete="off" maxlength="2000">
         <button type="submit" class="btn btn-primary btn-sm" style="padding: 10px 20px;">Send</button>
       </form>
     `;
 
     await this.fetchMessages();
 
-    // Start polling every 3.5 seconds
+    this.startLiveUpdates();
+  },
+
+  startLiveUpdates() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
     if (this.pollingInterval) clearInterval(this.pollingInterval);
-    this.pollingInterval = setInterval(() => {
-      if (this.activeConversationId) {
-        this.fetchMessages(true);
-      }
-    }, 3500);
+    if (!this.activeConversationId) return;
+
+    const url = `/api/messages/conversations/${this.activeConversationId}/stream`;
+    try {
+      this.eventSource = new EventSource(url);
+      this.eventSource.onmessage = (event) => {
+        const payload = JSON.parse(event.data);
+        if (payload.type === 'message') this.fetchMessages(true);
+      };
+      this.eventSource.onerror = () => {
+        if (this.eventSource) {
+          this.eventSource.close();
+          this.eventSource = null;
+        }
+        if (!this.pollingInterval) {
+          this.pollingInterval = setInterval(() => {
+            if (this.activeConversationId) this.fetchMessages(true);
+          }, 4000);
+        }
+      };
+    } catch {
+      this.pollingInterval = setInterval(() => {
+        if (this.activeConversationId) this.fetchMessages(true);
+      }, 4000);
+    }
   },
 
   async fetchMessages(isPolling = false) {
@@ -190,6 +220,11 @@ const Matches = {
 
       const currentScroll = container.scrollTop;
       const isAtBottom = container.scrollHeight - container.clientHeight <= currentScroll + 50;
+
+      if (!res.messages.length) {
+        container.innerHTML = '<div style="text-align:center;color:var(--color-text-muted);padding:20px;">No messages yet.</div>';
+        return;
+      }
 
       container.innerHTML = res.messages.map(msg => {
         const isMine = msg.sender_id === State.user.id;
@@ -207,7 +242,22 @@ const Matches = {
         container.scrollTop = container.scrollHeight;
       }
     } catch (err) {
-      console.warn('Error fetching messages:', err);
+      const container = document.getElementById('chat-messages-container');
+      if (container && !isPolling) {
+        container.innerHTML = `<p style="color:var(--color-danger);text-align:center;">${err.message}</p>`;
+      }
+    }
+  },
+
+  async blockUser(userId) {
+    try {
+      await API.post('/api/safety/block', { targetUserId: userId });
+      showToast('User blocked.', 'info');
+      this.cleanup();
+      this.activeConversationId = null;
+      await this.loadMatches();
+    } catch (err) {
+      showToast(err.message, 'error');
     }
   },
 
@@ -255,6 +305,10 @@ const Matches = {
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval);
       this.pollingInterval = null;
+    }
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
     }
   }
 };

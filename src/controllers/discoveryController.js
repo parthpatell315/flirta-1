@@ -9,12 +9,13 @@ exports.discoverProfiles = (req, res) => {
       city,
       event_id,
       connection_type,
-      experience,
       language,
       min_age,
       max_age,
+      interest,
+      verified_only,
       page = 1,
-      limit = 1000
+      limit = 100
     } = req.query;
 
     const offset = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(1000, Math.max(1, parseInt(limit, 10)));
@@ -24,6 +25,7 @@ exports.discoverProfiles = (req, res) => {
       WHERE u.id != ?
         AND u.status = 'active'
         AND p.is_discoverable = 1
+        AND COALESCE(p.moderation_status, 'approved') != 'rejected'
         -- Exclude already swiped (liked or passed)
         AND u.id NOT IN (SELECT receiver_id FROM likes WHERE sender_id = ?)
         -- Exclude blocked users (bidirectional)
@@ -44,9 +46,16 @@ exports.discoverProfiles = (req, res) => {
       params.push(city.trim());
     }
 
-    if (experience && ['beginner', 'intermediate', 'advanced'].includes(experience)) {
-      whereClause += ` AND p.garba_experience = ?`;
-      params.push(experience);
+    const wantsAdvanced = Boolean((interest && String(interest).trim()) || String(verified_only) === '1');
+    if (wantsAdvanced) {
+      const { getUserActiveSubscription } = require('./subscriptionController');
+      const gateSub = getUserActiveSubscription(db, userId);
+      if (!gateSub || gateSub.can_see_likes !== 1) {
+        return res.status(403).json({
+          error: 'Advanced filters are included with Chemistry, Attraction, and Dream Match.',
+          upgradeRequired: true
+        });
+      }
     }
 
     if (connection_type && connection_type.trim()) {
@@ -67,6 +76,15 @@ exports.discoverProfiles = (req, res) => {
     if (max_age) {
       whereClause += ` AND p.age <= ?`;
       params.push(parseInt(max_age, 10));
+    }
+
+    if (interest && String(interest).trim()) {
+      whereClause += ` AND LOWER(COALESCE(p.interests, '')) LIKE LOWER(?)`;
+      params.push(`%${String(interest).trim()}%`);
+    }
+
+    if (String(verified_only) === '1') {
+      whereClause += ` AND p.is_photo_verified = 1`;
     }
 
     if (event_id) {
@@ -92,8 +110,8 @@ exports.discoverProfiles = (req, res) => {
         p.city,
         p.preferred_language,
         p.bio,
-        p.garba_experience,
-        p.dance_style,
+        p.interests,
+        p.is_photo_verified,
         p.hobbies,
         p.connection_types,
         p.preferred_dates,
@@ -179,8 +197,8 @@ exports.discoverProfiles = (req, res) => {
         city: prof.city,
         preferred_language: prof.preferred_language,
         bio: prof.bio,
-        garba_experience: prof.garba_experience,
-        dance_style: prof.dance_style,
+        interests: (() => { try { return JSON.parse(prof.interests || '[]'); } catch { return []; } })(),
+        is_photo_verified: prof.is_photo_verified === 1,
         hobbies: prof.hobbies,
         connection_types: parsedConnTypes,
         preferred_dates: prof.preferred_dates,

@@ -17,6 +17,9 @@ const safetyRoutes = require('./routes/safetyRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const referralRoutes = require('./routes/referralRoutes');
+const hostRoutes = require('./routes/hostRoutes');
+const { COPY, RULES } = require('./constants/copy');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -29,6 +32,12 @@ app.use(cookieParser());
 // Apply global rate limiting to all API endpoints in production/testing
 app.use('/api', generalLimiter);
 app.use('/api', csrfProtection);
+
+app.get('/js/copy.js', (req, res) => {
+  res.type('application/javascript');
+  res.set('Cache-Control', 'no-store');
+  res.send(`window.COPY = ${JSON.stringify(COPY)};\nwindow.RULES = ${JSON.stringify(RULES)};\n`);
+});
 
 // Serve static assets (CSS, JS, Uploaded Photos)
 app.use('/uploads', express.static(config.UPLOAD_DIR));
@@ -46,6 +55,8 @@ app.use('/api/safety', safetyRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/referrals', referralRoutes);
+app.use('/api/hosts', hostRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

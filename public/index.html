@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Flirta · Find Your Dream Garba Partner</title>
-  <meta name="description" content="Find your dream Garba partner for Navratri 2026. Discover compatible dance partners, make friends, and explore connections on Flirta.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Flirta · Meet someone nearby</title>
+  <meta name="description" content="Flirta is a dating app for adults 18 and older. Create a profile, browse people in your city, and chat after you both match.">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
@@ -38,7 +38,7 @@
   <!-- Header / Navbar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="/garba-partner" class="brand-logo" onclick="event.preventDefault(); Router.navigate('/garba-partner');" title="Flirta">
+      <a href="/" class="brand-logo" onclick="event.preventDefault(); Router.navigate('/');" title="Flirta">
         <img src="/images/logo.png" alt="Flirta" class="brand-logo-img">
       </a>
       <nav>
@@ -71,17 +71,99 @@
       </div>
 
       <h3 id="auth-modal-title" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; color: var(--color-text-primary);">
-        Find Your Garba Match
+        Join Flirta
       </h3>
-      <p style="color: var(--color-text-secondary); font-size: 0.88rem; line-height: 1.45; margin-bottom: 22px;">
-        Sign in or join Flirta with Google for Navratri 2026. Safe, private, and 18+ verified only.
+      <p id="auth-modal-subtitle" style="color: var(--color-text-secondary); font-size: 0.88rem; line-height: 1.45; margin-bottom: 14px;">
+        Email, phone, or Google. You must be 18 or older.
       </p>
+      <div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 14px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="switchAuthTab('login')">Sign in</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="switchAuthTab('register')">Email</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="switchAuthTab('phone')">Phone</button>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)" style="text-align: left; display: none;">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input id="login-email" class="form-control" type="email" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input id="login-password" class="form-control" type="password" required autocomplete="current-password">
+        </div>
+        <p id="login-error" style="color: var(--color-danger); font-size: 0.82rem; min-height: 1.1em;"></p>
+        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+      <form id="register-form" onsubmit="handleRegister(event)" style="text-align: left; display: none;">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Name</label>
+          <input id="reg-name" class="form-control" required maxlength="40">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email</label>
+          <input id="reg-email" class="form-control" type="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <input id="reg-password" class="form-control" type="password" required minlength="8">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-dob">Date of birth</label>
+          <input id="reg-dob" class="form-control" type="date" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-city">City</label>
+          <input id="reg-city" class="form-control" required placeholder="Ahmedabad">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-referral">Referral code (optional)</label>
+          <input id="reg-referral" class="form-control">
+        </div>
+        <label style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.82rem; margin-bottom: 10px;">
+          <input id="reg-adult-confirm" type="checkbox" required>
+          <span>I confirm I am at least 18 and agree to the Terms and Privacy Policy.</span>
+        </label>
+        <p id="reg-error" style="color: var(--color-danger); font-size: 0.82rem; min-height: 1.1em;"></p>
+        <button class="btn btn-primary btn-block" type="submit">Create account</button>
+      </form>
+
+      <form id="phone-form" onsubmit="handlePhoneAuth(event)" style="text-align: left; display: none;">
+        <div class="form-group">
+          <label class="form-label" for="phone-number">Mobile number</label>
+          <input id="phone-number" class="form-control" inputmode="numeric" placeholder="10-digit mobile" required>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="requestPhoneOtp()">Send OTP</button>
+        <div class="form-group" style="margin-top: 10px;">
+          <label class="form-label" for="phone-otp">OTP</label>
+          <input id="phone-otp" class="form-control" inputmode="numeric" maxlength="6">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone-name">Name (new accounts)</label>
+          <input id="phone-name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone-dob">Date of birth (new accounts)</label>
+          <input id="phone-dob" class="form-control" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone-city">City</label>
+          <input id="phone-city" class="form-control" placeholder="Mumbai">
+        </div>
+        <label style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.82rem; margin-bottom: 10px;">
+          <input id="phone-adult-confirm" type="checkbox">
+          <span>I confirm I am at least 18.</span>
+        </label>
+        <p id="phone-error" style="color: var(--color-danger); font-size: 0.82rem; min-height: 1.1em;"></p>
+        <p id="phone-dev-otp" style="font-size: 0.8rem; color: var(--color-text-muted);"></p>
+        <button class="btn btn-primary btn-block" type="submit">Verify and continue</button>
+      </form>
 
       <!-- Google Official Button Container (Rendered by GIS) -->
-      <div id="google-btn-container" style="display: flex; justify-content: center; margin-bottom: 12px; min-height: 44px;"></div>
+      <div id="google-btn-container"></div>
 
       <!-- Google 1-Click Button -->
-      <button type="button" id="google-custom-btn" class="btn btn-secondary btn-block btn-google" onclick="handleGoogleSignIn()" style="display: flex; align-items: center; justify-content: center; gap: 12px; background: #FFFFFF; color: #3c4043; border: 1.5px solid #dadce0; font-weight: 700; font-size: 0.95rem; padding: 11px 18px; border-radius: 8px; box-shadow: 0 1px 4px rgba(60,64,67,0.12); cursor: pointer; margin-bottom: 18px; width: 100%;">
+      <button type="button" id="google-custom-btn" class="btn btn-secondary btn-block btn-google" onclick="handleGoogleSignIn()" style="display: flex; align-items: center; justify-content: center; gap: 12px; background: #FFFFFF; color: #3c4043; border: 1.5px solid #dadce0; font-weight: 700; font-size: 0.95rem; padding: 11px 18px; border-radius: 8px; box-shadow: 0 1px 4px rgba(60,64,67,0.12); cursor: pointer;">
         <svg width="20" height="20" viewBox="0 0 18 18">
           <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/>
           <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
@@ -101,6 +183,9 @@
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
           <strong>✓ DPDP Act 2023 Compliant & 256-Bit Encrypted</strong>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <strong>✓ Chat Starts Only After You Both Like</strong>
         </div>
       </div>
 
@@ -157,6 +242,7 @@
   </div>
 
   <!-- Scripts -->
+  <script src="/js/copy.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/metaAds.js"></script>
   <script src="/js/state.js"></script>

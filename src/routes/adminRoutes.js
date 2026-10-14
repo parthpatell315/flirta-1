@@ -19,6 +19,9 @@ router.post('/transactions/:id/refund', adminController.refundTransaction);
 
 router.get('/reports', adminController.getReports);
 router.patch('/reports/:id', adminController.resolveReport);
+router.get('/verifications', adminController.getVerifications);
+router.patch('/verifications/:id', adminController.reviewVerification);
+router.patch('/profiles/:userId/moderation', adminController.setProfileModeration);
 
 router.patch('/users/:id/suspend', adminController.setUserSuspension);
 router.get('/metrics', adminController.getMetrics);

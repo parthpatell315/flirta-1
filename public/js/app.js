@@ -100,7 +100,7 @@ function updateNavigationUI(state) {
   } else {
     desktopNav.innerHTML = `
       <li>
-        <button class="nav-btn" data-route="/garba-partner" onclick="Router.navigate('/garba-partner')">
+        <button class="nav-btn" data-route="/" onclick="Router.navigate('/')">
           Home
         </button>
       </li>
@@ -122,7 +122,7 @@ function updateNavigationUI(state) {
     `;
 
     mobileNav.innerHTML = `
-      <button class="mobile-nav-item active" data-route="/garba-partner" onclick="Router.navigate('/garba-partner')">
+      <button class="mobile-nav-item active" data-route="/" onclick="Router.navigate('/')">
         <svg class="mobile-nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span>Home</span>
       </button>

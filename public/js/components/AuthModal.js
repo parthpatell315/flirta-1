@@ -97,28 +97,85 @@ function initGoogleIdentity() {
   checkGsi();
 }
 
+let googleBtnResizeObserver = null;
+let googleBtnResizeBound = false;
+let googleBtnResizeFrame = 0;
+
+function syncGoogleButtonWidth() {
+  const current = document.getElementById('google-btn-container');
+  if (!current || !authConfig.googleClientId) return;
+  const width = measureGoogleButtonWidth(current);
+  if (current.dataset.renderedWidth !== String(width)) renderGoogleButton();
+}
+
+function scheduleGoogleButtonSync() {
+  syncGoogleButtonWidth();
+  if (googleBtnResizeFrame) cancelAnimationFrame(googleBtnResizeFrame);
+  googleBtnResizeFrame = requestAnimationFrame(() => {
+    googleBtnResizeFrame = 0;
+    syncGoogleButtonWidth();
+  });
+}
+
+function measureGoogleButtonWidth(container) {
+  const signIn = [...document.querySelectorAll('#auth-modal form .btn-block')]
+    .find((el) => el.getClientRects().length);
+  let width = signIn ? signIn.getBoundingClientRect().width : 0;
+  if (width < 240) {
+    const modalBox = container.closest('.modal-box');
+    if (modalBox) {
+      const styles = getComputedStyle(modalBox);
+      const pad = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+      width = modalBox.clientWidth - pad;
+    }
+  }
+  return Math.max(240, Math.min(400, Math.floor(width || 320)));
+}
+
+function watchGoogleButtonWidth(container) {
+  if (!googleBtnResizeObserver && typeof ResizeObserver !== 'undefined') {
+    const target = container.closest('.modal-box') || container;
+    googleBtnResizeObserver = new ResizeObserver(() => scheduleGoogleButtonSync());
+    googleBtnResizeObserver.observe(target);
+  }
+  if (!googleBtnResizeBound) {
+    googleBtnResizeBound = true;
+    window.addEventListener('resize', scheduleGoogleButtonSync);
+  }
+}
+
 function renderGoogleButton() {
   const container = document.getElementById('google-btn-container');
   const customBtn = document.getElementById('google-custom-btn');
   if (container && window.google && window.google.accounts && window.google.accounts.id && authConfig.googleClientId) {
     try {
-      container.innerHTML = '';
-      window.google.accounts.id.renderButton(container, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'large',
-        text: 'continue_with',
-        shape: 'rectangular',
-        logo_alignment: 'left',
-        width: 320
-      });
+      const width = measureGoogleButtonWidth(container);
+      const alreadySized = container.dataset.renderedWidth === String(width) && container.childElementCount > 0;
+      if (!alreadySized) {
+        container.innerHTML = '';
+        window.google.accounts.id.renderButton(container, {
+          type: 'standard',
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          shape: 'rectangular',
+          logo_alignment: 'left',
+          width
+        });
+        container.dataset.renderedWidth = String(width);
+      }
       if (customBtn) customBtn.style.display = 'none';
+      watchGoogleButtonWidth(container);
     } catch (e) {
       console.debug('Google renderButton error:', e);
       if (customBtn) customBtn.style.display = 'flex';
     }
   } else if (customBtn) {
     customBtn.style.display = 'flex';
+    if (container) {
+      container.innerHTML = '';
+      delete container.dataset.renderedWidth;
+    }
   }
 }
 
@@ -196,6 +253,7 @@ function openAuthModal(mode = 'login') {
   const modal = document.getElementById('auth-modal');
   if (!modal) return;
   modal.classList.add('open');
+  switchAuthTab(mode === 'register' ? 'register' : mode === 'phone' ? 'phone' : 'login');
   renderGoogleButton();
   renderDemoAccountsUI();
   fetchAuthConfig();
@@ -207,7 +265,14 @@ function closeAuthModal() {
 }
 
 function switchAuthTab(tab) {
-  // Modal is unified for both sign in and sign up via Google
+  const login = document.getElementById('login-form');
+  const register = document.getElementById('register-form');
+  const phone = document.getElementById('phone-form');
+  if (login) login.style.display = tab === 'login' ? 'block' : 'none';
+  if (register) register.style.display = tab === 'register' ? 'block' : 'none';
+  if (phone) phone.style.display = tab === 'phone' ? 'block' : 'none';
+  const title = document.getElementById('auth-modal-title');
+  if (title && window.COPY) title.textContent = window.COPY.brand;
 }
 
 async function handleLogin(e) {
@@ -298,7 +363,7 @@ async function handleRegister(e) {
   const password = document.getElementById('reg-password').value;
   const dob = document.getElementById('reg-dob').value;
   const city = document.getElementById('reg-city').value;
-  const experience = document.getElementById('reg-experience').value;
+  const referralCode = document.getElementById('reg-referral') ? document.getElementById('reg-referral').value.trim() : '';
   const isAdultConfirmed = document.getElementById('reg-adult-confirm').checked;
   const errEl = document.getElementById('reg-error');
   if (errEl) errEl.textContent = '';
@@ -346,7 +411,7 @@ async function handleRegister(e) {
       password,
       dob,
       city,
-      garbaExperience: experience,
+      referralCode,
       isAdultConfirmed,
       turnstileToken
     });
@@ -385,6 +450,40 @@ window.handleLogin = handleLogin;
 window.quickFillLogin = quickFillLogin;
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.handleForgotPassword = handleForgotPassword;
+async function requestPhoneOtp() {
+  const phone = document.getElementById('phone-number').value.trim();
+  const errEl = document.getElementById('phone-error');
+  const devEl = document.getElementById('phone-dev-otp');
+  if (errEl) errEl.textContent = '';
+  try {
+    const res = await API.post('/api/auth/otp/request', { phone });
+    if (devEl) devEl.textContent = res.devOtp ? `Development OTP: ${res.devOtp}` : 'OTP sent.';
+  } catch (err) {
+    if (errEl) errEl.textContent = err.message;
+  }
+}
+
+async function handlePhoneAuth(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('phone-error');
+  if (errEl) errEl.textContent = '';
+  try {
+    const res = await API.post('/api/auth/otp/verify', {
+      phone: document.getElementById('phone-number').value.trim(),
+      otp: document.getElementById('phone-otp').value.trim(),
+      displayName: document.getElementById('phone-name').value.trim(),
+      dob: document.getElementById('phone-dob').value,
+      city: document.getElementById('phone-city').value.trim(),
+      isAdultConfirmed: document.getElementById('phone-adult-confirm').checked
+    });
+    completeAuthSuccess(res);
+  } catch (err) {
+    if (errEl) errEl.textContent = err.message;
+  }
+}
+
 window.handleRegister = handleRegister;
+window.requestPhoneOtp = requestPhoneOtp;
+window.handlePhoneAuth = handlePhoneAuth;
 window.handleGoogleSignIn = handleGoogleSignIn;
 window.handleGoogleCredentialResponse = handleGoogleCredentialResponse;

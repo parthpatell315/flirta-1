@@ -1,4 +1,6 @@
 const { getDb } = require('../db/database');
+const { COPY } = require('../constants/copy');
+const { ensureCredits } = require('../services/accounts');
 
 exports.sendInteraction = (req, res) => {
   const db = getDb();
@@ -38,8 +40,19 @@ exports.sendInteraction = (req, res) => {
       return res.status(403).json({ error: 'Interaction not permitted between these accounts.' });
     }
 
+    if (req.superLikeBypass && action === 'like') {
+      const credits = ensureCredits(db, senderId);
+      const already = db.prepare('SELECT id FROM super_likes WHERE sender_id = ? AND receiver_id = ?').get(senderId, targetUserId);
+      if (!already && credits.super_likes <= 0) {
+        return res.status(403).json({
+          error: 'No Super Like credits remaining. Super Likes are sold separately from subscription plans.',
+          upgradeRequired: true
+        });
+      }
+    }
+
     // Enforce Daily Likes Allowance
-    if (action === 'like') {
+    if (action === 'like' && !req.superLikeBypass) {
       const { getUserActiveSubscription } = require('./subscriptionController');
       const activeSub = getUserActiveSubscription(db, senderId);
       const dailyLimit = activeSub ? activeSub.daily_likes_limit : 5; // Default free: 5 likes/day
@@ -71,6 +84,16 @@ exports.sendInteraction = (req, res) => {
     let matchId = null;
 
     try {
+      if (req.superLikeBypass && action === 'like') {
+        const inserted = db.prepare(`
+          INSERT INTO super_likes (sender_id, receiver_id) VALUES (?, ?)
+          ON CONFLICT(sender_id, receiver_id) DO NOTHING
+        `).run(senderId, targetUserId);
+        if (inserted.changes > 0) {
+          db.prepare('UPDATE user_credits SET super_likes = super_likes - 1 WHERE user_id = ?').run(senderId);
+        }
+      }
+
       // Upsert like/pass
       db.prepare(`
         INSERT INTO likes (sender_id, receiver_id, action)
@@ -140,12 +163,34 @@ exports.sendInteraction = (req, res) => {
       isMatch,
       matchId,
       message: isMatch
-        ? `It's a Garba Jodi match with ${receiver.display_name}! You can now dance together and chat.`
-        : (action === 'like' ? 'Interest sent!' : 'Profile passed.')
+        ? `${COPY.matchMessage} ${receiver.display_name} is ready to chat.`
+        : (action === 'like' ? COPY.likeSent : COPY.passSent)
     });
   } catch (err) {
     console.error('sendInteraction error:', err);
     return res.status(500).json({ error: 'Failed to record interaction.' });
+  }
+};
+
+exports.sendSuperLike = (req, res) => {
+  const db = getDb();
+  try {
+    const senderId = req.user.id;
+    const targetUserId = parseInt(req.body.receiverId, 10);
+    if (!targetUserId) {
+      return res.status(400).json({ error: "Invalid request. 'receiverId' is required." });
+    }
+    if (senderId === targetUserId) {
+      return res.status(400).json({ error: 'You cannot like or pass yourself.' });
+    }
+
+    req.body.action = 'like';
+    req.body.receiverId = targetUserId;
+    req.superLikeBypass = true;
+    return exports.sendInteraction(req, res);
+  } catch (err) {
+    console.error('sendSuperLike error:', err);
+    return res.status(500).json({ error: 'Failed to send Super Like.' });
   }
 };
 

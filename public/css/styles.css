@@ -56,8 +56,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  font-size: clamp(15px, 0.25vw + 14.5px, 16px);
+}
+
 html, body {
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--color-bg);
   background-image: 
     radial-gradient(at 15% 15%, rgba(236, 29, 36, 0.03) 0px, transparent 50%),
@@ -76,7 +81,13 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.25;
   color: var(--color-text-primary);
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
+
+h1 { font-size: clamp(1.55rem, 4.6vw, 2.4rem); }
+h2 { font-size: clamp(1.28rem, 3.2vw, 1.85rem); }
+h3 { font-size: clamp(1.05rem, 2.4vw, 1.35rem); }
+p, li, label, td, th { overflow-wrap: break-word; }
 
 a {
   color: var(--color-primary);
@@ -254,6 +265,32 @@ a:hover {
   width: 100%;
 }
 
+/* Auth modal Google button — match Sign in width and the 18px form rhythm */
+#auth-modal #google-btn-container {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 18px 0;
+}
+
+#auth-modal #google-btn-container > div,
+#auth-modal #google-btn-container [role="button"] {
+  max-width: 100% !important;
+}
+
+#auth-modal #google-btn-container:empty {
+  height: 0;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+#auth-modal #google-custom-btn {
+  width: 100%;
+  margin: 18px 0;
+  box-sizing: border-box;
+}
+
 /* Main Content Area */
 #main-content {
   min-height: calc(100vh - 180px);
@@ -282,7 +319,7 @@ a:hover {
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: clamp(1.85rem, 6.2vw, 3.25rem);
   font-weight: 800;
   line-height: 1.15;
   margin-bottom: 20px;
@@ -291,7 +328,7 @@ a:hover {
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
+  font-size: clamp(0.98rem, 2.5vw, 1.2rem);
   color: var(--color-text-secondary);
   max-width: 680px;
   margin: 0 auto 36px;
@@ -308,7 +345,7 @@ a:hover {
 /* Stats Ribbon (Avian Experience Clean Metric Ribbon) */
 .stats-bar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 16px;
   margin: 40px 0;
   padding: 24px;
@@ -337,7 +374,7 @@ a:hover {
 
 /* Section Header Typography */
 .section-title {
-  font-size: 2.2rem;
+  font-size: clamp(1.4rem, 4vw, 2.1rem);
   margin-bottom: 12px;
   text-align: center;
 }
@@ -345,13 +382,13 @@ a:hover {
   text-align: center;
   color: var(--color-text-secondary);
   margin-bottom: 38px;
-  font-size: 1.05rem;
+  font-size: clamp(0.92rem, 2.2vw, 1.05rem);
 }
 
 /* Steps Grid */
 .steps-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 24px;
   margin-bottom: 60px;
 }
@@ -1175,7 +1212,7 @@ a:hover {
 /* Events Grid */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 24px;
 }
 
@@ -1916,4 +1953,220 @@ a:hover {
     width: 50px !important;
     height: 50px !important;
   }
+}
+
+/* Phone layout: fluid type, wrapping, and no sideways scroll */
+img, video, svg {
+  max-width: 100%;
+}
+
+.chat-header-actions,
+.chat-safety {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-safety {
+  margin: 8px 12px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #666;
+  justify-content: space-between;
+}
+
+@media (max-width: 820px) {
+  h1 { font-size: clamp(1.45rem, 6.2vw, 1.85rem) !important; }
+  h2 { font-size: clamp(1.2rem, 4.8vw, 1.5rem) !important; }
+  h3 { font-size: clamp(1rem, 3.8vw, 1.2rem) !important; }
+
+  .hero-subtitle,
+  .section-subtitle,
+  .step-card p,
+  .partner-bio,
+  .card p,
+  .stat-item .stat-label {
+    font-size: 1rem !important;
+    line-height: 1.45 !important;
+  }
+
+  #main-content [style*="font-size: 1.9rem"],
+  #main-content [style*="font-size: 1.8rem"],
+  #main-content [style*="font-size: 2rem"],
+  #main-content [style*="font-size: 2.2rem"] {
+    font-size: 1.35rem !important;
+  }
+
+  #main-content [style*="font-size: 1.6rem"],
+  #main-content [style*="font-size: 1.5rem"],
+  #main-content [style*="font-size: 1.45rem"],
+  #main-content [style*="font-size: 1.4rem"] {
+    font-size: 1.15rem !important;
+  }
+
+  #main-content [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  #main-content [style*="display: flex"][style*="space-between"],
+  #main-content [style*="display:flex"][style*="space-between"] {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chat-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .chat-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .chat-header-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  .chat-safety {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .chat-safety a {
+    white-space: normal !important;
+  }
+
+  .message-bubble {
+    max-width: 88%;
+    font-size: 0.95rem;
+  }
+
+  .chat-input {
+    font-size: 16px !important;
+    min-width: 0;
+  }
+
+  .chat-input-bar .btn {
+    flex-shrink: 0;
+  }
+
+  .swipe-actions {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  .action-circle-btn,
+  .action-circle-btn.btn-like,
+  .action-circle-btn.btn-flag {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 44px;
+    border-radius: 12px !important;
+    font-size: 0.72rem !important;
+    padding: 6px 2px;
+    line-height: 1.1;
+  }
+
+  .partner-card-media {
+    height: clamp(240px, 46vh, 380px) !important;
+    min-height: 240px !important;
+    max-height: none !important;
+  }
+
+  .modal-box,
+  #auth-modal .modal-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: min(92dvh, 92vh);
+    padding: 18px 14px !important;
+  }
+
+  .btn {
+    min-height: 42px;
+  }
+
+  .navbar .btn,
+  .mobile-nav .btn,
+  .swipe-actions .btn,
+  .action-circle-btn {
+    min-height: 0;
+  }
+
+  #toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    max-width: none;
+  }
+}
+
+@media (max-width: 380px) {
+  html { font-size: 14px; }
+
+  .mobile-nav-item {
+    min-width: 0;
+    padding: 4px 2px;
+    font-size: 0.64rem;
+  }
+
+  .hero-title {
+    font-size: 1.65rem !important;
+  }
+
+  .discover-actions {
+    width: 100%;
+  }
+
+  .discover-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .discover-top-bar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Auth modal: the overlay is a fixed flex container centered on the viewport.
+   A tall register form used to overflow that box and get clipped, because the
+   card's min-height stayed at the content size and the overlay did not scroll.
+   Scroll the dialog itself so every field stays reachable. */
+#auth-modal.modal-overlay {
+  align-items: flex-start;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-top: max(12px, env(safe-area-inset-top, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+}
+
+#auth-modal .modal-box {
+  flex-shrink: 0;
+  min-height: 0;
+  max-height: none;
+  margin-top: auto;
+  margin-bottom: auto;
+  overflow: visible;
 }

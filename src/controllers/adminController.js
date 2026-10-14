@@ -1,4 +1,5 @@
 const { getDb } = require('../db/database');
+const { grantReferralReward } = require('../services/accounts');
 
 // Event management
 exports.getAllEvents = (req, res) => {
@@ -463,5 +464,95 @@ exports.resolveGrievance = (req, res) => {
   } catch (err) {
     console.error('admin resolveGrievance error:', err);
     return res.status(500).json({ error: 'Failed to update grievance.' });
+  }
+};
+
+exports.getVerifications = (req, res) => {
+  try {
+    const db = getDb();
+    const status = req.query.status || 'pending';
+    const requests = db.prepare(`
+      SELECT v.*, p.display_name, p.city, p.age, u.email
+      FROM verification_requests v
+      JOIN users u ON u.id = v.user_id
+      JOIN profiles p ON p.user_id = v.user_id
+      WHERE v.status = ?
+      ORDER BY v.id ASC
+    `).all(status);
+    return res.json({ requests });
+  } catch (err) {
+    console.error('getVerifications error:', err);
+    return res.status(500).json({ error: 'Could not load verification queue.' });
+  }
+};
+
+exports.reviewVerification = (req, res) => {
+  const db = getDb();
+  try {
+    const id = parseInt(req.params.id, 10);
+    const status = req.body.status;
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: "Status must be 'approved' or 'rejected'." });
+    }
+    const requestRow = db.prepare('SELECT * FROM verification_requests WHERE id = ?').get(id);
+    if (!requestRow) return res.status(404).json({ error: 'Verification request not found.' });
+    if (requestRow.status !== 'pending') {
+      return res.status(400).json({ error: 'This request was already reviewed.' });
+    }
+
+    db.exec('BEGIN IMMEDIATE');
+    let reward = null;
+    try {
+      db.prepare(`
+        UPDATE verification_requests
+        SET status = ?, reviewer_id = ?, reviewed_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(status, req.user.id, id);
+
+      if (status === 'approved') {
+        db.prepare('UPDATE profiles SET is_photo_verified = 1, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?')
+          .run(requestRow.user_id);
+        reward = grantReferralReward(db, requestRow.user_id);
+      }
+      db.prepare(`
+        INSERT INTO moderation_actions (admin_id, action_taken, notes)
+        VALUES (?, ?, ?)
+      `).run(req.user.id, `Verification ${id} ${status}`, '');
+      db.exec('COMMIT');
+    } catch (txErr) {
+      db.exec('ROLLBACK');
+      throw txErr;
+    }
+
+    return res.json({
+      message: `Verification ${status}.`,
+      referralReward: reward
+    });
+  } catch (err) {
+    console.error('reviewVerification error:', err);
+    return res.status(500).json({ error: 'Could not review verification.' });
+  }
+};
+
+exports.setProfileModeration = (req, res) => {
+  try {
+    const status = req.body.moderationStatus;
+    if (!['pending', 'approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: "moderationStatus must be 'pending', 'approved', or 'rejected'." });
+    }
+    const db = getDb();
+    const userId = parseInt(req.params.userId, 10);
+    const profile = db.prepare('SELECT id FROM profiles WHERE user_id = ?').get(userId);
+    if (!profile) return res.status(404).json({ error: 'Profile not found.' });
+    db.prepare('UPDATE profiles SET moderation_status = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?')
+      .run(status, userId);
+    db.prepare(`
+      INSERT INTO moderation_actions (admin_id, action_taken, notes)
+      VALUES (?, ?, ?)
+    `).run(req.user.id, `Profile ${userId} moderation ${status}`, req.body.notes || '');
+    return res.json({ message: `Profile moderation set to ${status}.` });
+  } catch (err) {
+    console.error('setProfileModeration error:', err);
+    return res.status(500).json({ error: 'Could not update profile moderation.' });
   }
 };

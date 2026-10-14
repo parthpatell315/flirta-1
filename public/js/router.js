@@ -2,15 +2,15 @@
 
 const Router = {
   routes: {
-    '/garba-partner': Landing,
     '/': Landing,
+    '/garba-partner': Landing,
     '/discover': Discover,
     '/pricing': Pricing,
     '/likes-received': LikesReceived,
     '/matches': Matches,
-    '/events': Events,
-    '/groups': Groups,
     '/profile': Profile,
+    '/referrals': Profile,
+    '/host': Profile,
     '/admin': Admin,
     '/terms': LegalPages,
     '/privacy': LegalPages,
@@ -35,7 +35,7 @@ const Router = {
       }
     });
 
-    const initialPath = window.location.pathname || '/garba-partner';
+    const initialPath = window.location.pathname || '/';
     this.renderPath(initialPath);
   },
 
@@ -50,13 +50,13 @@ const Router = {
 
   renderPath(path) {
     // Normalize path
-    let matchedPath = '/garba-partner';
+    let matchedPath = '/';
     if (path.startsWith('/discover')) matchedPath = '/discover';
     else if (path.startsWith('/pricing')) matchedPath = '/pricing';
     else if (path.startsWith('/likes-received')) matchedPath = '/likes-received';
     else if (path.startsWith('/matches')) matchedPath = '/matches';
-    else if (path.startsWith('/events') || path.startsWith('/groups')) matchedPath = '/discover';
-    else if (path.startsWith('/profile')) matchedPath = '/profile';
+    else if (path.startsWith('/profile') || path.startsWith('/referrals') || path.startsWith('/host')) matchedPath = '/profile';
+    else if (path.startsWith('/garba-partner') || path.startsWith('/events') || path.startsWith('/groups')) matchedPath = '/';
     else if (path.startsWith('/admin')) matchedPath = '/admin';
     else if (path.startsWith('/terms')) matchedPath = '/terms';
     else if (path.startsWith('/privacy')) matchedPath = '/privacy';

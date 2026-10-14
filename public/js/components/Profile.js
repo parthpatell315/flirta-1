@@ -14,7 +14,7 @@ const Profile = {
     const container = document.getElementById('main-content');
     container.innerHTML = `
       <div class="container" style="max-width: 720px;">
-        <h1 style="font-size: 1.9rem; margin-bottom: 24px;">Your Festive Profile</h1>
+        <h1 style="font-size: 1.9rem; margin-bottom: 24px;">Your profile</h1>
 
         <div id="profile-content-area">
           <div style="text-align: center; padding: 40px; color: var(--color-gold-light);">
@@ -31,12 +31,13 @@ const Profile = {
     try {
       const [res, sub] = await Promise.all([
         API.get('/api/profile'),
-        API.get('/api/subscriptions/my').catch(() => null)
+        API.get('/api/subscriptions/me').catch(() => null)
       ]);
       this.profileData = res;
       this.photos = res.photos || [];
       this.subData = sub;
       this.renderProfileForm();
+      this.loadTrustPanels();
     } catch (err) {
       document.getElementById('profile-content-area').innerHTML = `
         <div class="card" style="text-align: center; color: var(--color-danger); padding: 30px;">
@@ -53,9 +54,9 @@ const Profile = {
     if (!area) return;
 
     const connectionTypes = p.connection_types || ['partner'];
-    const planName = sub && sub.subscription ? sub.subscription.plan_name : 'Free Explorer';
-    const hasActiveSub = sub && sub.active;
-    const expiryStr = sub && sub.subscription ? new Date(sub.subscription.expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
+    const planName = sub && sub.subscription ? sub.subscription.planName : 'Free';
+    const hasActiveSub = sub && sub.hasActiveSubscription;
+    const expiryStr = sub && sub.subscription ? new Date(sub.subscription.endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
 
     area.innerHTML = `
       <!-- Flirta Subscription & Status Card -->
@@ -79,31 +80,33 @@ const Profile = {
           <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
             <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Daily Likes</div>
             <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary); margin-top: 2px;">
-              ${sub ? `${sub.daily_likes_used} / ${sub.daily_likes_limit === 999999 ? '∞' : sub.daily_likes_limit}` : '5 / 5'}
+              ${sub && sub.usage ? `${sub.usage.likesToday} / ${sub.usage.dailyLimit}` : '0 / 5'}
             </div>
           </div>
 
           <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
             <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Boost Credits</div>
             <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-text-primary); margin-top: 2px;">
-              ${sub ? sub.available_boost_credits : 0} Available
+              ${sub && sub.subscription ? sub.subscription.remainingBoosts : 0} on plan
             </div>
           </div>
 
           <div style="padding: 10px; background: rgba(0,0,0,0.02); border-radius: 8px;">
             <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Visibility</div>
             <div style="font-weight: 700; font-size: 0.95rem; color: ${sub && sub.is_boosted ? 'var(--color-primary)' : 'var(--color-text-primary)'}; margin-top: 2px;">
-              ${sub && sub.is_boosted ? 'Boosted (Top Rank)' : 'Standard'}
+              ${sub && sub.usage && sub.usage.isBoosted ? 'Boosted' : 'Standard'}
             </div>
           </div>
         </div>
       </div>
 
+      <div id="trust-panels"></div>
+
       <!-- Photo Gallery Card -->
       <div class="card" style="margin-bottom: 24px;">
         <h3 style="font-size: 1.2rem; margin-bottom: 14px;">Profile Photos</h3>
         <p style="color: var(--color-text-secondary); font-size: 0.88rem; margin-bottom: 16px;">
-          Upload clear photos showing your festive Garba attire. Max 5MB per photo (JPEG, PNG, WebP).
+          Add photos of yourself. JPEG, PNG, or WebP. Max 5MB each.
         </p>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; margin-bottom: 18px;">
@@ -135,7 +138,7 @@ const Profile = {
 
       <!-- Main Profile Form -->
       <form class="card" onsubmit="Profile.handleSave(event)">
-        <h3 style="font-size: 1.2rem; margin-bottom: 18px;">Personal & Dance Details</h3>
+        <h3 style="font-size: 1.2rem; margin-bottom: 18px;">Profile details</h3>
 
         <div class="form-group">
           <label class="form-label">Display Name</label>
@@ -168,24 +171,23 @@ const Profile = {
             </select>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Garba Skill Level</label>
-            <select id="prof-experience" class="form-control">
-              <option value="beginner" ${p.garba_experience === 'beginner' ? 'selected' : ''}>Beginner (Learning Steps)</option>
-              <option value="intermediate" ${p.garba_experience === 'intermediate' ? 'selected' : ''}>Intermediate (Grooving easily)</option>
-              <option value="advanced" ${p.garba_experience === 'advanced' ? 'selected' : ''}>Advanced (Raas Enthusiast)</option>
-            </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Bio</label>
+          <textarea id="prof-bio" class="form-control" rows="3" maxlength="500" placeholder="A short bio">${escapeHtml(p.bio || '')}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Interests</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${(window.RULES ? RULES.interests : []).map(interest => `
+              <label class="form-checkbox">
+                <input type="checkbox" class="interest-box" value="${interest}" ${(Array.isArray(p.interests) ? p.interests : []).includes(interest) ? 'checked' : ''}>
+                <span>${interest}</span>
+              </label>
+            `).join('')}
           </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Short Bio</label>
-          <textarea id="prof-bio" class="form-control" rows="3" placeholder="Tell your match about your festive enthusiasm, preferred venues, and music taste...">${escapeHtml(p.bio || '')}</textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Favorite Dance Steps / Styles</label>
-          <input type="text" id="prof-dance-style" class="form-control" placeholder="e.g. Dodhiya, Popat, 3-Taali, Heech, Free Style" value="${escapeHtml(p.dance_style || '')}">
         </div>
 
         <div class="form-group">
@@ -204,11 +206,11 @@ const Profile = {
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
             <label class="form-checkbox">
               <input type="checkbox" id="conn-partner" ${connectionTypes.includes('partner') ? 'checked' : ''}>
-              <span>Garba Dance Partner</span>
+              <span>Dating</span>
             </label>
             <label class="form-checkbox">
               <input type="checkbox" id="conn-friendship" ${connectionTypes.includes('friendship') ? 'checked' : ''}>
-              <span>Festive Friendship</span>
+              <span>Friendship</span>
             </label>
             <label class="form-checkbox">
               <input type="checkbox" id="conn-dating" ${connectionTypes.includes('dating') ? 'checked' : ''}>
@@ -269,11 +271,10 @@ const Profile = {
     e.preventDefault();
     const displayName = document.getElementById('prof-name').value;
     const city = document.getElementById('prof-city').value;
-    const garbaExperience = document.getElementById('prof-experience').value;
     const bio = document.getElementById('prof-bio').value;
-    const danceStyle = document.getElementById('prof-dance-style').value;
     const preferredLanguage = document.getElementById('prof-lang').value;
     const hobbies = document.getElementById('prof-hobbies').value;
+    const interests = Array.from(document.querySelectorAll('.interest-box:checked')).map(el => el.value);
     const isDiscoverable = document.getElementById('prof-discoverable').checked ? 1 : 0;
 
     const connectionTypes = [];
@@ -285,9 +286,8 @@ const Profile = {
       const res = await API.put('/api/profile', {
         displayName,
         city,
-        garbaExperience,
         bio,
-        danceStyle,
+        interests,
         preferredLanguage,
         hobbies,
         connectionTypes,
@@ -343,11 +343,93 @@ const Profile = {
     }
   },
 
+  async loadTrustPanels() {
+    const mount = document.getElementById('trust-panels');
+    if (!mount) return;
+    mount.innerHTML = '<p>Loading account tools…</p>';
+    try {
+      const [verification, referral, host] = await Promise.all([
+        API.get('/api/profile/verification'),
+        API.get('/api/referrals/me'),
+        API.get('/api/hosts/me/earnings').catch(() => ({ missing: true }))
+      ]);
+      const rules = referral.rules || {};
+      const hostRules = host.rules || (window.RULES && window.RULES.host) || {};
+      const captured = host.captured || { earned_inr: 0, fees_inr: 0 };
+      const capturedRows = (host.transactions || []).filter(t => t.status === 'captured');
+      mount.innerHTML = `
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>Photo verification</h3>
+          <p>${verification.isPhotoVerified ? 'Photo verified badge is on your profile.' : 'Upload a selfie. A moderator reviews it before the badge is shown.'}</p>
+          <form onsubmit="Profile.submitSelfie(event)">
+            <input id="selfie-file" type="file" accept="image/jpeg,image/png,image/webp" required>
+            <button class="btn btn-secondary btn-sm" type="submit">Submit selfie</button>
+          </form>
+          <p id="selfie-status" style="font-size: 0.85rem;"></p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>Referral rewards</h3>
+          <p>Your code: <strong>${referral.code}</strong></p>
+          <p>${rules.trigger || ''}</p>
+          <p>${rules.order || ''}</p>
+          <p>Recorded rewards: ${referral.totals.rewards}. Premium days recorded: ${referral.totals.premium_days}. Wallet credits recorded: ₹${referral.totals.wallet_inr}. Wallet balance: ₹${referral.walletInr}.</p>
+          ${referral.rewards.length ? `<ul>${referral.rewards.map(r => `<li>${r.reward_type}: ${r.premium_days ? r.premium_days + ' days' : '₹' + r.wallet_inr}</li>`).join('')}</ul>` : '<p>No referral rewards recorded yet.</p>'}
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+          <h3>Host ledger</h3>
+          <p>${hostRules.explanation || ''}</p>
+          ${host.missing ? `<form onsubmit="Profile.applyHost(event)"><textarea id="host-pitch" class="form-control" maxlength="300" placeholder="What do you host?"></textarea><button class="btn btn-secondary btn-sm" type="submit">Apply as host</button></form>` : `
+            <p>Status: ${host.hostStatus}. Captured host earnings: ₹${captured.earned_inr}. Fees on those rows: ₹${captured.fees_inr}. Available: ₹${host.availableInr}.</p>
+            ${capturedRows.length ? `<ul>${capturedRows.map(t => `<li>${t.kind} ₹${t.host_earning_inr} earned, fee ₹${t.platform_fee_inr}</li>`).join('')}</ul>` : '<p>No captured host transactions.</p>'}
+            ${host.hostStatus === 'verified' ? '<button class="btn btn-secondary btn-sm" type="button" onclick="Profile.requestPayout()">Request payout</button>' : ''}
+          `}
+        </div>
+      `;
+    } catch (err) {
+      mount.innerHTML = `<div class="card"><p>Could not load account tools: ${err.message}</p></div>`;
+    }
+  },
+
+  async submitSelfie(e) {
+    e.preventDefault();
+    const file = document.getElementById('selfie-file').files[0];
+    const status = document.getElementById('selfie-status');
+    const body = new FormData();
+    body.append('selfie', file);
+    try {
+      const res = await API.upload('/api/profile/verification', body);
+      if (status) status.textContent = res.message;
+    } catch (err) {
+      if (status) status.textContent = err.message;
+    }
+  },
+
+  async applyHost(e) {
+    e.preventDefault();
+    try {
+      const res = await API.post('/api/hosts/apply', { pitch: document.getElementById('host-pitch').value.trim() });
+      showToast(res.message, 'success');
+      this.loadTrustPanels();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  },
+
+  async requestPayout() {
+    try {
+      const res = await API.post('/api/hosts/payouts', {});
+      showToast(`Payout requested for ₹${res.payout.amount_inr}.`, 'success');
+      this.loadTrustPanels();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  },
+
   logout() {
     API.setToken(null);
     State.setUser(null, null, []);
     showToast('Logged out.', 'info');
-    Router.navigate('/garba-partner');
+    Router.navigate('/');
   },
 
   async deleteAccount() {
@@ -360,7 +442,7 @@ const Profile = {
       API.setToken(null);
       State.setUser(null, null, []);
       showToast('Account permanently deleted.', 'info');
-      Router.navigate('/garba-partner');
+      Router.navigate('/');
     } catch (err) {
       showToast(err.message, 'error');
     }

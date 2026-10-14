@@ -558,6 +558,9 @@ async function seed() {
     await seed1000Dancers(db, 1000);
   }
 
+  const { scrubFestivalCopy } = require('./scrubCopy');
+  scrubFestivalCopy(db);
+
   console.log('Seeding complete.');
 }
 

@@ -354,6 +354,7 @@ exports.getLikesReceived = (req, res) => {
         p.city,
         p.garba_experience,
         p.bio,
+        p.is_photo_verified,
         p.dance_style,
         p.connection_types,
         COALESCE(p.is_phone_verified, u.is_phone_verified, 0) as is_phone_verified,
@@ -402,7 +403,10 @@ exports.activateBoost = (req, res) => {
     const userId = req.user.id;
 
     const activeSub = getUserActiveSubscription(db, userId);
-    if (!activeSub || activeSub.remaining_boosts <= 0) {
+    const { ensureCredits } = require('../services/accounts');
+    const purchased = ensureCredits(db, userId);
+    const usingPurchasedBoost = (!activeSub || activeSub.remaining_boosts <= 0) && purchased.boost_credits > 0;
+    if ((!activeSub || activeSub.remaining_boosts <= 0) && !usingPurchasedBoost) {
       return res.status(403).json({
         error: 'No profile boost credits remaining. Upgrade to Attraction or Dream Match to get more boosts.',
         upgradeRequired: true
@@ -412,12 +416,17 @@ exports.activateBoost = (req, res) => {
     db.exec('BEGIN IMMEDIATE');
     let boostedUntil;
     try {
-      // Deduct 1 boost credit
-      db.prepare(`
-        UPDATE user_subscriptions
-        SET remaining_boosts = remaining_boosts - 1, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `).run(activeSub.subscription_id);
+      if (usingPurchasedBoost) {
+        db.prepare(`
+          UPDATE user_credits SET boost_credits = boost_credits - 1 WHERE user_id = ? AND boost_credits > 0
+        `).run(userId);
+      } else {
+        db.prepare(`
+          UPDATE user_subscriptions
+          SET remaining_boosts = remaining_boosts - 1, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `).run(activeSub.subscription_id);
+      }
 
       // Boost profile for 24 hours
       db.prepare(`
@@ -443,7 +452,7 @@ exports.activateBoost = (req, res) => {
     return res.json({
       success: true,
       message: 'Profile Boost Activated! Your card is now prioritized at the top of partner discovery for 24 hours.',
-      remainingBoosts: activeSub.remaining_boosts - 1,
+      remainingBoosts: usingPurchasedBoost ? purchased.boost_credits - 1 : activeSub.remaining_boosts - 1,
       boostedUntil
     });
   } catch (err) {

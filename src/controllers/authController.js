@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const { getDb } = require('../db/database');
+const { COPY } = require('../constants/copy');
+const { ensureReferralCode, applyReferralCode } = require('../services/accounts');
 
 function calculateAge(dobString) {
   const birthDate = new Date(dobString);
@@ -34,7 +36,7 @@ exports.getConfig = (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const { email, password, displayName, dob, isAdultConfirmed, city, garbaExperience, turnstileToken } = req.body;
+    const { email, password, displayName, dob, isAdultConfirmed, city, interests, referralCode, turnstileToken } = req.body;
 
     if (!email || !password || !displayName || !dob) {
       return res.status(400).json({ error: 'Please provide email, password, display name, and date of birth.' });
@@ -80,11 +82,11 @@ exports.register = async (req, res) => {
 
     const age = calculateAge(dob);
     if (age < 18) {
-      return res.status(403).json({ error: 'Eligibility requirement failed. You must be at least 18 years old to use GarbaJodi.' });
+      return res.status(403).json({ error: COPY.ageGate });
     }
 
     if (!isAdultConfirmed) {
-      return res.status(400).json({ error: 'You must confirm that you are at least 18 years old and eligible to register.' });
+      return res.status(400).json({ error: COPY.adultConfirm });
     }
 
     const db = getDb();
@@ -105,21 +107,24 @@ exports.register = async (req, res) => {
 const { sanitizeCity } = require('../config/cities');
     const safeCity = sanitizeCity(city);
 
+    const interestJson = JSON.stringify(Array.isArray(interests) ? interests.slice(0, 8) : []);
     db.prepare(`
       INSERT INTO profiles (
         user_id, display_name, dob, age, city, preferred_language,
-        bio, garba_experience, is_discoverable, is_adult_verified
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 1)
+        bio, interests, is_discoverable, is_adult_verified, moderation_status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 1, 'approved')
     `).run(
       userId,
       displayName.trim(),
       dob,
       age,
       safeCity,
-      'Gujarati, Hindi',
-      'Excited for Navratri 2026! Looking forward to energetic Raas and traditional Garba.',
-      ['beginner', 'intermediate', 'advanced'].includes(garbaExperience) ? garbaExperience : 'intermediate'
+      'English',
+      '',
+      interestJson
     );
+    ensureReferralCode(db, userId);
+    applyReferralCode(db, userId, referralCode);
 
     const user = { id: userId, email: email.toLowerCase().trim(), role: 'user' };
     const token = generateToken(user);
@@ -138,7 +143,7 @@ const { sanitizeCity } = require('../config/cities');
       .run(userId, 'registration_completed', JSON.stringify({ city: profile.city, age }));
 
     return res.status(201).json({
-      message: 'Account created successfully. Welcome to GarbaJodi!',
+      message: COPY.welcome,
       token,
       user,
       profile
@@ -353,11 +358,11 @@ exports.googleAuth = async (req, res) => {
       db.prepare(`
         INSERT INTO profiles (
           user_id, display_name, dob, age, city, preferred_language,
-          bio, garba_experience, is_discoverable, is_adult_verified
-        ) VALUES (?, ?, '2000-01-01', 26, 'Ahmedabad', 'Gujarati, Hindi',
-          'Excited for Navratri 2026! Looking for my match.',
-          'intermediate', 1, 1)
+          bio, interests, is_discoverable, is_adult_verified, moderation_status
+        ) VALUES (?, ?, '2000-01-01', 26, 'Ahmedabad', 'English',
+          '', '[]', 1, 1, 'approved')
       `).run(userId, googleUser.name);
+      ensureReferralCode(db, userId);
 
       if (googleUser.picture) {
         const profile = db.prepare('SELECT id FROM profiles WHERE user_id = ?').get(userId);
@@ -408,7 +413,7 @@ exports.googleAuth = async (req, res) => {
 // Google OAuth URL redirect
 exports.googleOAuthUrl = (req, res) => {
   if (!config.GOOGLE_CLIENT_ID) {
-    return res.redirect('/garba-partner?auth=google_not_configured');
+    return res.redirect('/?auth=google_not_configured');
   }
   const redirectUri = encodeURIComponent(`${config.BASE_URL}/api/auth/google/callback`);
   const scope = encodeURIComponent('openid email profile');
@@ -420,7 +425,7 @@ exports.googleOAuthUrl = (req, res) => {
 exports.googleOAuthCallback = async (req, res) => {
   const { code, error } = req.query;
   if (error || !code) {
-    return res.redirect('/garba-partner?auth_error=cancelled');
+    return res.redirect('/?auth_error=cancelled');
   }
   try {
     const redirectUri = `${config.BASE_URL}/api/auth/google/callback`;
@@ -437,7 +442,7 @@ exports.googleOAuthCallback = async (req, res) => {
       body: params.toString()
     });
     if (!tokenRes.ok) {
-      return res.redirect('/garba-partner?auth_error=token_failed');
+      return res.redirect('/?auth_error=token_failed');
     }
     const tokenData = await tokenRes.json();
     const userinfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -461,11 +466,11 @@ exports.googleOAuthCallback = async (req, res) => {
       db.prepare(`
         INSERT INTO profiles (
           user_id, display_name, dob, age, city, preferred_language,
-          bio, garba_experience, is_discoverable, is_adult_verified
-        ) VALUES (?, ?, '2000-01-01', 26, 'Ahmedabad', 'Gujarati, Hindi',
-          'Excited for Navratri 2026! Looking for my match.',
-          'intermediate', 1, 1)
+          bio, interests, is_discoverable, is_adult_verified, moderation_status
+        ) VALUES (?, ?, '2000-01-01', 26, 'Ahmedabad', 'English',
+          '', '[]', 1, 1, 'approved')
       `).run(userId, userInfo.name || email.split('@')[0]);
+      ensureReferralCode(db, userId);
 
       if (userInfo.picture) {
         const profile = db.prepare('SELECT id FROM profiles WHERE user_id = ?').get(userId);
@@ -486,6 +491,6 @@ exports.googleOAuthCallback = async (req, res) => {
     return res.redirect('/discover');
   } catch (err) {
     console.error('Google callback error:', err);
-    return res.redirect('/garba-partner?auth_error=server_error');
+    return res.redirect('/?auth_error=server_error');
   }
 };

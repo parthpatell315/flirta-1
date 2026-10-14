@@ -87,18 +87,21 @@ const Discover = {
             <option value="Indore" ${this.filters.city === 'Indore' ? 'selected' : ''}>Indore</option>
           </select>
 
-          <select id="filter-experience" onchange="Discover.applyFilters()">
-            <option value="">All Experience</option>
-            <option value="beginner" ${this.filters.experience === 'beginner' ? 'selected' : ''}>Beginner</option>
-            <option value="intermediate" ${this.filters.experience === 'intermediate' ? 'selected' : ''}>Intermediate</option>
-            <option value="advanced" ${this.filters.experience === 'advanced' ? 'selected' : ''}>Advanced</option>
+          <input id="filter-min-age" class="form-control" type="number" min="18" max="99" placeholder="Min age" value="${this.filters.min_age || ''}" onchange="Discover.applyFilters()">
+          <input id="filter-max-age" class="form-control" type="number" min="18" max="99" placeholder="Max age" value="${this.filters.max_age || ''}" onchange="Discover.applyFilters()">
+          <select id="filter-interest" onchange="Discover.applyFilters()">
+            <option value="">Interest (Premium)</option>
+            ${(window.RULES ? RULES.interests : []).map(i => `<option value="${i}" ${this.filters.interest === i ? 'selected' : ''}>${i}</option>`).join('')}
           </select>
+          <label style="font-size: 0.85rem; display: flex; gap: 6px; align-items: center;">
+            <input id="filter-verified" type="checkbox" ${this.filters.verified_only ? 'checked' : ''} onchange="Discover.applyFilters()">
+            Photo verified only (Premium)
+          </label>
 
           <select id="filter-connection" onchange="Discover.applyFilters()">
-            <option value="">All Connection Types</option>
-            <option value="partner" ${this.filters.connection_type === 'partner' ? 'selected' : ''}>Garba Partner</option>
-            <option value="friendship" ${this.filters.connection_type === 'friendship' ? 'selected' : ''}>Festive Friendship</option>
-            <option value="dating" ${this.filters.connection_type === 'dating' ? 'selected' : ''}>Open to Dating</option>
+            <option value="">Any intent</option>
+            <option value="dating" ${this.filters.connection_type === 'dating' ? 'selected' : ''}>Dating</option>
+            <option value="friendship" ${this.filters.connection_type === 'friendship' ? 'selected' : ''}>Friendship</option>
           </select>
         </div>
 
@@ -219,11 +222,17 @@ const Discover = {
 
   applyFilters() {
     const cityEl = document.getElementById('filter-city');
-    const expEl = document.getElementById('filter-experience');
     const connEl = document.getElementById('filter-connection');
+    const minEl = document.getElementById('filter-min-age');
+    const maxEl = document.getElementById('filter-max-age');
+    const interestEl = document.getElementById('filter-interest');
+    const verifiedEl = document.getElementById('filter-verified');
     this.filters.city = cityEl ? cityEl.value : '';
-    this.filters.experience = expEl ? expEl.value : '';
     this.filters.connection_type = connEl ? connEl.value : '';
+    this.filters.min_age = minEl ? minEl.value : '';
+    this.filters.max_age = maxEl ? maxEl.value : '';
+    this.filters.interest = interestEl ? interestEl.value : '';
+    this.filters.verified_only = verifiedEl ? verifiedEl.checked : false;
     this.updateCityChipsUI();
     this.updateFilterButtonBadge();
     this.currentIndex = 0;
@@ -232,10 +241,14 @@ const Discover = {
 
   async loadProfiles() {
     const cardArea = document.getElementById('discover-card-area');
+    if (cardArea) cardArea.innerHTML = '<div class="card" style="text-align:center;padding:40px;">Loading profiles…</div>';
     try {
       const queryParams = new URLSearchParams();
       if (this.filters.city) queryParams.set('city', this.filters.city);
-      if (this.filters.experience) queryParams.set('experience', this.filters.experience);
+      if (this.filters.min_age) queryParams.set('min_age', this.filters.min_age);
+      if (this.filters.max_age) queryParams.set('max_age', this.filters.max_age);
+      if (this.filters.interest) queryParams.set('interest', this.filters.interest);
+      if (this.filters.verified_only) queryParams.set('verified_only', '1');
       if (this.filters.connection_type) queryParams.set('connection_type', this.filters.connection_type);
 
       const res = await API.get(`/api/discovery?${queryParams.toString()}`);
@@ -261,7 +274,7 @@ const Discover = {
         <div class="card" style="text-align: center; padding: 50px 20px;">
           <h2 style="font-size: 1.6rem; margin-bottom: 12px;">You've Caught Up!</h2>
           <p style="color: var(--color-text-secondary); max-width: 440px; margin: 0 auto 24px;">
-            You have reviewed all available Garba profiles matching your current filters. Adjust your filters to discover more matches!
+            No more profiles match these filters.
           </p>
           <div style="display: flex; gap: 12px; justify-content: center;">
             <button class="btn btn-secondary" onclick="Discover.resetFilters()">Clear Filters</button>
@@ -321,44 +334,23 @@ const Discover = {
             <div>
               <div class="partner-card-name" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span>${p.display_name}, ${p.age}</span>
-                ${(p.auth_provider === 'google' || p.is_phone_verified) ? `
-                  <span class="badge" title="Verified Member" style="background: rgba(16, 185, 129, 0.95); color: #FFFFFF; font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; letter-spacing: 0.02em; text-shadow: none;">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    ${p.auth_provider === 'google' ? 'Google Verified' : 'Verified'}
-                  </span>
+                ${p.is_photo_verified ? `
+                  <span class="badge" title="Photo verified" style="background: rgba(16, 185, 129, 0.95); color: #FFFFFF; font-size: 0.68rem; font-weight: 700; padding: 2px 7px; border-radius: 10px;">Photo verified</span>
                 ` : ''}
               </div>
               <div class="partner-card-meta">
                 <span>${p.city}</span>
-                <span>·</span>
-                <span style="text-transform: capitalize;">${p.garba_experience} Garba Partner</span>
               </div>
             </div>
-            <span class="partner-badge">Navratri 2026</span>
+            <span class="partner-badge">18+</span>
           </div>
         </div>
 
         <div class="partner-card-body">
-          <p class="partner-bio">${p.bio || 'Excited for vibrant Raas and traditional Garba nights!'}</p>
-
-          <div class="partner-seeking-wrap" style="margin-bottom: 8px;">
-            <strong style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Seeking:</strong>
-            <div class="pill-list" style="margin-top: 4px;">
-              ${(p.connection_types || []).map(ct => `
-                <span class="pill pill-accent">${ct === 'partner' ? 'Garba Partner' : ct === 'dating' ? 'Open to Dating' : ct}</span>
-              `).join('')}
-            </div>
+          <p class="partner-bio">${p.bio || 'No bio yet.'}</p>
+          <div class="pill-list" style="margin-top: 8px;">
+            ${(p.interests || []).map(i => `<span class="pill">${i}</span>`).join('')}
           </div>
-
-          ${p.dance_style ? `
-            <div class="partner-styles-wrap" style="margin-bottom: 8px;">
-              <strong style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Styles:</strong>
-              <div class="pill-list" style="margin-top: 4px;">
-                <span class="pill">${p.dance_style}</span>
-                ${p.preferred_language ? `<span class="pill">${p.preferred_language}</span>` : ''}
-              </div>
-            </div>
-          ` : ''}
         </div>
 
         <!-- Swipe Action Bar -->
@@ -371,8 +363,11 @@ const Discover = {
             Pass
           </button>
 
-          <button class="action-circle-btn btn-like" title="Like / Send Interest" onclick="Discover.handleAction(${p.user_id}, 'like')" style="font-size: 0.95rem; font-weight: 700;">
+          <button class="action-circle-btn btn-like" title="Like" onclick="Discover.handleAction(${p.user_id}, 'like')" style="font-size: 0.95rem; font-weight: 700;">
             Like
+          </button>
+          <button class="action-circle-btn" title="Super Like" onclick="Discover.handleSuperLike(${p.user_id})" style="font-size: 0.82rem; font-weight: 700;">
+            Super
           </button>
         </div>
       </div>
@@ -429,8 +424,20 @@ const Discover = {
     });
   },
 
+  async handleSuperLike(receiverId) {
+    try {
+      const res = await API.post('/api/match/super-like', { receiverId });
+      if (res.isMatch) this.showMatchCelebration(res.matchId, this.profiles[this.currentIndex]);
+      else showToast('Super Like sent.', 'info');
+      this.currentIndex++;
+      this.renderCurrentCard();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  },
+
   resetFilters() {
-    this.filters = { city: '', experience: '', connection_type: '', min_age: '', max_age: '' };
+    this.filters = { city: '', connection_type: '', min_age: '', max_age: '', interest: '', verified_only: false };
     const cityEl = document.getElementById('filter-city');
     const expEl = document.getElementById('filter-experience');
     const connEl = document.getElementById('filter-connection');
@@ -520,7 +527,7 @@ const Discover = {
       <div class="modal-box" style="text-align: center; border: 2px solid var(--color-primary); background: #FFFFFF; box-shadow: var(--shadow-lg);">
         <h2 style="font-size: 2rem; color: var(--color-primary); margin: 12px 0;">It's a Mutual Match!</h2>
         <p style="color: var(--color-text-secondary); margin-bottom: 24px; font-size: 1rem;">
-          You and <strong>${profile.display_name}</strong> both expressed interest in each other! You can now coordinate your Garba nights and chat.
+          You and <strong>${profile.display_name}</strong> both liked each other. You can chat now.
         </p>
         <div style="display: flex; gap: 14px; justify-content: center;">
           <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Keep Browsing</button>

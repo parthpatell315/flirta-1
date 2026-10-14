@@ -42,7 +42,7 @@ const Pricing = {
             Payment Successful via PayU
           </div>
           <p style="color: var(--color-text-secondary); margin: 0 0 12px; font-size: 0.92rem;">
-            Your Navratri 2026 festival pass has been activated immediately. Transaction ID: <code>${txnid || 'N/A'}</code>
+            Your plan is active. Transaction ID: <code>${txnid || 'N/A'}</code>
           </p>
           <div style="display: flex; gap: 10px; justify-content: center;">
             <button class="btn btn-primary btn-sm" onclick="Router.navigate('/discover')">Start Exploring Partners</button>
@@ -79,15 +79,15 @@ const Pricing = {
             <span>Flirta Premium Passes</span>
           </div>
           <h1 style="font-size: clamp(1.75rem, 5vw, 2.7rem); margin-bottom: 12px; letter-spacing: -0.02em;">
-            Unlock Your Dream Garba Partner
+            Choose a plan
           </h1>
           <p style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto 16px; font-size: clamp(0.92rem, 2.2vw, 1.05rem); line-height: 1.5;">
-            Supercharge your Navratri 2026 discovery with higher daily likes, instant reveal of who liked you, and peak-night profile boosts.
+            Free accounts get limited daily likes. Chemistry and above include unlimited likes, who liked you, and advanced filters. Boosts and Super Likes are separate purchases.
           </p>
 
           <div style="display: inline-flex; align-items: center; justify-content: center; text-align: center; gap: 8px; font-size: 0.82rem; color: var(--color-primary); background: var(--color-primary-soft); padding: 6px 14px; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--color-primary-border); line-height: 1.4; max-width: 100%; margin-bottom: 24px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            Secure Matchmaking • Navratri Festival Access • One-Time Pass (No Auto-Renewal)
+            Prices below are the amounts charged. Plans do not renew unless you buy again.
           </div>
 
           <!-- Interactive Duration Toggle Switch -->

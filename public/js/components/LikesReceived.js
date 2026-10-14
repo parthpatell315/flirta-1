@@ -16,7 +16,7 @@ const LikesReceived = {
           <div>
             <h1 style="font-size: 1.9rem; margin-bottom: 6px;">Who Liked You</h1>
             <p style="color: var(--color-text-secondary); font-size: 0.95rem;">
-              Profiles waiting to be your match this Navratri 2026.
+              People who liked you.
             </p>
           </div>
           <button class="btn btn-secondary btn-sm" onclick="Router.navigate('/pricing')">
@@ -114,12 +114,12 @@ const LikesReceived = {
                       <span>${l.display_name}, ${l.age}</span>
                       ${(l.auth_provider === 'google' || l.is_phone_verified) ? `<span class="badge" style="background:#10B981; color:#fff; font-size:0.65rem; padding:1px 6px; border-radius:10px;">✓ Verified</span>` : ''}
                     </div>
-                    <div style="font-size: 0.78rem; color: var(--color-secondary);">${l.city} · ${l.garba_experience}</div>
+                    <div style="font-size: 0.78rem; color: var(--color-secondary);">${l.city}${l.is_photo_verified ? ' · Photo verified' : ''}</div>
                   </div>
                 </div>
 
                 <p style="font-size: 0.88rem; color: var(--color-text-secondary); line-height: 1.4; margin-bottom: 14px;">
-                  ${l.bio || 'Excited for Navratri 2026!'}
+                  ${l.bio || 'No bio yet.'}
                 </p>
               </div>
 
@@ -139,7 +139,7 @@ const LikesReceived = {
     try {
       const res = await API.post('/api/match/like', { receiverId: userId, action: 'like' });
       if (res.isMatch) {
-        showToast(`It's a Garba Jodi match with ${name}! Opening conversation...`, 'success');
+        showToast(`It's a match with ${name}.`, 'success');
         setTimeout(() => Router.navigate('/matches'), 800);
       } else {
         showToast('Interest sent!', 'info');

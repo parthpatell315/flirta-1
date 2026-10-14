@@ -6,7 +6,7 @@ const State = {
   photos: [],
   matchesCount: 0,
   unreadMessagesCount: 0,
-  currentRoute: '/garba-partner',
+  currentRoute: '/',
   activeConversationId: null,
   listeners: [],
 

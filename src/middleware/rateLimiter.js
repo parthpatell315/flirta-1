@@ -38,10 +38,24 @@ const actionLimiter = rateLimit({
   message: { error: 'Action rate limit reached. Please wait a moment.' }
 });
 
+const likeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: { error: 'Like rate limit reached. Please wait a moment.' }
+});
+
+const messageLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: { error: 'Message rate limit reached. Please wait a moment before sending more messages.' }
+});
+
 module.exports = {
   generalLimiter,
   authLimiter,
   registerLimiter,
   otpLimiter,
-  actionLimiter
+  actionLimiter,
+  likeLimiter,
+  messageLimiter
 };
